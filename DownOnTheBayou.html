@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Down on the Bayou</title>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">#version 300 es
+        // do these transformations to the vertex data so we can get from the default coordinates
+        // to the normalized device coordinates
+
+        in vec4 vPosition;
+        in vec4 vColor;
+        uniform mat4 model_view; // gets us into eye space
+        uniform mat4 projection; // gets us from eye space to normalized device space
+        out vec4 color; // passing this one back to the fragment shader
+
+        void main() {
+            gl_Position = projection * model_view * vPosition;
+            // plus implicit "divide by w coordinate" phase
+            color = vColor;
+        }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">#version 300 es
+    precision mediump float;
+    in vec4 color;
+    out vec4  fColor;
+
+    void main()
+    {
+        fColor = color;
+    }
+    </script>
+
+    <script type="module" src="FanBoatDriver.js"></script>
+</head>
+<body>
+<div>Practicing transformation matrices</div>
+<canvas id="gl-canvas" width="512" height="512">
+    Sorry; your web browser doesn't support HTML5's canvas element.
+</canvas>
+</body>
