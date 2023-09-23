@@ -60,7 +60,7 @@ window.onload = function init() {
 
     // set up initial array of render objects
     water = new Water();
-    boat = new BoatBody();
+    boat = new BoatBody(water);
     fan = new BoatFan();
     rudders = new BoatRudders();
 

@@ -1,16 +1,31 @@
 import {RenderObject} from "../RenderObject.js";
 import {vec4} from "../helperfunctions.js";
+import {Water} from "./Water";
 
 export class BoatBody extends RenderObject{
 
-    constructor() {
+    water:Water;
+
+    constructor(water:Water) {
         super();
+        this.water = water;
         this.direction = 10; // I think it looks less-bad if the boat starts at an angle
     }
 
     moveBy(speed:number) {
         this.xPos += Math.sin(this.direction * Math.PI / 180) * speed;
+        if(this.xPos >= this.water.size * 0.9) {
+            this.xPos = this.water.size * 0.9
+        } else if (this.xPos <= -this.water.size * 0.9) {
+            this.xPos = -this.water.size * 0.9
+        }
+
         this.zPos += Math.cos(this.direction * Math.PI / 180) * speed;
+        if(this.zPos >= this.water.size * 0.9) {
+            this.zPos = this.water.size * 0.9
+        } else if (this.zPos <= -this.water.size * 0.9) {
+            this.zPos = -this.water.size * 0.9
+        }
     }
 
     createObjectTris() {
