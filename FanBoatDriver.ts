@@ -1,7 +1,8 @@
 "use strict"
 
 // webGL objects
-import {RenderObject} from "./RenderObject.js";
+
+import {RenderObject} from "./RenderObject";
 
 let gl:WebGLRenderingContext;
 let canvas:HTMLCanvasElement;
@@ -20,8 +21,6 @@ let water:Water;
 let fan:BoatFan;
 let objects:RenderObject[];
 
-let boatDirection:number;
-
 import {
     initShaders,
     vec4,
@@ -32,7 +31,7 @@ import {
     lookAt,
     rotateX,
     rotateY,
-    rotateZ, rotate
+    rotateZ,
 } from './helperfunctions.js';
 import {BoatBody} from "./objects/BoatBody.js";
 import {Water} from "./objects/Water.js";
@@ -63,14 +62,11 @@ window.onload = function init() {
     boat = new BoatBody();
     fan = new BoatFan();
 
-    boatDirection = 0;
-
     objects = [
         water,
         boat,
         fan
     ];
-
     makeObjectsAndBuffer();
 
     // set up the viewport
@@ -86,12 +82,13 @@ window.onload = function init() {
 };
 
 function keydownHandler(event) {
+
     switch(event.key) {
         case "ArrowLeft":
-            boat.rotateBy(-1);
+            boat.rotateBy(1);
             break;
         case "ArrowRight":
-            boat.rotateBy(1);
+            boat.rotateBy(-1);
             break;
         case "ArrowDown":
             boat.moveBy(-0.1);
@@ -174,25 +171,17 @@ function makeObjectsAndBuffer(){
     //send the local data over to this buffer on the graphics card.  Note our use of Angel's "flatten" function
     gl.bufferData(gl.ARRAY_BUFFER, flatten(allPoints), gl.STATIC_DRAW);
 
-    //Data is packed in groups of 4 floats which are 4 bytes each, 32 bytes total for position and color
     // position            color
     //  x   y   z     w       r    g     b    a
     // 0-3 4-7 8-11 12-15  16-19 20-23 24-27 28-31
 
-    //What is this data going to be used for?
-    //The vertex shader has an attribute named "vPosition".  Let's associate part of this data to that attribute
+    // vPosition
     vPosition = gl.getAttribLocation(program, "vPosition");
-
-    //attribute location we just fetched, 4 elements in each vector, data type float, don't normalize this data,
-    //each position starts 32 bytes after the start of the previous one, and starts right away at index 0
     gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 32, 0);
     gl.enableVertexAttribArray(vPosition);
 
-    //The vertex shader also has an attribute named "vColor".  Let's associate the other part of this data to that attribute
+    // vColor
     vColor = gl.getAttribLocation(program, "vColor");
-
-    //attribute location we just fetched, 4 elements in each vector, data type float, don't normalize this data,
-    //each color starts 32 bytes after the start of the previous one, and the first color starts 16 bytes into the data
     gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 32, 16);
     gl.enableVertexAttribArray(vColor);
 }

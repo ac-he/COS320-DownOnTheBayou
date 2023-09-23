@@ -1,0 +1,24 @@
+body {
+    background-color: darkslategrey;
+    font-family: "Book Antiqua", serif;
+    color: antiquewhite;
+    text-align: center;
+}
+
+.row {
+    display: flex;
+}
+
+.column {
+    padding: 1%;
+}
+
+h1 {
+    font-family: "Edwardian Script ITC", cursive;
+    font-size: xxx-large;
+    color: antiquewhite;
+}
+
+table {
+    width: 100%;
+}

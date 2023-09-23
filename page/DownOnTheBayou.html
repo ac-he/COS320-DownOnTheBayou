@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Down on the Bayou</title>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">#version 300 es
+        // do these transformations to the vertex data so we can get from the default coordinates
+        // to the normalized device coordinates
+
+        in vec4 vPosition;
+        in vec4 vColor;
+        uniform mat4 model_view; // gets us into eye space
+        uniform mat4 projection; // gets us from eye space to normalized device space
+        out vec4 color; // passing this one back to the fragment shader
+
+        void main() {
+            gl_Position = projection * model_view * vPosition;
+            // plus implicit "divide by w coordinate" phase
+            color = vColor;
+        }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">#version 300 es
+        precision mediump float;
+        in vec4 color;
+        out vec4  fColor;
+
+        void main()
+        {
+            fColor = color;
+        }
+    </script>
+
+    <script type="module" src="../FanBoatDriver.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+</head>
+<body>
+    <div  class ="row">
+        <div class="column">
+            <canvas id="gl-canvas" width="720" height=720%>
+            Sorry; your web browser doesn't support HTML5's canvas element.
+            </canvas>
+        </div>
+        <div class="column">
+            <h1>Down on the Bayou</h1>
+            <div>COS320 Project 2</div>
+            <hr>
+            <div>
+                Controls
+                <table>
+                    <tr>
+                        <th>Rotate right</th>
+                        <td>Right arrow</td>
+                    </tr>
+                    <tr>
+                        <th>Rotate left</th>
+                        <td>Left arrow</td>
+                    </tr>
+                    <tr>
+                        <th>Move forward</th>
+                        <td>Up arrow</td>
+                    </tr>
+                    <tr>
+                        <th>Move backward</th>
+                        <td>Down arrow</td>
+                    </tr>
+                </table>
+            <div>
+        </div>
+    </div>
+</body>
