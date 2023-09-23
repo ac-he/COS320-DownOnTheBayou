@@ -2,25 +2,6 @@
 
 // webGL objects
 
-import {RenderObject} from "./RenderObject";
-
-let gl:WebGLRenderingContext;
-let canvas:HTMLCanvasElement;
-let program:WebGLProgram;
-let bufferId:WebGLBuffer;
-
-// shader variables
-let umv:WebGLUniformLocation; // model_view uniform
-let uproj:WebGLUniformLocation; // projection uniform
-let vPosition:GLint; // vPosition vertex
-let vColor:GLint; // vColor vertex
-
-// to store all objects
-let boat:BoatBody;
-let water:Water;
-let fan:BoatFan;
-let objects:RenderObject[];
-
 import {
     initShaders,
     vec4,
@@ -36,6 +17,26 @@ import {
 import {BoatBody} from "./objects/BoatBody.js";
 import {Water} from "./objects/Water.js";
 import {BoatFan} from "./objects/BoatFan.js"
+import {BoatRudders} from "./objects/BoatRudders.js";
+import {RenderObject} from "./RenderObject.js";
+
+let gl:WebGLRenderingContext;
+let canvas:HTMLCanvasElement;
+let program:WebGLProgram;
+let bufferId:WebGLBuffer;
+
+// shader variables
+let umv:WebGLUniformLocation; // model_view uniform
+let uproj:WebGLUniformLocation; // projection uniform
+let vPosition:GLint; // vPosition vertex
+let vColor:GLint; // vColor vertex
+
+// to store all objects in the scene
+let boat:BoatBody;
+let water:Water;
+let fan:BoatFan;
+let rudders:BoatRudders;
+let objects:RenderObject[];
 
 
 // initial setup
@@ -61,11 +62,13 @@ window.onload = function init() {
     water = new Water();
     boat = new BoatBody();
     fan = new BoatFan();
+    rudders = new BoatRudders();
 
     objects = [
         water,
         boat,
-        fan
+        fan,
+        rudders,
     ];
     makeObjectsAndBuffer();
 
@@ -83,12 +86,15 @@ window.onload = function init() {
 
 function keydownHandler(event) {
 
+    rudders.direction = 0;
     switch(event.key) {
         case "ArrowLeft":
             boat.rotateBy(1);
+            rudders.direction = -45;
             break;
         case "ArrowRight":
             boat.rotateBy(-1);
+            rudders.direction = 45;
             break;
         case "ArrowDown":
             boat.moveBy(-0.1);
@@ -151,6 +157,35 @@ function render() {
         .mult(translate(0, 0, 0));
     gl.uniformMatrix4fv(umv, false, mv.flatten());
     gl.drawArrays(gl.TRIANGLES, fan.bufferIndex, fan.getNumTris());    // draw the fan
+
+    mv = commonMat;
+    mv = mv.mult(translate(boat.xPos, 0.1, boat.zPos))
+        .mult(rotateY(boat.direction))
+        .mult(translate(-0.3, 0, -1.1))
+        .mult(rotateY(rudders.direction))
+        .mult(translate(0, 0, 0));
+    gl.uniformMatrix4fv(umv, false, mv.flatten());
+    gl.drawArrays(gl.TRIANGLES, rudders.bufferIndex, rudders.getNumTris());    // draw the rudder
+
+
+    mv = commonMat;
+    mv = mv.mult(translate(boat.xPos, 0.1, boat.zPos))
+        .mult(rotateY(boat.direction))
+        .mult(translate(0.3, 0, -1.1))
+        .mult(rotateY(rudders.direction))
+        .mult(translate(0, 0, 0));
+    gl.uniformMatrix4fv(umv, false, mv.flatten());
+    gl.drawArrays(gl.TRIANGLES, rudders.bufferIndex, rudders.getNumTris());    // draw the rudder
+
+
+    mv = commonMat;
+    mv = mv.mult(translate(boat.xPos, 0.1, boat.zPos))
+        .mult(rotateY(boat.direction))
+        .mult(translate(0, 0, -1.1))
+        .mult(rotateY(rudders.direction))
+        .mult(translate(0, 0, 0));
+    gl.uniformMatrix4fv(umv, false, mv.flatten());
+    gl.drawArrays(gl.TRIANGLES, rudders.bufferIndex, rudders.getNumTris());    // draw the rudder
 }
 
 //Make all objects and send over to the graphics card
