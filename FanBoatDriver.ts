@@ -17,6 +17,7 @@ let vColor:GLint; // vColor vertex
 // to store all objects
 let boat:BoatBody;
 let water:Water;
+let fan:BoatFan;
 let objects:RenderObject[];
 
 let boatDirection:number;
@@ -31,10 +32,11 @@ import {
     lookAt,
     rotateX,
     rotateY,
-    rotateZ
+    rotateZ, rotate
 } from './helperfunctions.js';
 import {BoatBody} from "./objects/BoatBody.js";
 import {Water} from "./objects/Water.js";
+import {BoatFan} from "./objects/BoatFan.js"
 
 
 // initial setup
@@ -59,12 +61,14 @@ window.onload = function init() {
     // set up initial array of render objects
     water = new Water();
     boat = new BoatBody();
+    fan = new BoatFan();
 
     boatDirection = 0;
 
     objects = [
         water,
-        boat
+        boat,
+        fan
     ];
 
     makeObjectsAndBuffer();
@@ -73,7 +77,7 @@ window.onload = function init() {
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
     // set up background
-    gl.clearColor(0, 0, 0,1);
+    gl.clearColor(0, 0.5, 0,1);
 
     // configure so that object overlap corresponds to depth
     gl.enable(gl.DEPTH_TEST);
@@ -91,9 +95,11 @@ function keydownHandler(event) {
             break;
         case "ArrowDown":
             boat.moveBy(-0.1);
+            fan.spinBy(-15);
             break;
         case "ArrowUp":
             boat.moveBy(0.1);
+            fan.spinBy(15);
             break;
     }
 
@@ -134,9 +140,20 @@ function render() {
     gl.drawArrays(gl.TRIANGLES, water.bufferIndex, water.getNumTris()); // draw the water
 
     mv = commonMat;
-    mv = mv.mult(translate(boat.xPos, 0, boat.zPos)).mult(rotateY(boat.direction)).mult(translate(0, 0, 0));
+    mv = mv.mult(translate(boat.xPos, 0, boat.zPos))
+        .mult(rotateY(boat.direction))
+        .mult(translate(0, 0, 0));
     gl.uniformMatrix4fv(umv, false, mv.flatten());
     gl.drawArrays(gl.TRIANGLES, boat.bufferIndex, boat.getNumTris());    // draw the boat
+
+    mv = commonMat;
+    mv = mv.mult(translate(boat.xPos, 0.7, boat.zPos))
+        .mult(rotateY(boat.direction))
+        .mult(translate(0, 0, -1))
+        .mult(rotateZ(fan.angle))
+        .mult(translate(0, 0, 0));
+    gl.uniformMatrix4fv(umv, false, mv.flatten());
+    gl.drawArrays(gl.TRIANGLES, fan.bufferIndex, fan.getNumTris());    // draw the fan
 }
 
 //Make all objects and send over to the graphics card

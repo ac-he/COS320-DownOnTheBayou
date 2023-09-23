@@ -22,7 +22,7 @@ export abstract class RenderObject {
     }
 
     // Specify what the triangles are for this object
-    abstract createObjectTris();
+    abstract createObjectTris() : void;
 
     // Get the list of triangles that make up this object
     getObjectTris():vec4[] {
