@@ -1,13 +1,28 @@
 import {RenderObject} from "../RenderObject.js";
-import {vec4} from "../helperfunctions.js";
+import {rotateY, translate, vec4} from "../helperfunctions.js";
+import {BoatBody} from "./BoatBody.js";
 
 export class BoatRudders extends RenderObject {
 
-    direction:number;
+    boat:BoatBody;
+    offset:number;
 
-    constructor() {
+    constructor(boat:BoatBody, offset:number) {
         super();
-        this.direction = 0;
+        this.boat = boat;
+        this.offset = offset;
+    }
+
+    getTransformsSequence(): any[] {
+        this.transforms = [
+            translate(this.boat.xPos, 0.1, this.boat.zPos),
+            rotateY(this.boat.direction),
+            translate(this.offset, 0, -1.1),
+            rotateY(this.direction),
+            translate(0, 0, 0)
+        ];
+
+        return this.transforms;
     }
 
     createObjectTris(): void {
@@ -18,11 +33,11 @@ export class BoatRudders extends RenderObject {
         //  |   |      ||  ||  ||
         //  D---C
 
-        let a:vec4 = new vec4(0, 0.3, -0.1, 1);
-        let b:vec4 = new vec4(0, 0.3, 0.1, 1);
+        let a:vec4 = new vec4(0, 0.2, -0.1, 1);
+        let b:vec4 = new vec4(0, 0.2, 0.1, 1);
         let c:vec4 = new vec4(0, -0.1, 0.1, 1);
         let d:vec4 = new vec4(0, -0.1, -0.1, 1);
-        let color:vec4 = new vec4(1, 1, 0, 1);
+        let color:vec4 = new vec4(Math.random(), Math.random(), 0, 1);
 
         this.objectTris.push(a);
         this.objectTris.push(color);

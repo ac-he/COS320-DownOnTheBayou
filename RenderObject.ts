@@ -11,6 +11,9 @@ export abstract class RenderObject {
     // store all the triangles that make up this object
     protected objectTris:vec4[];
 
+    // store all the transforms needed to properly render this object
+    protected transforms:any[];
+
     // Constructor
     constructor(){
         this.bufferIndex = 0; // will be set properly later
@@ -23,6 +26,9 @@ export abstract class RenderObject {
 
     // Specify what the triangles are for this object
     abstract createObjectTris() : void;
+
+    abstract getTransformsSequence() :any[];
+
 
     // Get the list of triangles that make up this object
     getObjectTris():vec4[] {
@@ -41,9 +47,5 @@ export abstract class RenderObject {
         }
     }
 
-    setPosition(x:number, z:number){
-        this.xPos = x;
-        this.zPos = z;
-    }
 }
 

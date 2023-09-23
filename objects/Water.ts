@@ -1,5 +1,5 @@
 import {RenderObject} from "../RenderObject.js";
-import {vec4} from "../helperfunctions.js";
+import {translate, vec4} from "../helperfunctions.js";
 
 export class Water extends RenderObject{
 
@@ -30,5 +30,13 @@ export class Water extends RenderObject{
         this.objectTris.push(new vec4(-this.size, 0, -this.size, enabled));
         this.objectTris.push(color);
 
+    }
+
+    getTransformsSequence(): any[] {
+        this.transforms = [
+            translate(0, 0, 0)
+        ];
+
+        return this.transforms;
     }
 }

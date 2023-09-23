@@ -1,5 +1,5 @@
 import {RenderObject} from "../RenderObject.js";
-import {vec4} from "../helperfunctions.js";
+import {rotateY, translate, vec4} from "../helperfunctions.js";
 import {Water} from "./Water";
 
 export class BoatBody extends RenderObject{
@@ -26,6 +26,16 @@ export class BoatBody extends RenderObject{
         } else if (this.zPos <= -this.water.size * 0.9) {
             this.zPos = -this.water.size * 0.9
         }
+    }
+
+    getTransformsSequence(): any[] {
+        this.transforms = [
+            translate(this.xPos, 0, this.zPos),
+            rotateY(this.direction),
+            translate(0, 0, 0)
+        ];
+
+        return this.transforms;
     }
 
     createObjectTris() {
@@ -58,7 +68,7 @@ export class BoatBody extends RenderObject{
         let fanBaseL:vec4 = new vec4(-0.2, 0.2, -0.9, 1);
         let fanBaseR:vec4 = new vec4(0.2, 0.2, -0.9, 1);
         let fanBaseC:vec4 = new vec4(0, 0.2, -0.6, 1);
-        let fanAttachment:vec4 = new vec4(0, 0.8, -0.9, 1);
+        let fanAttachment:vec4 = new vec4(0, 0.9, -0.9, 1);
 
         //front face = 6 verts, position then color
         this.objectTris.push(a);

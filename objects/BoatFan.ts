@@ -1,11 +1,14 @@
 import {RenderObject} from "../RenderObject.js";
-import {mat4, vec4} from "../helperfunctions.js";
+import {rotateY, rotateZ, translate, vec4} from "../helperfunctions.js";
+import {BoatBody} from "./BoatBody";
 
 export class BoatFan extends RenderObject {
 
     angle:number;
-    constructor() {
+    boat:BoatBody;
+    constructor(boat:BoatBody) {
         super();
+        this.boat = boat;
         this.angle = 4; // I think it looks less-bad if the fan starts at an angle
     }
 
@@ -14,6 +17,17 @@ export class BoatFan extends RenderObject {
         if(angle >= 360){
             angle--;
         }
+    }
+
+    getTransformsSequence(): any[] {
+        this.transforms = [
+            translate(this.boat.xPos, 0.8, this.boat.zPos),
+            rotateY(this.boat.direction),
+            translate(0, 0, -1),
+            rotateZ(this.angle),
+            translate(0, 0, 0)
+        ];
+        return this.transforms;
     }
 
     createObjectTris():void {
@@ -66,4 +80,6 @@ export class BoatFan extends RenderObject {
 
 
     }
+
+
 }
