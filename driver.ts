@@ -6,6 +6,7 @@ import {Water} from "./objects/water.js";
 import {BoatFan} from "./objects/boatFan.js"
 import {BoatRudder} from "./objects/boatRudder.js";
 import {RenderObject} from "./helpers/renderObject.js";
+import {BoatLight} from "./objects/boatLight.js";
 
 // webGL objects
 let gl:WebGLRenderingContext;
@@ -26,11 +27,13 @@ let fan:BoatFan;
 let rudder1:BoatRudder;
 let rudder2:BoatRudder;
 let rudder3:BoatRudder;
+let light:BoatLight;
 let objects:RenderObject[];
 
 // to track the state of the boat as it moves
 let moving:number; // [-1, 0, 1] used as a multiplier for boat movement
 let turning:number; // [-1, 0, 1] used as a multiplier for boat rotation
+let lightMoving:number; // [-1, 0, 1] used as a multiplier for light movement
 
 
 // initial setup
@@ -57,6 +60,7 @@ window.onload = function init() {
     // the boat is still to begin with
     moving = 0;
     turning = 0;
+    lightMoving = 0;
 
     // set up initial array of render objects
     water = new Water();
@@ -65,6 +69,7 @@ window.onload = function init() {
     rudder1 = new BoatRudder(boat, 0.3);
     rudder2 = new BoatRudder(boat, 0);
     rudder3 = new BoatRudder(boat, -0.3);
+    light = new BoatLight(boat);
 
     // put these objects into a list for easy iteration
     objects = [
@@ -74,6 +79,7 @@ window.onload = function init() {
         rudder1,
         rudder2,
         rudder3,
+        light
     ];
 
     // create all the objects
@@ -105,6 +111,12 @@ function keydownHandler(event) {
         case "ArrowUp":
             moving = 1;
             break;
+        case "a":
+            lightMoving = 1;
+            break;
+        case "d":
+            lightMoving = -1;
+            break;
     }
 }
 
@@ -118,6 +130,10 @@ function keyupHandler(event) {
         case "ArrowDown":
             moving = 0;
             break;
+        case "a":
+        case "d":
+            lightMoving = 0;
+            break;
     }
 }
 
@@ -128,9 +144,12 @@ function update() {
 
     // spin the boat
     boat.rotateBy(turning);
-    rudder1.direction = turning * 30
-    rudder2.direction = turning * 30
-    rudder3.direction = turning * 30
+    rudder1.direction = turning * 30;
+    rudder2.direction = turning * 30;
+    rudder3.direction = turning * 30;
+
+    // rotate the light
+    light.rotateBy(lightMoving);
 
     requestAnimationFrame(render);
 }

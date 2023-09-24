@@ -39,7 +39,7 @@ export abstract class RenderObject {
         return this.objectTris.length / 2; // because each point is made of a color vector and a position vector
     }
 
-    // rotate this object (supposing that it does rotate)
+    // some default rotation, which some objects will use
     rotateBy(angle:number){
         this.direction += angle;
         if(this.direction >= 360) {
