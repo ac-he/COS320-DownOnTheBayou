@@ -1,11 +1,11 @@
-import {RenderObject} from "../RenderObject.js";
-import {rotateY, translate, vec4} from "../helperfunctions.js";
-import {BoatBody} from "./BoatBody.js";
+import {RenderObject} from "../helpers/renderObject.js";
+import {rotateY, translate, vec4} from "../helpers/helperfunctions.js";
+import {BoatBody} from "./boatBody.js";
 
-export class BoatRudders extends RenderObject {
+export class BoatRudder extends RenderObject {
 
-    boat:BoatBody;
-    offset:number;
+    boat:BoatBody; // the boat this rudder is attached to
+    offset:number; // determines if this rudder is off-center relative to the back of the boat
 
     constructor(boat:BoatBody, offset:number) {
         super();
@@ -14,23 +14,21 @@ export class BoatRudders extends RenderObject {
     }
 
     getTransformsSequence(): any[] {
-        this.transforms = [
-            translate(this.boat.xPos, 0.1, this.boat.zPos),
-            rotateY(this.boat.direction),
-            translate(this.offset, 0, -1.1),
-            rotateY(this.direction),
-            translate(0, 0, 0)
-        ];
+        return [
+            translate(this.boat.xPos, 0.1, this.boat.zPos), // Move to match the boat's position
+            rotateY(this.boat.direction), // Turn to match the boat's rotation
 
-        return this.transforms;
+            translate(this.offset, 0, -1.1), // Move to where it attaches to the boat
+            rotateY(this.direction)  // Rotate in place to the correct direction
+        ];
     }
 
     createObjectTris(): void {
         this.objectTris = [];
 
         //  A---B
-        //  |   |      0   1   2
-        //  |   |      ||  ||  ||
+        //  |   |
+        //  |   |
         //  D---C
 
         let a:vec4 = new vec4(0, 0.2, -0.1, 1);
@@ -51,7 +49,6 @@ export class BoatRudders extends RenderObject {
         this.objectTris.push(color);
         this.objectTris.push(c);
         this.objectTris.push(color);
-
     }
 
 }

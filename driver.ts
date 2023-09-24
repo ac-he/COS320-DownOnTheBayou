@@ -1,25 +1,13 @@
 "use strict"
 
+import {initShaders, vec4, mat4, flatten, perspective, translate, lookAt } from './helpers/helperfunctions.js';
+import {BoatBody} from "./objects/boatBody.js";
+import {Water} from "./objects/water.js";
+import {BoatFan} from "./objects/boatFan.js"
+import {BoatRudder} from "./objects/boatRudder.js";
+import {RenderObject} from "./helpers/renderObject.js";
+
 // webGL objects
-
-import {
-    initShaders,
-    vec4,
-    mat4,
-    flatten,
-    perspective,
-    translate,
-    lookAt,
-    rotateX,
-    rotateY,
-    rotateZ,
-} from './helperfunctions.js';
-import {BoatBody} from "./objects/BoatBody.js";
-import {Water} from "./objects/Water.js";
-import {BoatFan} from "./objects/BoatFan.js"
-import {BoatRudders} from "./objects/BoatRudders.js";
-import {RenderObject} from "./RenderObject.js";
-
 let gl:WebGLRenderingContext;
 let canvas:HTMLCanvasElement;
 let program:WebGLProgram;
@@ -35,14 +23,14 @@ let vColor:GLint; // vColor vertex
 let boat:BoatBody;
 let water:Water;
 let fan:BoatFan;
-let rudder1:BoatRudders;
-let rudder2:BoatRudders;
-let rudder3:BoatRudders;
+let rudder1:BoatRudder;
+let rudder2:BoatRudder;
+let rudder3:BoatRudder;
 let objects:RenderObject[];
 
-// to track input
-let moving:number;
-let turning:number;
+// to track the state of the boat as it moves
+let moving:number; // [-1, 0, 1] used as a multiplier for boat movement
+let turning:number; // [-1, 0, 1] used as a multiplier for boat rotation
 
 
 // initial setup
@@ -62,9 +50,11 @@ window.onload = function init() {
     umv = gl.getUniformLocation(program, "model_view");
     uproj = gl.getUniformLocation(program, "projection");
 
+    // create event listeners to deal with keyboard input
     window.addEventListener("keydown", keydownHandler);
     window.addEventListener("keyup", keyupHandler);
 
+    // the boat is still to begin with
     moving = 0;
     turning = 0;
 
@@ -72,10 +62,11 @@ window.onload = function init() {
     water = new Water();
     boat = new BoatBody(water);
     fan = new BoatFan(boat);
-    rudder1 = new BoatRudders(boat, 0.3);
-    rudder2 = new BoatRudders(boat, 0);
-    rudder3 = new BoatRudders(boat, -0.3);
+    rudder1 = new BoatRudder(boat, 0.3);
+    rudder2 = new BoatRudder(boat, 0);
+    rudder3 = new BoatRudder(boat, -0.3);
 
+    // put these objects into a list for easy iteration
     objects = [
         water,
         boat,
@@ -84,6 +75,8 @@ window.onload = function init() {
         rudder2,
         rudder3,
     ];
+
+    // create all the objects
     makeObjectsAndBuffer();
 
     // set up the viewport
@@ -113,8 +106,6 @@ function keydownHandler(event) {
             moving = 1;
             break;
     }
-
-    requestAnimationFrame(render);//and now we need a new frame since we made a change
 }
 
 function keyupHandler(event) {
@@ -128,14 +119,14 @@ function keyupHandler(event) {
             moving = 0;
             break;
     }
-
-    requestAnimationFrame(render);//and now we need a new frame since we made a change
 }
 
 function update() {
+    // move the boat
     boat.moveBy(moving / 8);
-    fan.spinBy(moving * 15);
+    fan.rotateBy(moving * 15);
 
+    // spin the boat
     boat.rotateBy(turning);
     rudder1.direction = turning * 30
     rudder2.direction = turning * 30
@@ -163,38 +154,36 @@ function render() {
     // bind buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
 
-    // send over geometry
-    let numTris = 0;
+    // send over triangles, one object at a time
     objects.forEach((rOb:RenderObject) => {
-        numTris += rOb.getNumTris();
-
+        // reset the transformation matrix
         mv = commonMat;
+
+        // apply every transformation associated with this object
         let transforms = rOb.getTransformsSequence();
         transforms.forEach((transform) => {
             mv = mv.mult(transform);
         });
 
+        // draw the object
         gl.uniformMatrix4fv(umv, false, mv.flatten());
-        gl.drawArrays(gl.TRIANGLES, rOb.bufferIndex, rOb.getNumTris()); // draw the object
+        gl.drawArrays(gl.TRIANGLES, rOb.bufferIndex, rOb.getNumTris());
     });
 }
 
-//Make all objects and send over to the graphics card
 function makeObjectsAndBuffer(){
+    //Make all objects and send over to the graphics card
     let allPoints:vec4[] = [];
     let curIndex = 0;
     objects.forEach((rOb:RenderObject) => {
         rOb.bufferIndex = curIndex;
         allPoints.push(...rOb.getObjectTris());
-        console.log("this object takes up " + curIndex + " + " + rOb.getNumTris() );
         curIndex += rOb.getNumTris();
     })
 
-    //we need some graphics memory for this information
+    //bind and buffer all points
     bufferId = gl.createBuffer();
-    //tell WebGL that the buffer we just created is the one we want to work with right now
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-    //send the local data over to this buffer on the graphics card.  Note our use of Angel's "flatten" function
     gl.bufferData(gl.ARRAY_BUFFER, flatten(allPoints), gl.STATIC_DRAW);
 
     // position            color

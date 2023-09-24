@@ -11,9 +11,6 @@ export abstract class RenderObject {
     // store all the triangles that make up this object
     protected objectTris:vec4[];
 
-    // store all the transforms needed to properly render this object
-    protected transforms:any[];
-
     // Constructor
     constructor(){
         this.bufferIndex = 0; // will be set properly later
@@ -27,6 +24,8 @@ export abstract class RenderObject {
     // Specify what the triangles are for this object
     abstract createObjectTris() : void;
 
+
+    // generate all the transforms needed to properly render this object in its current state
     abstract getTransformsSequence() :any[];
 
 
@@ -40,6 +39,7 @@ export abstract class RenderObject {
         return this.objectTris.length / 2; // because each point is made of a color vector and a position vector
     }
 
+    // rotate this object (supposing that it does rotate)
     rotateBy(angle:number){
         this.direction += angle;
         if(this.direction >= 360) {

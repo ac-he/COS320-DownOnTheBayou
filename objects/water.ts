@@ -1,13 +1,9 @@
-import {RenderObject} from "../RenderObject.js";
-import {translate, vec4} from "../helperfunctions.js";
+import {RenderObject} from "../helpers/renderObject.js";
+import {vec4} from "../helpers/helperfunctions.js";
 
 export class Water extends RenderObject{
 
-    size:number;
-
-    constructor() {
-        super();
-    }
+    size:number; // determines the size of this body of water
 
     createObjectTris() {
         let color:vec4 = new vec4(0.3, 0.5, 0.8, 1);
@@ -33,10 +29,6 @@ export class Water extends RenderObject{
     }
 
     getTransformsSequence(): any[] {
-        this.transforms = [
-            translate(0, 0, 0)
-        ];
-
-        return this.transforms;
+        return []; // the water doesn't ever move :)
     }
 }
