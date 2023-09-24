@@ -40,6 +40,10 @@ let rudder2:BoatRudders;
 let rudder3:BoatRudders;
 let objects:RenderObject[];
 
+// to track input
+let moving:number;
+let turning:number;
+
 
 // initial setup
 window.onload = function init() {
@@ -59,6 +63,10 @@ window.onload = function init() {
     uproj = gl.getUniformLocation(program, "projection");
 
     window.addEventListener("keydown", keydownHandler);
+    window.addEventListener("keyup", keyupHandler);
+
+    moving = 0;
+    turning = 0;
 
     // set up initial array of render objects
     water = new Water();
@@ -91,31 +99,33 @@ window.onload = function init() {
 };
 
 function keydownHandler(event) {
-
-    rudder1.direction = 0;
-    rudder2.direction = 0;
-    rudder3.direction = 0;
-
     switch(event.key) {
         case "ArrowLeft":
-            boat.rotateBy(1);
-            rudder1.direction = -45;
-            rudder2.direction = -45;
-            rudder3.direction = -45;
+            turning = 1;
             break;
         case "ArrowRight":
-            boat.rotateBy(-1);
-            rudder1.direction = 45;
-            rudder2.direction = 45;
-            rudder3.direction = 45;
+            turning = -1;
             break;
         case "ArrowDown":
-            boat.moveBy(-0.1);
-            fan.spinBy(-15);
+            moving = -1;
             break;
         case "ArrowUp":
-            boat.moveBy(0.1);
-            fan.spinBy(15);
+            moving = 1;
+            break;
+    }
+
+    requestAnimationFrame(render);//and now we need a new frame since we made a change
+}
+
+function keyupHandler(event) {
+    switch(event.key) {
+        case "ArrowLeft":
+        case "ArrowRight":
+            turning = 0;
+            break;
+        case "ArrowUp":
+        case "ArrowDown":
+            moving = 0;
             break;
     }
 
@@ -123,6 +133,13 @@ function keydownHandler(event) {
 }
 
 function update() {
+    boat.moveBy(moving / 8);
+    fan.spinBy(moving * 15);
+
+    boat.rotateBy(turning);
+    rudder1.direction = turning * 30
+    rudder2.direction = turning * 30
+    rudder3.direction = turning * 30
 
     requestAnimationFrame(render);
 }
