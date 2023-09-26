@@ -14,13 +14,12 @@ export class BoatRudder extends RenderObject {
     }
 
     getTransformsSequence(): any[] {
-        return [
-            translate(this.boat.xPos, 0.1, this.boat.zPos), // Move to match the boat's position
-            rotateY(this.boat.direction), // Turn to match the boat's rotation
-
-            translate(this.offset, 0, -1.1), // Move to where it attaches to the boat
+        let ts:any[] = this.boat.getTransformsSequence(); // use the boat's transform sequence first
+        ts.push(
+            translate(this.offset, 0.1, -1.1), // Move to where it attaches to the boat
             rotateY(this.direction)  // Rotate in place to the correct direction
-        ];
+        );
+        return ts;
     }
 
     createObjectTris(): void {

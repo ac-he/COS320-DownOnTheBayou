@@ -12,13 +12,12 @@ export class BoatFan extends RenderObject {
     }
 
     getTransformsSequence(): any[] {
-        return [
-            translate(this.boat.xPos, 0.8, this.boat.zPos), // move to match the location of the boat
-            rotateY(this.boat.direction), // rotate to match the rotation of the boat
-
-            translate(0, 0, -1), // move to where it attaches to the base
+        let ts:any[] = this.boat.getTransformsSequence(); // use the boat's transform sequence first
+        ts.push(
+            translate(0, 0.8, -1), // move to where it attaches to the base,
             rotateZ(this.direction) // rotate around this object's own center to make the blades spin
-        ];
+        );
+        return ts;
     }
 
     createObjectTris():void {

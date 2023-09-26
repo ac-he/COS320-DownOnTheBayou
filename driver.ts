@@ -28,6 +28,7 @@ let rudder1:BoatRudder;
 let rudder2:BoatRudder;
 let rudder3:BoatRudder;
 let light:BoatLight;
+// these will also be added to a list for easy iteration over
 let objects:RenderObject[];
 
 // to track the state of the boat as it moves

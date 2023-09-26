@@ -1,6 +1,6 @@
 import {RenderObject} from "../helpers/renderObject.js";
 import {BoatBody} from "./boatBody.js";
-import {rotateY, translate, vec4} from "../helpers/helperfunctions.js";
+import {rotateY, rotateZ, translate, vec4} from "../helpers/helperfunctions.js";
 
 export class BoatLight extends RenderObject {
 
@@ -20,13 +20,12 @@ export class BoatLight extends RenderObject {
     }
 
     getTransformsSequence(): any[] {
-        return [
-            translate(this.boat.xPos, 0, this.boat.zPos), // move to match the location of the boat
-            rotateY(this.boat.direction), // rotate to match the rotation of the boat
-
+        let ts:any[] = this.boat.getTransformsSequence(); // use the boat's transform sequence first
+        ts.push(
             translate(0, 0.5, 0.9), // move to where it attaches to the bow
             rotateY(this.direction) // rotate around this object's own center to make it turn
-        ];
+        );
+        return ts;
     }
 
     createObjectTris(): void {

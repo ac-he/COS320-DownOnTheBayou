@@ -148,7 +148,7 @@ export class BoatBody extends RenderObject {
         this.objectTris.push(f);
         this.objectTris.push(topFaceColor);
 
-        //bottom CDEH
+        //bottom CDGH
         this.objectTris.push(d);
         this.objectTris.push(bottomFaceColor);
         this.objectTris.push(c);
@@ -156,11 +156,11 @@ export class BoatBody extends RenderObject {
         this.objectTris.push(h);
         this.objectTris.push(bottomFaceColor);
 
-        this.objectTris.push(d);
-        this.objectTris.push(bottomFaceColor);
-        this.objectTris.push(e);
-        this.objectTris.push(bottomFaceColor);
         this.objectTris.push(h);
+        this.objectTris.push(bottomFaceColor);
+        this.objectTris.push(g);
+        this.objectTris.push(bottomFaceColor);
+        this.objectTris.push(c);
         this.objectTris.push(bottomFaceColor);
 
 
