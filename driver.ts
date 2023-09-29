@@ -11,6 +11,7 @@ import {Tree} from "./objects/tree.js";
 import {Camera} from "./helpers/camera.js";
 import {FreeRoam} from "./cameras/freeRoam.js";
 import {Overhead} from "./cameras/overhead.js";
+import {Chase} from "./cameras/chase.js";
 
 // webGL objects
 let gl:WebGLRenderingContext;
@@ -249,6 +250,7 @@ function setChaseCamera(){
     });
     cameraButtons[2].className = "selected";
     cameraControlFeedback.innerText = "";
+    camera = new Chase(boat, aspectRatio);
 }
 
 function setSearchLightCamera(){
@@ -257,6 +259,7 @@ function setSearchLightCamera(){
     });
     cameraButtons[3].className = "selected";
     cameraControlFeedback.innerText = "";
+
 }
 
 function update() {
