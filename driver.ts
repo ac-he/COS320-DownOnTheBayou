@@ -1,6 +1,6 @@
 "use strict"
 
-import {initShaders, vec4, mat4, flatten, perspective, translate, lookAt } from './helpers/helperfunctions.js';
+import {initShaders, vec4, mat4, flatten, translate} from './helpers/helperfunctions.js';
 import {BoatBody} from "./objects/boatBody.js";
 import {Water} from "./objects/water.js";
 import {BoatFan} from "./objects/boatFan.js"
@@ -10,6 +10,7 @@ import {BoatLight} from "./objects/boatLight.js";
 import {Tree} from "./objects/tree.js";
 import {Camera} from "./helpers/camera.js";
 import {FreeRoam} from "./cameras/freeRoam.js";
+import {Overhead} from "./cameras/overhead.js";
 
 // webGL objects
 let gl:WebGLRenderingContext;
@@ -44,6 +45,7 @@ let lightMoving:number; // [-1, 0, 1] used as a multiplier for light movement
 // to keep track of the camera
 let camera:Camera;
 let frCamera:FreeRoam;
+let aspectRatio:number;
 
 
 // initial setup
@@ -122,7 +124,8 @@ window.onload = function init() {
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
     // create the initial camera
-    frCamera = new FreeRoam(boat, canvas.clientWidth / canvas.clientHeight);
+    aspectRatio = canvas.clientWidth / canvas.clientHeight
+    frCamera = new FreeRoam(boat, aspectRatio);
     setFreeRoamCamera();
 
     // set up background
@@ -237,6 +240,7 @@ function setOverheadCamera(){
     });
     cameraButtons[1].className = "selected";
     cameraControlFeedback.innerText = "";
+    camera = new Overhead(boat, aspectRatio);
 }
 
 function setChaseCamera(){
