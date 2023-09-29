@@ -7,6 +7,7 @@ import {BoatFan} from "./objects/boatFan.js"
 import {BoatRudder} from "./objects/boatRudder.js";
 import {RenderObject} from "./helpers/renderObject.js";
 import {BoatLight} from "./objects/boatLight.js";
+import {Tree} from "./objects/tree.js";
 
 // webGL objects
 let gl:WebGLRenderingContext;
@@ -80,7 +81,15 @@ window.onload = function init() {
         rudder1,
         rudder2,
         rudder3,
-        light
+        light,
+        new Tree(water, 0, -water.size, water.size),
+        new Tree(water, 0, water.size, water.size),
+        new Tree(water, 0, -water.size, -water.size),
+        new Tree(water, 0, water.size, -water.size),
+        new Tree(water, 0, -water.size, 0),
+        new Tree(water, 0, water.size, 0),
+        new Tree(water, 0,0, -water.size),
+        new Tree(water, 0, 0, water.size)
     ];
 
     // create all the objects
@@ -90,7 +99,7 @@ window.onload = function init() {
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
     // set up background
-    gl.clearColor(0, 0.5, 0,1);
+    gl.clearColor(67/255, 110/255, 92/255,1);
 
     // configure so that object overlap corresponds to depth
     gl.enable(gl.DEPTH_TEST);
@@ -160,11 +169,11 @@ function render() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // set up projection matrix
-    let p:mat4 = perspective(45.0, canvas.clientWidth / canvas.clientHeight, 1, 100);
+    let p:mat4 = perspective(50.0, canvas.clientWidth / canvas.clientHeight, 1, 100);
     gl.uniformMatrix4fv(uproj, false, p.flatten());
 
     // set up model view matrix
-    let mv:mat4 = lookAt(new vec4(0, 10, 20, 1), new vec4(0, 0, 0, 1),
+    let mv:mat4 = lookAt(new vec4(10, 10, 20, 1), new vec4(-1, 0, 0, 1),
         new vec4(0, 1, 0, 0));
     mv = mv.mult(translate(0, 0, 0));
     let commonMat:mat4 = mv;
