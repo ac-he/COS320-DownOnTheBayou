@@ -122,7 +122,7 @@ window.onload = function init() {
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
     // create the initial camera
-    frCamera = new FreeRoam(boat);
+    frCamera = new FreeRoam(boat, canvas.clientWidth / canvas.clientHeight);
     setFreeRoamCamera();
 
     // set up background
@@ -153,6 +153,36 @@ function keydownHandler(event) {
             break;
         case "d":
             lightMoving = -1;
+            break;
+        case "e":
+            if(camera === frCamera){
+                frCamera.changeDollyZoomBy(2);
+            }
+            break;
+        case "f":
+            if(camera === frCamera){
+                frCamera.toggleBoatCentered();
+            }
+            break;
+        case "q":
+            if(camera === frCamera){
+                frCamera.changeDollyZoomBy(-2);
+            }
+            break;
+        case "r":
+            if(camera === frCamera) {
+                frCamera.reset();
+            }
+            break;
+        case "x":
+            if(camera === frCamera){
+                frCamera.changeLensZoomBy(-5);
+            }
+            break;
+        case "y":
+            if(camera === frCamera){
+                frCamera.changeLensZoomBy(5);
+            }
             break;
         case "1":
             setFreeRoamCamera();
@@ -247,12 +277,11 @@ function render() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // set up projection matrix
-    let p:mat4 = perspective(50.0, canvas.clientWidth / canvas.clientHeight, 1, 100);
+    let p:mat4 = camera.getPerspectiveMat();
     gl.uniformMatrix4fv(uproj, false, p.flatten());
 
     // set up model view matrix
-    let mv:mat4 = lookAt(new vec4(10, 10, 20, 1), new vec4(-1, 0, 0, 1),
-        new vec4(0, 1, 0, 0));
+    let mv:mat4 = camera.getLookAtMat();
     mv = mv.mult(translate(0, 0, 0));
     let commonMat:mat4 = mv;
 
