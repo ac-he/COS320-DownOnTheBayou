@@ -34,8 +34,8 @@ export class Tree extends RenderObject {
         }
 
         // Get a random selection of leaf colors to use in drawing trees
-        let leafColorR:number = 0.2;
-        let leafColorG:number = 0.5;
+        let leafColorR:number = 0.1;
+        let leafColorG:number = 0.3;
         let leafColorB:number = 0.1;
         let leafColors:vec4[] = [];
         let numLeafColors:number = 8;

@@ -1,6 +1,6 @@
 body {
     background-color: darkslategrey;
-    font-family: "Book Antiqua", serif;
+    font-family: "Bradley Hand ITC", serif;
     color: antiquewhite;
     text-align: center;
 }
@@ -14,11 +14,23 @@ body {
 }
 
 h1 {
-    font-family: "Edwardian Script ITC", cursive;
+    font-family: "Book Antiqua", serif;
     font-size: xxx-large;
     color: antiquewhite;
 }
 
 table {
     width: 100%;
+}
+
+button {
+    background-color: antiquewhite;
+    color: darkslategrey;
+    font-family: "Book Antiqua", serif;
+    font-size: 1em;
+    margin: 5px;
+}
+
+.selected {
+    background-color: darkseagreen;
 }

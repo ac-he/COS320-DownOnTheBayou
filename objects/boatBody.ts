@@ -43,11 +43,11 @@ export class BoatBody extends RenderObject {
         this.objectTris = [];
         //color palette
         let frontFaceColor:vec4 = new vec4(1, 0, 0, 1); // ABCD
-        let backFaceColor:vec4 = new vec4(0.6, 0.6, 0.4, 1); // EFGH
+        let backFaceColor:vec4 = new vec4(1, 0, 0, 1); // EFGH
         let topFaceColor:vec4 = new vec4(0.4, 0.4, 0.4, 1); // ABGF
         let bottomFaceColor:vec4 = new vec4(0.2, 0.2, 0.2, 1); // CDEH
         let leftFaceColor:vec4 = new vec4(0.7, 0.3, 0.3, 1); // BCHG
-        let rightFaceColor:vec4 = new vec4(0.6, 0.4, 0.2, 1); // ADEF
+        let rightFaceColor:vec4 = new vec4(0.7, 0.3, 0.3, 1); // ADEF
         let fanAttachmentColor:vec4 = new vec4(0.5, 0.5, 0.5, 1);
 
         //       E ____ F

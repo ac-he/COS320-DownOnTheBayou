@@ -24,10 +24,10 @@ export class BoatFan extends RenderObject {
         this.objectTris = [];
 
         let bladeColor:vec4[] = [
-            new vec4(0, 0, 1, 1),
-            new vec4(0, 0.2, 0.4, 1),
-            new vec4(0, 0.4, 1, 1),
-            new vec4(0, 0.4, 0.6, 1)
+            new vec4(0.3, 0.3, 0.3, 1),
+            new vec4(0.3, 0.3, 0.3, 1),
+            new vec4(0.3, 0.3, 0.3, 1),
+            new vec4(0.3, 0.3, 0.3, 1),
         ];
 
         let centerX:number = 0;

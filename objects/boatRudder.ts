@@ -34,7 +34,7 @@ export class BoatRudder extends RenderObject {
         let b:vec4 = new vec4(0, 0.2, 0.1, 1);
         let c:vec4 = new vec4(0, -0.1, 0.1, 1);
         let d:vec4 = new vec4(0, -0.1, -0.1, 1);
-        let color:vec4 = new vec4(Math.random(), Math.random(), 0, 1);
+        let color:vec4 = new vec4(0.2, 0.2, 0.2, 1);
 
         this.objectTris.push(a);
         this.objectTris.push(color);

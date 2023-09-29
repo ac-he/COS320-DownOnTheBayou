@@ -8,12 +8,16 @@ import {BoatRudder} from "./objects/boatRudder.js";
 import {RenderObject} from "./helpers/renderObject.js";
 import {BoatLight} from "./objects/boatLight.js";
 import {Tree} from "./objects/tree.js";
+import {Camera} from "./helpers/camera.js";
+import {FreeRoam} from "./cameras/freeRoam.js";
 
 // webGL objects
 let gl:WebGLRenderingContext;
 let canvas:HTMLCanvasElement;
 let program:WebGLProgram;
 let bufferId:WebGLBuffer;
+let cameraButtons:HTMLButtonElement[];
+let cameraControlFeedback:HTMLDivElement;
 
 // shader variables
 let umv:WebGLUniformLocation; // model_view uniform
@@ -37,6 +41,10 @@ let moving:number; // [-1, 0, 1] used as a multiplier for boat movement
 let turning:number; // [-1, 0, 1] used as a multiplier for boat rotation
 let lightMoving:number; // [-1, 0, 1] used as a multiplier for light movement
 
+// to keep track of the camera
+let camera:Camera;
+let frCamera:FreeRoam;
+
 
 // initial setup
 window.onload = function init() {
@@ -58,6 +66,21 @@ window.onload = function init() {
     // create event listeners to deal with keyboard input
     window.addEventListener("keydown", keydownHandler);
     window.addEventListener("keyup", keyupHandler);
+
+    // set up camera control buttons
+    cameraButtons = [
+        document.getElementById("free-roam") as HTMLButtonElement,
+        document.getElementById("overhead") as HTMLButtonElement,
+        document.getElementById("chase") as HTMLButtonElement,
+        document.getElementById("search-light") as HTMLButtonElement,
+    ];
+    cameraButtons[0].addEventListener("click", setFreeRoamCamera);
+    cameraButtons[1].addEventListener("click", setOverheadCamera);
+    cameraButtons[2].addEventListener("click", setChaseCamera);
+    cameraButtons[3].addEventListener("click", setSearchLightCamera);
+
+    cameraControlFeedback = document.getElementById("camera-control-feedback") as HTMLDivElement;
+
 
     // the boat is still to begin with
     moving = 0;
@@ -98,6 +121,10 @@ window.onload = function init() {
     // set up the viewport
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
+    // create the initial camera
+    frCamera = new FreeRoam(boat);
+    setFreeRoamCamera();
+
     // set up background
     gl.clearColor(67/255, 110/255, 92/255,1);
 
@@ -127,6 +154,18 @@ function keydownHandler(event) {
         case "d":
             lightMoving = -1;
             break;
+        case "1":
+            setFreeRoamCamera();
+            break;
+        case "2":
+            setOverheadCamera();
+            break;
+        case "3":
+            setChaseCamera();
+            break;
+        case "4":
+            setSearchLightCamera();
+            break;
     }
 }
 
@@ -145,6 +184,45 @@ function keyupHandler(event) {
             lightMoving = 0;
             break;
     }
+}
+
+function setFreeRoamCamera(){
+    cameraButtons.forEach((button:HTMLButtonElement) => {
+        button.className = "";
+    });
+    cameraButtons[0].className = "selected";
+    cameraControlFeedback.innerText =
+        "X -- Zoom In (lens)\n" +
+        "Y -- Zoom Out (lens)\n" +
+        "Q -- Zoom In (dolly)\n" +
+        "E -- Zoom Out (dolly)\n" +
+        "F -- Toggle Center\n" +
+        "R -- Reset";
+    camera = frCamera;
+}
+
+function setOverheadCamera(){
+    cameraButtons.forEach((button:HTMLButtonElement) => {
+        button.className = "";
+    });
+    cameraButtons[1].className = "selected";
+    cameraControlFeedback.innerText = "";
+}
+
+function setChaseCamera(){
+    cameraButtons.forEach((button:HTMLButtonElement) => {
+        button.className = "";
+    });
+    cameraButtons[2].className = "selected";
+    cameraControlFeedback.innerText = "";
+}
+
+function setSearchLightCamera(){
+    cameraButtons.forEach((button:HTMLButtonElement) => {
+        button.className = "";
+    });
+    cameraButtons[3].className = "selected";
+    cameraControlFeedback.innerText = "";
 }
 
 function update() {
