@@ -12,6 +12,7 @@ import {Camera} from "./helpers/camera.js";
 import {FreeRoam} from "./cameras/freeRoam.js";
 import {Overhead} from "./cameras/overhead.js";
 import {Chase} from "./cameras/chase.js";
+import {SearchLightCamera} from "./cameras/searchLight.js";
 
 // webGL objects
 let gl:WebGLRenderingContext;
@@ -259,7 +260,7 @@ function setSearchLightCamera(){
     });
     cameraButtons[3].className = "selected";
     cameraControlFeedback.innerText = "";
-
+    camera = new SearchLightCamera(light, aspectRatio);
 }
 
 function update() {

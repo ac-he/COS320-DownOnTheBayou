@@ -32,12 +32,12 @@ export class BoatLight extends RenderObject {
         this.objectTris = [];
 
         let lightColor:vec4 = new vec4(1, 1, 1, 1);
-        let shellColor1:vec4 = new vec4(0.8, 0.8, 0.8, 1);
+        let shellColor1:vec4 = new vec4(0.5, 0.5, 0.5, 1);
         let shellColor2:vec4 = new vec4(0.6, 0.6, 0.6, 1)
 
         let centerX:number = 0;
         let centerY:number = 0;
-        let ptsPerCircle:number = 10;
+        let ptsPerCircle:number = 30;
         let radius:number = 0.15;
         let length:number = 0.2;
 
