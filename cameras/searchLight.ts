@@ -16,8 +16,7 @@ export class SearchLightCamera extends Camera {
 
         let viewOffset:number = -0.3;
         let cameraHeight:number = 1.1;
-        let chaseOffset:number = 5
-        ;
+        let chaseOffset:number = 5;
 
         // locate the eye above the boat, but rotated to match the direction of the boat
         let eye:vec4 = new vec4(

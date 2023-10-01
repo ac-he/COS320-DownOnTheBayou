@@ -1,12 +1,20 @@
 import {RenderObject} from "../helpers/renderObject.js";
-import {vec4} from "../helpers/helperfunctions.js";
+import {translate, vec4} from "../helpers/helperfunctions.js";
 
 export class Water extends RenderObject{
 
     size:number; // determines the size of this body of water
+    xPos:number;
+    zPos:number;
+
+    constructor(xPos:number, zPos:number) {
+        super();
+        this.xPos = xPos;
+        this.zPos = zPos;
+    }
 
     createObjectTris() {
-        let color:vec4 = new vec4(0.3, 0.5, 0.8, 1);
+        let color:vec4 = new vec4(0.2, 0.4, 0.7,1);
         let enabled:number = 1; // for debugging purposes, allows me to show/hide the water as desired
         this.size = 8.0;
 
@@ -29,6 +37,6 @@ export class Water extends RenderObject{
     }
 
     getTransformsSequence(): any[] {
-        return []; // the water doesn't ever move :)
+        return [translate(this.xPos, 0, this.zPos)];
     }
 }

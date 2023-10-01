@@ -25,15 +25,21 @@ export class BoatRudder extends RenderObject {
     createObjectTris(): void {
         this.objectTris = [];
 
-        //  A---B
-        //  |   |
-        //  |   |
-        //  D---C
+        //    E-----F
+        //   /|    /|
+        //  A-----B |
+        //  | H---|-G
+        //  |/    |/
+        //  D-----C
 
-        let a:vec4 = new vec4(0, 0.2, -0.1, 1);
-        let b:vec4 = new vec4(0, 0.2, 0.1, 1);
-        let c:vec4 = new vec4(0, -0.1, 0.1, 1);
-        let d:vec4 = new vec4(0, -0.1, -0.1, 1);
+        let a:vec4 = new vec4(0.005, 0.2, -0.1, 1);
+        let b:vec4 = new vec4(0.005, 0.2, 0.1, 1);
+        let c:vec4 = new vec4(0.005, -0.1, 0.1, 1);
+        let d:vec4 = new vec4(0.005, -0.1, -0.1, 1);
+        let e:vec4 = new vec4(-0.005, 0.2, -0.1, 1);
+        let f:vec4 = new vec4(-0.005, 0.2, 0.1, 1);
+        let g:vec4 = new vec4(-0.005, -0.1, 0.1, 1);
+        let h:vec4 = new vec4(-0.005, -0.1, -0.1, 1);
         let color:vec4 = new vec4(0.2, 0.2, 0.2, 1);
 
         this.objectTris.push(a);
@@ -48,6 +54,59 @@ export class BoatRudder extends RenderObject {
         this.objectTris.push(color);
         this.objectTris.push(c);
         this.objectTris.push(color);
+
+        this.objectTris.push(e);
+        this.objectTris.push(color);
+        this.objectTris.push(f);
+        this.objectTris.push(color);
+        this.objectTris.push(g);
+        this.objectTris.push(color);
+        this.objectTris.push(e);
+        this.objectTris.push(color);
+        this.objectTris.push(h);
+        this.objectTris.push(color);
+        this.objectTris.push(g);
+        this.objectTris.push(color);
+
+        this.objectTris.push(b);
+        this.objectTris.push(color);
+        this.objectTris.push(f);
+        this.objectTris.push(color);
+        this.objectTris.push(c);
+        this.objectTris.push(color);
+        this.objectTris.push(b);
+        this.objectTris.push(color);
+        this.objectTris.push(g);
+        this.objectTris.push(color);
+        this.objectTris.push(c);
+        this.objectTris.push(color);
+
+        this.objectTris.push(a);
+        this.objectTris.push(color);
+        this.objectTris.push(d);
+        this.objectTris.push(color);
+        this.objectTris.push(e);
+        this.objectTris.push(color);
+        this.objectTris.push(d);
+        this.objectTris.push(color);
+        this.objectTris.push(h);
+        this.objectTris.push(color);
+        this.objectTris.push(e);
+        this.objectTris.push(color);
+
+        this.objectTris.push(a);
+        this.objectTris.push(color);
+        this.objectTris.push(b);
+        this.objectTris.push(color);
+        this.objectTris.push(e);
+        this.objectTris.push(color);
+        this.objectTris.push(b);
+        this.objectTris.push(color);
+        this.objectTris.push(f);
+        this.objectTris.push(color);
+        this.objectTris.push(e);
+        this.objectTris.push(color);
+
     }
 
 }

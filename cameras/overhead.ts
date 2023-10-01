@@ -19,7 +19,7 @@ export class Overhead extends Camera {
             // boat position    // rotate to match direction
             this.boat.xPos - Math.sin(this.boat.direction * Math.PI / 180),
             // locate the camera 30 units above the water
-            30,
+            20,
             // boat position    // rotate to match direction
             this.boat.zPos - Math.cos(this.boat.direction * Math.PI / 180),
             1

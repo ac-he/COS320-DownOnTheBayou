@@ -7,12 +7,12 @@ import {BoatFan} from "./objects/boatFan.js"
 import {BoatRudder} from "./objects/boatRudder.js";
 import {RenderObject} from "./helpers/renderObject.js";
 import {BoatLight} from "./objects/boatLight.js";
-import {Tree} from "./objects/tree.js";
 import {Camera} from "./helpers/camera.js";
 import {FreeRoam} from "./cameras/freeRoam.js";
 import {Overhead} from "./cameras/overhead.js";
 import {Chase} from "./cameras/chase.js";
 import {SearchLightCamera} from "./cameras/searchLight.js";
+import {SceneryManager} from "./helpers/sceneryManager.js";
 
 // webGL objects
 let gl:WebGLRenderingContext;
@@ -92,7 +92,7 @@ window.onload = function init() {
     lightMoving = 0;
 
     // set up initial array of render objects
-    water = new Water();
+    water = new Water(0, 0);
     boat = new BoatBody(water);
     fan = new BoatFan(boat);
     rudder1 = new BoatRudder(boat, 0.3);
@@ -108,16 +108,10 @@ window.onload = function init() {
         rudder1,
         rudder2,
         rudder3,
-        light,
-        new Tree(water, 0, -water.size, water.size),
-        new Tree(water, 0, water.size, water.size),
-        new Tree(water, 0, -water.size, -water.size),
-        new Tree(water, 0, water.size, -water.size),
-        new Tree(water, 0, -water.size, 0),
-        new Tree(water, 0, water.size, 0),
-        new Tree(water, 0,0, -water.size),
-        new Tree(water, 0, 0, water.size)
+        light
     ];
+    let sm = new SceneryManager(water);
+    objects.push(...sm.getScenery());
 
     // create all the objects
     makeObjectsAndBuffer();
@@ -131,7 +125,7 @@ window.onload = function init() {
     setFreeRoamCamera();
 
     // set up background
-    gl.clearColor(67/255, 110/255, 92/255,1);
+    gl.clearColor(0.4, 0.6, 1, 1);
 
     // configure so that object overlap corresponds to depth
     gl.enable(gl.DEPTH_TEST);

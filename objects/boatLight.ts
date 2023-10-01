@@ -1,6 +1,6 @@
 import {RenderObject} from "../helpers/renderObject.js";
 import {BoatBody} from "./boatBody.js";
-import {rotateY, rotateZ, translate, vec4} from "../helpers/helperfunctions.js";
+import {rotateY, translate, vec4} from "../helpers/helperfunctions.js";
 
 export class BoatLight extends RenderObject {
 

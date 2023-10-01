@@ -25,30 +25,31 @@ export class BoatFan extends RenderObject {
 
         let bladeColor:vec4[] = [
             new vec4(0.3, 0.3, 0.3, 1),
+            new vec4(0.25, 0.25, 0.25, 1),
             new vec4(0.3, 0.3, 0.3, 1),
-            new vec4(0.3, 0.3, 0.3, 1),
-            new vec4(0.3, 0.3, 0.3, 1),
+            new vec4(0.25, 0.25, 0.25, 1),
         ];
 
         let centerX:number = 0;
         let centerY:number = 0;
         let zIn:number = -0.1;
         let zOut:number = 0.1;
+        let bladeThickness = 0.02;
         let bladeL:number = 0.5
 
         let centerIn:vec4 = new vec4(centerX, centerY, zIn, 1);
         let centerOut:vec4 = new vec4(centerX, centerY, zOut, 1);
-        let bladeIn:vec4[] = [
-            new vec4(centerX, centerY + bladeL, zIn, 1),
-            new vec4(centerX - bladeL, centerY, zIn, 1),
-            new vec4(centerX, centerY - bladeL, zIn, 1),
-            new vec4(centerX + bladeL, centerY, zIn, 1)
+        let bladeInA:vec4[] = [
+            new vec4(centerX + bladeThickness, centerY + bladeL, zIn, 1),
+            new vec4(centerX - bladeL, centerY + bladeThickness, zIn, 1),
+            new vec4(centerX - bladeThickness, centerY - bladeL, zIn, 1),
+            new vec4(centerX + bladeL, centerY - bladeThickness, zIn, 1)
         ];
-        let bladeOut:vec4[] = [
-            new vec4(centerX, centerY + bladeL, zOut, 1),
-            new vec4(centerX - bladeL, centerY, zOut, 1),
-            new vec4(centerX, centerY - bladeL, zOut, 1),
-            new vec4(centerX + bladeL, centerY, zOut, 1)
+        let bladeOutA:vec4[] = [
+            new vec4(centerX - bladeThickness, centerY + bladeL, zOut, 1),
+            new vec4(centerX - bladeL, centerY - bladeThickness, zOut, 1),
+            new vec4(centerX + bladeThickness, centerY - bladeL, zOut, 1),
+            new vec4(centerX + bladeL, centerY + bladeThickness, zOut, 1)
         ];
 
         for(let i = 0; i < 4; i++){
@@ -56,13 +57,13 @@ export class BoatFan extends RenderObject {
             this.objectTris.push(bladeColor[i]);
             this.objectTris.push(centerOut);
             this.objectTris.push(bladeColor[i]);
-            this.objectTris.push(bladeIn[i]);
+            this.objectTris.push(bladeInA[i]);
             this.objectTris.push(bladeColor[i]);
-            this.objectTris.push(bladeOut[i]);
+            this.objectTris.push(bladeOutA[i]);
             this.objectTris.push(bladeColor[i]);
             this.objectTris.push(centerOut);
             this.objectTris.push(bladeColor[i]);
-            this.objectTris.push(bladeIn[i]);
+            this.objectTris.push(bladeInA[i]);
             this.objectTris.push(bladeColor[i]);
         }
     }
