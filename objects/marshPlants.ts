@@ -25,18 +25,19 @@ export class MarshPlants extends RenderObject {
         let leafColors:vec4[] = [];
         let numLeafColors:number = 15;
         for (let i = 0; i < numLeafColors; i++){
-            leafColors.push(new vec4(
-                leafColorR * (Math.random() * 0.3 + 1) ,
-                leafColorG * (Math.random() * 0.3 + 1) ,
-                leafColorB * (Math.random() * 0.3 + 1) ,
-                1
-            ))
+            leafColors.push(
+                new vec4(
+                    leafColorR * (Math.random() * 0.3 + 1) ,
+                    leafColorG * (Math.random() * 0.3 + 1) ,
+                    leafColorB * (Math.random() * 0.3 + 1) ,
+                    1
+                )
+            );
         }
 
-
         // add leaves
-        let radius = 5;
-        let numLeaves = (Math.random() * (radius * radius * 30) + (radius * radius * 40));
+        let radius = 4.5;
+        let numLeaves = (Math.random() * (Math.pow(radius, 2) * 30) + (Math.pow(radius, 2) * 40));
         for(let l = 0; l < numLeaves; l++){
             // randomly decide on the top center of this leaf
             let leafCenterX:number = Math.random() * radius * Math.cos(Math.random() * 2 * Math.PI);

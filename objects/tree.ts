@@ -68,8 +68,8 @@ export class Tree extends RenderObject {
         let heights:number[] = [
             0,  // water
             1 + (Math.random() - 0.5) * 0.3, // roots
-            3 + (Math.random() - 0.5) * 0.3, // branches
-            5 + (Math.random() - 0.5) * 0.5 // tip
+            4 + (Math.random() - 0.5) * 0.3, // branches
+            6 + (Math.random() - 0.5) * 0.5 // tip
         ];
 
         // get the points for each side of trunk
@@ -155,7 +155,7 @@ export class Tree extends RenderObject {
                     let branchAngleM = (Math.PI * i) / (ptsPerCircle/2);
                     // decide on random dimensions for this branch
                     let branchLength = (Math.random() + 1) / (h - 1);
-                    let branchHeight = heights[h] + (Math.random() - 0.5) * 0.3;
+                    let branchHeight = heights[h] + (Math.random() - 2) * 0.3;
 
                     // create points
                     let baseL = new vec4(
