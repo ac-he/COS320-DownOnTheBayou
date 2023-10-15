@@ -20,8 +20,6 @@ export class SearchLightCamera extends Camera {
     *   in a forward direction.
     */
     getLookAtMat(): mat4 {
-        console.log(this.boatLight.xPos + ", " + this.boatLight.zPos + ": " + this.boatLight.boat.direction);
-
         let cameraHeight:number = 1.1; // height of the camera above the water
         let viewOffset:number = 0.3; // how far forward on the boat to locate the camera
                                     // (should be near the search light)
@@ -32,7 +30,7 @@ export class SearchLightCamera extends Camera {
             this.boatLight.boat.xPos
                 // ...offset by the specified amount...
                 - viewOffset
-                // ...in the direction of the boat light...as well as the boat it is attached to
+                // ...in the direction of the boat
                 * Math.sin(this.boatLight.boat.direction * Math.PI / 180),
             // locate the camera 30 units above the water
             cameraHeight,
@@ -40,7 +38,7 @@ export class SearchLightCamera extends Camera {
                 this.boatLight.boat.zPos
                 // ...offset by the specified amount...
                 - viewOffset
-                // ...in the direction of the boat light...as well as the boat it is attached to
+                // ...in the direction of the boat
                 * Math.cos(this.boatLight.boat.direction * Math.PI / 180),
             1
         );

@@ -1,6 +1,6 @@
 "use strict"
 
-import {initShaders, vec4, mat4, flatten, translate} from './helpers/helperfunctions.js';
+import {vec4, mat4, flatten, translate, initFileShaders} from './helpers/helperfunctions.js';
 import {BoatBody} from "./objects/boatBody.js";
 import {Water} from "./objects/water.js";
 import {BoatFan} from "./objects/boatFan.js"
@@ -25,8 +25,9 @@ let cameraControlFeedback:HTMLDivElement;
 // shader variables
 let umv:WebGLUniformLocation; // model_view uniform
 let uproj:WebGLUniformLocation; // projection uniform
-let vPosition:GLint; // vPosition vertex
-let vColor:GLint; // vColor vertex
+let vPosition:GLint; // vPosition vector
+let vColor:GLint; // vColor vector
+let vNormal:GLint; // vNormal vector
 
 // to store all objects in the scene
 let boat:BoatBody;
@@ -60,7 +61,8 @@ window.onload = function init() {
     }
 
     // compile shaders
-    program = initShaders(gl, "vertex-shader", "fragment-shader");
+    program = initFileShaders(gl, "../shaders/vertexShader.glsl",
+        "../shaders/fragmentShader.glsl");
     gl.useProgram(program); //and we want to use that program for our rendering
 
     // set up uniform views
@@ -84,7 +86,6 @@ window.onload = function init() {
     cameraButtons[3].addEventListener("click", setSearchLightCamera);
 
     cameraControlFeedback = document.getElementById("camera-control-feedback") as HTMLDivElement;
-
 
     // the boat is still to begin with
     moving = 0;
@@ -324,17 +325,38 @@ function makeObjectsAndBuffer(){
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(allPoints), gl.STATIC_DRAW);
 
-    // position            color
-    //  x   y   z     w       r    g     b    a
-    // 0-3 4-7 8-11 12-15  16-19 20-23 24-27 28-31
+    // position            color                    normal
+    //  x   y   z     w      r     g     b     a      x     y     z     w
+    // 0-3 4-7 8-11 12-15  16-19 20-23 24-27 28-31  32-35 36-39 40-43 44-47
 
-    // vPosition
-    vPosition = gl.getAttribLocation(program, "vPosition");
-    gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 32, 0);
-    gl.enableVertexAttribArray(vPosition);
+    let NORMALS_OFF_TOGGLE:boolean = true;
+    if(NORMALS_OFF_TOGGLE){
+        // vPosition
+        vPosition = gl.getAttribLocation(program, "vPosition");
+        gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 32, 0);
+        gl.enableVertexAttribArray(vPosition);
 
-    // vColor
-    vColor = gl.getAttribLocation(program, "vColor");
-    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 32, 16);
-    gl.enableVertexAttribArray(vColor);
+        // vColor
+        vColor = gl.getAttribLocation(program, "vColor");
+        gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 32, 16);
+        gl.enableVertexAttribArray(vColor);
+    } else {
+        // vPosition
+        vPosition = gl.getAttribLocation(program, "vPosition");
+        gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 48, 0);
+        gl.enableVertexAttribArray(vPosition);
+
+        // vColor
+        vColor = gl.getAttribLocation(program, "vColor");
+        gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 48, 16);
+        gl.enableVertexAttribArray(vColor);
+
+        // vNormal
+        vNormal = gl.getAttribLocation(program, "vNormal");
+        gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 48, 32);
+        gl.enableVertexAttribArray(vNormal);
+    }
+
+
+
 }
