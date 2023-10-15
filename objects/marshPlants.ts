@@ -77,4 +77,8 @@ export class MarshPlants extends RenderObject {
         ];
     }
 
+    setLogDebugName(): void {
+        this.LOG_NAME = "MarshPlants";
+    }
+
 }

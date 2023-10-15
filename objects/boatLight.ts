@@ -87,4 +87,7 @@ export class BoatLight extends RenderObject {
 
     }
 
+    setLogDebugName(): void {
+        this.LOG_NAME = "BoatLight";
+    }
 }

@@ -188,4 +188,8 @@ export class BoatBody extends RenderObject {
 
     }
 
+    setLogDebugName(): void {
+        this.LOG_NAME = "BoatBody";
+    }
+
 }

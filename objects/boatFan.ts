@@ -67,4 +67,8 @@ export class BoatFan extends RenderObject {
             this.objectTris.push(bladeColor[i]);
         }
     }
+
+    setLogDebugName(): void {
+        this.LOG_NAME = "BoatFan";
+    }
 }

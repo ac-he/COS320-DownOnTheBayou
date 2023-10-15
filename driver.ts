@@ -329,34 +329,19 @@ function makeObjectsAndBuffer(){
     //  x   y   z     w      r     g     b     a      x     y     z     w
     // 0-3 4-7 8-11 12-15  16-19 20-23 24-27 28-31  32-35 36-39 40-43 44-47
 
-    let NORMALS_OFF_TOGGLE:boolean = true;
-    if(NORMALS_OFF_TOGGLE){
-        // vPosition
-        vPosition = gl.getAttribLocation(program, "vPosition");
-        gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 32, 0);
-        gl.enableVertexAttribArray(vPosition);
+    // vPosition
+    vPosition = gl.getAttribLocation(program, "vPosition");
+    gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 48, 0);
+    gl.enableVertexAttribArray(vPosition);
 
-        // vColor
-        vColor = gl.getAttribLocation(program, "vColor");
-        gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 32, 16);
-        gl.enableVertexAttribArray(vColor);
-    } else {
-        // vPosition
-        vPosition = gl.getAttribLocation(program, "vPosition");
-        gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 48, 0);
-        gl.enableVertexAttribArray(vPosition);
+    // vColor
+    vColor = gl.getAttribLocation(program, "vColor");
+    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 48, 16);
+    gl.enableVertexAttribArray(vColor);
 
-        // vColor
-        vColor = gl.getAttribLocation(program, "vColor");
-        gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 48, 16);
-        gl.enableVertexAttribArray(vColor);
-
-        // vNormal
-        vNormal = gl.getAttribLocation(program, "vNormal");
-        gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 48, 32);
-        gl.enableVertexAttribArray(vNormal);
-    }
-
-
+    // vNormal
+    vNormal = gl.getAttribLocation(program, "vNormal");
+    gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 48, 32);
+    gl.enableVertexAttribArray(vNormal);
 
 }

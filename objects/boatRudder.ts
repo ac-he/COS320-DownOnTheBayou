@@ -109,4 +109,7 @@ export class BoatRudder extends RenderObject {
 
     }
 
+    setLogDebugName(): void {
+        this.LOG_NAME = "BoatRudder";
+    }
 }

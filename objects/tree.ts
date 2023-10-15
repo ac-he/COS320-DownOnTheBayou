@@ -107,39 +107,39 @@ export class Tree extends RenderObject {
             // create the level 1 sides
             this.objectTris.push(new vec4(trunkBaseX0[i], heights[0], trunkBaseZ0[i], 1));
             this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(trunkBaseX1[i], heights[1], trunkBaseZ1[i], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
             this.objectTris.push(new vec4(trunkBaseX0[i + 1], 0, trunkBaseZ0[i + 1], 1));
+            this.objectTris.push(trunkColors[i % numTrunkColors]);
+            this.objectTris.push(new vec4(trunkBaseX1[i], heights[1], trunkBaseZ1[i], 1));
             this.objectTris.push(trunkColors[i % numTrunkColors]);
 
             this.objectTris.push(new vec4(trunkBaseX0[i + 1], heights[0], trunkBaseZ0[i + 1], 1));
             this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(trunkBaseX1[i], heights[1], trunkBaseZ1[i], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
             this.objectTris.push(new vec4(trunkBaseX1[i + 1], heights[1], trunkBaseZ1[i + 1], 1));
+            this.objectTris.push(trunkColors[i % numTrunkColors]);
+            this.objectTris.push(new vec4(trunkBaseX1[i], heights[1], trunkBaseZ1[i], 1));
             this.objectTris.push(trunkColors[i % numTrunkColors]);
 
             // create the level 2 sides
             this.objectTris.push(new vec4(trunkBaseX1[i], heights[1], trunkBaseZ1[i], 1));
             this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(trunkBaseX2[i], heights[2], trunkBaseZ2[i], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
             this.objectTris.push(new vec4(trunkBaseX1[i + 1], heights[1], trunkBaseZ1[i + 1], 1));
+            this.objectTris.push(trunkColors[i % numTrunkColors]);
+            this.objectTris.push(new vec4(trunkBaseX2[i], heights[2], trunkBaseZ2[i], 1));
             this.objectTris.push(trunkColors[i % numTrunkColors]);
 
             this.objectTris.push(new vec4(trunkBaseX1[i + 1], heights[1], trunkBaseZ1[i + 1], 1));
             this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(trunkBaseX2[i], heights[2], trunkBaseZ2[i], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
             this.objectTris.push(new vec4(trunkBaseX2[i + 1], heights[2], trunkBaseZ2[i + 1], 1));
+            this.objectTris.push(trunkColors[i % numTrunkColors]);
+            this.objectTris.push(new vec4(trunkBaseX2[i], heights[2], trunkBaseZ2[i], 1));
             this.objectTris.push(trunkColors[i % numTrunkColors]);
 
             // create the level 3 sides
             this.objectTris.push(new vec4(trunkBaseX2[i], heights[2], trunkBaseZ2[i], 1));
             this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(centerX, heights[3], centerZ, 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
             this.objectTris.push(new vec4(trunkBaseX2[i + 1], heights[2], trunkBaseZ2[i + 1], 1));
+            this.objectTris.push(trunkColors[i % numTrunkColors]);
+            this.objectTris.push(new vec4(centerX, heights[3], centerZ, 1));
             this.objectTris.push(trunkColors[i % numTrunkColors]);
         }
 
@@ -186,9 +186,9 @@ export class Tree extends RenderObject {
                     // bottom of the branch
                     this.objectTris.push(end);
                     this.objectTris.push(trunkColors[0%numTrunkColors]);
-                    this.objectTris.push(baseR);
-                    this.objectTris.push(trunkColors[0%numTrunkColors]);
                     this.objectTris.push(baseL);
+                    this.objectTris.push(trunkColors[0%numTrunkColors]);
+                    this.objectTris.push(baseR);
                     this.objectTris.push(trunkColors[0%numTrunkColors]);
 
                     // top left of the branch
@@ -254,4 +254,7 @@ export class Tree extends RenderObject {
         ];
     }
 
+    setLogDebugName(): void {
+        this.LOG_NAME = "Tree";
+    }
 }
