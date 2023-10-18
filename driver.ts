@@ -28,6 +28,10 @@ let uproj:WebGLUniformLocation; // projection uniform
 let vPosition:GLint; // vPosition vector
 let vColor:GLint; // vColor vector
 let vNormal:GLint; // vNormal vector
+let vAmbient:GLint;
+let vSpecular:GLint;
+let vSpecularExp:GLint;
+let uAmbient:WebGLUniformLocation;
 
 // to store all objects in the scene
 let boat:BoatBody;
@@ -50,6 +54,8 @@ let camera:Camera;
 let frCamera:FreeRoam;
 let aspectRatio:number;
 
+// light controls
+let lightLevel:number;
 
 // initial setup
 window.onload = function init() {
@@ -68,6 +74,7 @@ window.onload = function init() {
     // set up uniform views
     umv = gl.getUniformLocation(program, "model_view");
     uproj = gl.getUniformLocation(program, "projection");
+    uAmbient = gl.getUniformLocation(program, "ambient_light");
 
     // create event listeners to deal with keyboard input
     window.addEventListener("keydown", keydownHandler);
@@ -91,6 +98,9 @@ window.onload = function init() {
     moving = 0;
     turning = 0;
     lightMoving = 0;
+
+    // basic light
+    lightLevel = 0.75;
 
     // set up initial array of render objects
     water = new Water(0, 0);
@@ -126,7 +136,7 @@ window.onload = function init() {
     setFreeRoamCamera();
 
     // set up background
-    gl.clearColor(0.4, 0.6, 1, 1);
+    gl.clearColor(0, 0, 0.2, 1);
 
     // configure so that object overlap corresponds to depth
     gl.enable(gl.DEPTH_TEST);
@@ -153,6 +163,12 @@ function keydownHandler(event) {
             break;
         case "d":
             lightMoving = -1;
+            break;
+        case "b":
+            lightLevel += 0.05;
+            if(lightLevel > 1){
+                lightLevel = 0.5;
+            }
             break;
         case "e":
             if(camera === frCamera){
@@ -306,6 +322,8 @@ function render() {
 
         // draw the object
         gl.uniformMatrix4fv(umv, false, mv.flatten());
+        gl.uniform4fv(uAmbient, [lightLevel, lightLevel, lightLevel, 1]);
+
         gl.drawArrays(gl.TRIANGLES, rOb.bufferIndex, rOb.getNumTris());
     });
 }
@@ -328,20 +346,37 @@ function makeObjectsAndBuffer(){
     // position            color                    normal
     //  x   y   z     w      r     g     b     a      x     y     z     w
     // 0-3 4-7 8-11 12-15  16-19 20-23 24-27 28-31  32-35 36-39 40-43 44-47
+    // ambientColor             specularColor            specularExponent
+    //   r     g     b     a      r     g     b     a      a     x     x     x
+    // 48-51 52-55 56-59 60-63  64-67 68-71 72-75 76-79  80-83 84-87 88-91 92-95
 
     // vPosition
     vPosition = gl.getAttribLocation(program, "vPosition");
-    gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 48, 0);
+    gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 96, 0);
     gl.enableVertexAttribArray(vPosition);
 
     // vColor
     vColor = gl.getAttribLocation(program, "vColor");
-    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 48, 16);
+    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 96, 16);
     gl.enableVertexAttribArray(vColor);
 
     // vNormal
     vNormal = gl.getAttribLocation(program, "vNormal");
-    gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 48, 32);
+    gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 96, 32);
     gl.enableVertexAttribArray(vNormal);
 
+    // vAmbient
+    vAmbient = gl.getAttribLocation(program, "vAmbientDiffuseColor");
+    gl.vertexAttribPointer(vAmbient, 4, gl.FLOAT, false, 96, 48);
+    gl.enableVertexAttribArray(vAmbient);
+
+    // vSpecular
+    vSpecular = gl.getAttribLocation(program, "vSpecularColor");
+    gl.vertexAttribPointer(vSpecular, 4, gl.FLOAT, false, 96, 64);
+    gl.enableVertexAttribArray(vSpecular);
+
+    // vSpecularExp
+    vSpecularExp = gl.getAttribLocation(program, "vSpecularExponent");
+    gl.vertexAttribPointer(vSpecularExp, 4, gl.FLOAT, false, 96, 80);
+    gl.enableVertexAttribArray(vSpecularExp);
 }

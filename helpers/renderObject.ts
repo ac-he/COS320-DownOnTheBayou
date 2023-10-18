@@ -122,13 +122,17 @@ export abstract class RenderObject {
             let vertex:vec4 = this.objectTris[i];
             let color:vec4 = this.objectTris[i+1];
             let normal:vec4 = vertices.get(vertex.flatten().join(","));
+
+            let ambient:vec4 = this.objectTris[i];
+            let specular:vec4 = new vec4(1, 1, 1, 1);
+            let specExp:vec4 = new vec4(15, 0, 0, 0);
             //console.log(this.LOG_NAME + ": " + vertex.flatten().join(",") + " -- " + normal);
 
             // normalize the vertex normal
             normal = normal.normalize();
             //console.log(this.LOG_NAME + ": " + vertex.flatten().join(",") + " -- " + normal);
 
-            this.objectTrisWithNormals.push(vertex, color, normal);
+            this.objectTrisWithNormals.push(vertex, color, normal, ambient, specular, specExp);
             //console.log(this.objectTrisWithNormals);
         }
 
