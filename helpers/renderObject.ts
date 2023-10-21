@@ -1,4 +1,5 @@
 import {vec4} from "./helperfunctions.js";
+import {AvlTree, AvlTreeNode} from "@datastructures-js/binary-search-tree";
 
 export abstract class RenderObject {
     // where it starts in the buffer
@@ -58,7 +59,29 @@ export abstract class RenderObject {
     }
 
     calculateNormals():void{
-        let vertices:Map<string, vec4> = new Map<string, vec4>();
+        // Documentation found at
+        //https://www.npmjs.com/package/@datastructures-js/binary-search-tree
+
+        let vertices:AvlTree<vec4> = new AvlTree(
+            // Set up rules for vector comparison
+            (a:vec4, b:vec4) => {
+                let aList:number[] = a.flatten();
+                let bList:number[] = b.flatten();
+                // for each element in the vectors
+                for(let i = 0; i < 4; i++){
+                    // find the difference
+                    let diff:number = aList[i] - bList[i];
+                    // use this difference if it's nonzero
+                    if(diff != 0){
+                        return diff;
+                    }
+                    // otherwise move on to the next element
+                }
+                // vectors are equivalent
+                return 0;
+            },
+            {key: 'key'}
+        );
         let numTrisAndColors:number = this.objectTris.length;
 
         // Normal Vector calculation algorithm based on material from Lecture 13: Meshes, Alternative Lighting and
@@ -69,7 +92,10 @@ export abstract class RenderObject {
             // if this vertex hasn't been added to the map yet
             if(!vertices.has(this.objectTris[i].flatten().join(","))){
                 // add it to the map
-                vertices.set(this.objectTris[i].flatten().join(","), new vec4(0, 0, 0, 0));
+                let node = new AvlTreeNode(this.objectTris[i], new vec4(0, 0, 0, 0) );
+                vertices.insert(new vec4(0, 0, 0, 0));
+                vertices.setValeu
+                vertices.set(this.objectTris[i].flatten().join(","), );
             }
         }
 
