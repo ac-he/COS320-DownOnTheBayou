@@ -20,16 +20,17 @@ export class Water extends RenderObject{
 
         this.objectTris = [];
 
-        this.objectTris.push(new vec4(this.size, 0, this.size, enabled));
-        this.objectTris.push(color);
+
         this.objectTris.push(new vec4(-this.size, 0, this.size, enabled));
+        this.objectTris.push(color);
+        this.objectTris.push(new vec4(this.size, 0, this.size, enabled));
         this.objectTris.push(color);
         this.objectTris.push(new vec4(-this.size, 0, -this.size, enabled));
         this.objectTris.push(color);
 
-        this.objectTris.push(new vec4(this.size, 0, this.size, enabled));
-        this.objectTris.push(color);
         this.objectTris.push(new vec4(-this.size, 0, -this.size, enabled));
+        this.objectTris.push(color);
+        this.objectTris.push(new vec4(this.size, 0, this.size, enabled));
         this.objectTris.push(color);
         this.objectTris.push(new vec4(this.size, 0, -this.size, enabled));
         this.objectTris.push(color);

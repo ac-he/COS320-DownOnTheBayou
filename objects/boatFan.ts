@@ -55,10 +55,11 @@ export class BoatFan extends RenderObject {
         for(let i = 0; i < 4; i++){
             this.objectTris.push(centerIn);
             this.objectTris.push(bladeColor[i]);
-            this.objectTris.push(centerOut);
-            this.objectTris.push(bladeColor[i]);
             this.objectTris.push(bladeInA[i]);
             this.objectTris.push(bladeColor[i]);
+            this.objectTris.push(centerOut);
+            this.objectTris.push(bladeColor[i]);
+
             this.objectTris.push(bladeOutA[i]);
             this.objectTris.push(bladeColor[i]);
             this.objectTris.push(centerOut);

@@ -21,7 +21,7 @@ void main() {
     gl_Position = projection * model_view * vPosition;
     // plus implicit "divide by w coordinate" phase
 
-    //color = vColor;
     color = vColor;
+    //color = vNormal;
     ambLight = ambient_light;
 }

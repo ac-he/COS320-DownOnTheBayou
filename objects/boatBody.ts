@@ -52,7 +52,7 @@ export class BoatBody extends RenderObject {
 
         //       E ____ F
         //      /|     /|
-        //     / G ___/ H
+        //     / H ___/ G
         //    A ____ B /
         //    |/     |/
         //    D ____ C
@@ -74,11 +74,11 @@ export class BoatBody extends RenderObject {
         let fanAttachment:vec4 = new vec4(0, 0.9, -0.9, 1);
 
         //front face ABCD
+        this.objectTris.push(c);
+        this.objectTris.push(frontFaceColor);
         this.objectTris.push(a);
         this.objectTris.push(frontFaceColor);
         this.objectTris.push(b);
-        this.objectTris.push(frontFaceColor);
-        this.objectTris.push(c);
         this.objectTris.push(frontFaceColor);
 
         this.objectTris.push(a);
@@ -91,24 +91,24 @@ export class BoatBody extends RenderObject {
         //back face EFGH
         this.objectTris.push(e);
         this.objectTris.push(backFaceColor);
-        this.objectTris.push(f);
-        this.objectTris.push(backFaceColor);
         this.objectTris.push(g);
+        this.objectTris.push(backFaceColor);
+        this.objectTris.push(f);
         this.objectTris.push(backFaceColor);
 
         this.objectTris.push(e);
         this.objectTris.push(backFaceColor);
-        this.objectTris.push(g);
-        this.objectTris.push(backFaceColor);
         this.objectTris.push(h);
+        this.objectTris.push(backFaceColor);
+        this.objectTris.push(g);
         this.objectTris.push(backFaceColor);
 
         //left face BCFG
         this.objectTris.push(b);
         this.objectTris.push(leftFaceColor);
-        this.objectTris.push(c);
-        this.objectTris.push(leftFaceColor);
         this.objectTris.push(g);
+        this.objectTris.push(leftFaceColor);
+        this.objectTris.push(c);
         this.objectTris.push(leftFaceColor);
 
         this.objectTris.push(b);
@@ -128,9 +128,9 @@ export class BoatBody extends RenderObject {
 
         this.objectTris.push(d);
         this.objectTris.push(rightFaceColor);
-        this.objectTris.push(e);
-        this.objectTris.push(rightFaceColor);
         this.objectTris.push(h);
+        this.objectTris.push(rightFaceColor);
+        this.objectTris.push(e);
         this.objectTris.push(rightFaceColor);
 
         //top ABEF
@@ -143,15 +143,15 @@ export class BoatBody extends RenderObject {
 
         this.objectTris.push(b);
         this.objectTris.push(topFaceColor);
-        this.objectTris.push(e);
-        this.objectTris.push(topFaceColor);
         this.objectTris.push(f);
+        this.objectTris.push(topFaceColor);
+        this.objectTris.push(e);
         this.objectTris.push(topFaceColor);
 
         //bottom CDGH
-        this.objectTris.push(d);
-        this.objectTris.push(bottomFaceColor);
         this.objectTris.push(c);
+        this.objectTris.push(bottomFaceColor);
+        this.objectTris.push(d);
         this.objectTris.push(bottomFaceColor);
         this.objectTris.push(h);
         this.objectTris.push(bottomFaceColor);
@@ -165,27 +165,35 @@ export class BoatBody extends RenderObject {
 
 
         //fan base
+        // ALR -- back
+        this.objectTris.push(fanAttachment);
+        this.objectTris.push(fanAttachmentColor);
+        this.objectTris.push(fanBaseR);
+        this.objectTris.push(fanAttachmentColor);
         this.objectTris.push(fanBaseL);
         this.objectTris.push(fanAttachmentColor);
-        this.objectTris.push(fanBaseR);
-        this.objectTris.push(fanAttachmentColor);
+        // ACL -- left front
         this.objectTris.push(fanAttachment);
         this.objectTris.push(fanAttachmentColor);
-
-        this.objectTris.push(fanBaseC);
-        this.objectTris.push(fanAttachmentColor);
-        this.objectTris.push(fanBaseR);
-        this.objectTris.push(fanAttachmentColor);
-        this.objectTris.push(fanAttachment);
-        this.objectTris.push(fanAttachmentColor);
-
         this.objectTris.push(fanBaseL);
         this.objectTris.push(fanAttachmentColor);
         this.objectTris.push(fanBaseC);
         this.objectTris.push(fanAttachmentColor);
+        // ARC  -- right front
         this.objectTris.push(fanAttachment);
         this.objectTris.push(fanAttachmentColor);
+        this.objectTris.push(fanBaseC);
+        this.objectTris.push(fanAttachmentColor);
+        this.objectTris.push(fanBaseR);
+        this.objectTris.push(fanAttachmentColor);
 
+        // CRL - bottom
+        this.objectTris.push(fanBaseR);
+        this.objectTris.push(fanAttachmentColor);
+        this.objectTris.push(fanBaseC);
+        this.objectTris.push(fanAttachmentColor);
+        this.objectTris.push(fanBaseL);
+        this.objectTris.push(fanAttachmentColor);
     }
 
     setLogDebugName(): void {

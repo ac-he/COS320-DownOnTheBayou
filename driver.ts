@@ -165,10 +165,10 @@ function keydownHandler(event) {
             lightMoving = -1;
             break;
         case "b":
-            lightLevel += 0.05;
             if(lightLevel > 1){
-                lightLevel = 0.5;
+                lightLevel = 0;
             }
+            lightLevel += 0.05;
             break;
         case "e":
             if(camera === frCamera){
