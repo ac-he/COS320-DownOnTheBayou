@@ -13,7 +13,7 @@ export abstract class RenderObject {
     protected colors:vec4[];
     protected normals:vec4[];
 
-    protected LOG_NAME:string;
+    LOG_NAME:string;
 
     // Constructor
     protected constructor(){
@@ -83,7 +83,7 @@ export abstract class RenderObject {
         // Shading, slides 29-31.
 
         // for each vertex being stored (count by 2 to skip colors)
-        for(let i:number = 0; i < numTrisAndColors; i+=2){
+        for(let i:number = 0; i < numTrisAndColors; i++){
             // if this vertex hasn't been added to the map yet
             if(!vertices.has(this.positions[i].flatten().join(","))){
                 // add it to the map
@@ -91,12 +91,12 @@ export abstract class RenderObject {
             }
         }
 
-        // for each triangle being stored (count by 6 to move one triangle at a time)
-        for(let i :number = 0; i < numTrisAndColors; i+=6){
+        // for each triangle being stored (count by 3 to move one triangle at a time)
+        for(let i :number = 0; i < numTrisAndColors; i+=3){
             // storing all the vertices for this iteration
             let vertex1:vec4 = this.positions[i];
-            let vertex2:vec4 = this.positions[i+2];
-            let vertex3:vec4 = this.positions[i+4];
+            let vertex2:vec4 = this.positions[i+1];
+            let vertex3:vec4 = this.positions[i+2];
 
             // obtain two vectors that lie in the plane
             let vector1:vec4 = vertex2.subtract(vertex1);
@@ -122,10 +122,11 @@ export abstract class RenderObject {
         this.normals = [];
 
         // push each vertex after normalizing the final result
-        for(let i:number = 0; i < numTrisAndColors; i+=2){
-            let normal = vertices.get( this.positions[i].flatten().join(","));
+        for(let i:number = 0; i < numTrisAndColors; i++){
+            let normal:vec4 = vertices.get( this.positions[i].flatten().join(","));
             // normalize the vertex normal
             normal = normal.normalize();
+
             this.normals.push(normal);
         }
     }

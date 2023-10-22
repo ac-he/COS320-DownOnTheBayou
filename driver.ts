@@ -1,6 +1,6 @@
 "use strict"
 
-import {vec4, mat4, flatten, translate, initFileShaders} from './helpers/helperfunctions.js';
+import {vec4, mat4, translate, initFileShaders} from './helpers/helperfunctions.js';
 import {BoatBody} from "./objects/boatBody.js";
 import {Water} from "./objects/water.js";
 import {BoatFan} from "./objects/boatFan.js"
@@ -194,7 +194,7 @@ function keydownHandler(event) {
                 frCamera.changeLensZoomBy(-5);
             }
             break;
-        case "y":
+        case "z":
             if(camera === frCamera){
                 frCamera.changeLensZoomBy(5);
             }
@@ -238,7 +238,7 @@ function setFreeRoamCamera(){
     cameraButtons[0].className = "selected";
     cameraControlFeedback.innerText =
         "X -- Zoom In (lens)\n" +
-        "Y -- Zoom Out (lens)\n" +
+        "Z -- Zoom Out (lens)\n" +
         "Q -- Zoom In (dolly)\n" +
         "E -- Zoom Out (dolly)\n" +
         "F -- Toggle Center\n" +
@@ -329,8 +329,8 @@ function render() {
 
 function makeObjectsAndBuffer(){
     //Make all objects and send over to the graphics card
-    let allPoints = [];
-    let curIndex = 0;
+    let allPoints:number[] = [];
+    let curIndex:number = 0;
     objects.forEach((rOb:RenderObject) => {
         rOb.bufferIndex = curIndex;
         let numPoints = rOb.getNumPoints();
@@ -351,7 +351,7 @@ function makeObjectsAndBuffer(){
     //bind and buffer all points
     bufferId = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(allPoints), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(allPoints), gl.STATIC_DRAW);
 
     // position            color                    normal
     //  x   y   z     w      r     g     b     a      x     y     z     w
@@ -362,26 +362,26 @@ function makeObjectsAndBuffer(){
 
     // vPosition
     vPosition = gl.getAttribLocation(program, "vPosition");
-    gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 67, 0);
+    gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 68, 0);
     gl.enableVertexAttribArray(vPosition);
 
     // vColor
     vColor = gl.getAttribLocation(program, "vColor");
-    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 67, 16);
+    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 68, 16);
     gl.enableVertexAttribArray(vColor);
 
     // vNormal
     vNormal = gl.getAttribLocation(program, "vNormal");
-    gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 67, 32);
+    gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 68, 32);
     gl.enableVertexAttribArray(vNormal);
 
     // vSpecular
     vSpecular = gl.getAttribLocation(program, "vSpecularColor");
-    gl.vertexAttribPointer(vSpecular, 4, gl.FLOAT, false, 67, 48);
+    gl.vertexAttribPointer(vSpecular, 4, gl.FLOAT, false, 68, 48);
     gl.enableVertexAttribArray(vSpecular);
 
     // vSpecularExp
     vSpecularExp = gl.getAttribLocation(program, "vSpecularExponent");
-    gl.vertexAttribPointer(vSpecularExp, 4, gl.FLOAT, false, 67, 64);
+    gl.vertexAttribPointer(vSpecularExp, 4, gl.FLOAT, false, 68, 64);
     gl.enableVertexAttribArray(vSpecularExp);
 }
