@@ -13,6 +13,7 @@ import {Overhead} from "./cameras/overhead.js";
 import {Chase} from "./cameras/chase.js";
 import {SearchLightCamera} from "./cameras/searchLight.js";
 import {SceneryManager} from "./helpers/sceneryManager.js";
+import {Light} from "./lights/pointLight.js";
 
 // webGL objects
 let gl:WebGLRenderingContext;
@@ -31,6 +32,10 @@ let vNormal:GLint; // vNormal vector
 let vSpecular:GLint;
 let vSpecularExp:GLint;
 let uAmbient:WebGLUniformLocation;
+// light controls
+let lightLevel:number;
+let uLights:WebGLUniformLocation;
+
 
 // to store all objects in the scene
 let boat:BoatBody;
@@ -53,8 +58,6 @@ let camera:Camera;
 let frCamera:FreeRoam;
 let aspectRatio:number;
 
-// light controls
-let lightLevel:number;
 
 // initial setup
 window.onload = function init() {
@@ -74,6 +77,7 @@ window.onload = function init() {
     umv = gl.getUniformLocation(program, "model_view");
     uproj = gl.getUniformLocation(program, "projection");
     uAmbient = gl.getUniformLocation(program, "ambient_light");
+    uLights = gl.getUniformLocation(program, "light_list");
 
     // create event listeners to deal with keyboard input
     window.addEventListener("keydown", keydownHandler);
@@ -304,6 +308,9 @@ function render() {
     let commonMat:mat4 = mv;
 
     gl.uniformMatrix4fv(umv, false, mv.flatten());
+
+    let pl:Light = new Light()
+    gl.uniform1fv(uLights, pl.getLightData());
 
     // bind buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
