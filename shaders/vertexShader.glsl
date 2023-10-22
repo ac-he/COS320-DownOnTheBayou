@@ -5,7 +5,6 @@ precision mediump float;
 in vec4 vPosition;
 in vec4 vColor;
 in vec4 vNormal;
-in vec4 vAmbientDiffuseColor;
 in vec4 vSpecularColor;
 in vec4 vSpecularExponent;
 

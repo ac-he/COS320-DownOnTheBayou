@@ -28,7 +28,6 @@ let uproj:WebGLUniformLocation; // projection uniform
 let vPosition:GLint; // vPosition vector
 let vColor:GLint; // vColor vector
 let vNormal:GLint; // vNormal vector
-let vAmbient:GLint;
 let vSpecular:GLint;
 let vSpecularExp:GLint;
 let uAmbient:WebGLUniformLocation;
@@ -324,18 +323,29 @@ function render() {
         gl.uniformMatrix4fv(umv, false, mv.flatten());
         gl.uniform4fv(uAmbient, [lightLevel, lightLevel, lightLevel, 1]);
 
-        gl.drawArrays(gl.TRIANGLES, rOb.bufferIndex, rOb.getNumTris());
+        gl.drawArrays(gl.TRIANGLES, rOb.bufferIndex, rOb.getNumPoints());
     });
 }
 
 function makeObjectsAndBuffer(){
     //Make all objects and send over to the graphics card
-    let allPoints:vec4[] = [];
+    let allPoints = [];
     let curIndex = 0;
     objects.forEach((rOb:RenderObject) => {
         rOb.bufferIndex = curIndex;
-        allPoints.push(...rOb.getObjectTris());
-        curIndex += rOb.getNumTris();
+        let numPoints = rOb.getNumPoints();
+        let positions:vec4[] = rOb.getObjectPositions();
+        let colors:vec4[] = rOb.getObjectColors();
+        let normals:vec4[] = rOb.getObjectNormals();
+
+        for(let i:number = 0; i < numPoints; i++){
+            allPoints.push(...positions[i].flatten());
+            allPoints.push(...colors[i].flatten());
+            allPoints.push(...normals[i].flatten());
+            allPoints.push(...rOb.getSpecularColor().flatten());
+            allPoints.push(rOb.getSpecularExponent());
+        }
+        curIndex += numPoints;
     })
 
     //bind and buffer all points
@@ -346,37 +356,32 @@ function makeObjectsAndBuffer(){
     // position            color                    normal
     //  x   y   z     w      r     g     b     a      x     y     z     w
     // 0-3 4-7 8-11 12-15  16-19 20-23 24-27 28-31  32-35 36-39 40-43 44-47
-    // ambientColor             specularColor            specularExponent
-    //   r     g     b     a      r     g     b     a      a     x     x     x
-    // 48-51 52-55 56-59 60-63  64-67 68-71 72-75 76-79  80-83 84-87 88-91 92-95
+    // specularColor             specularExponent
+    //   r     g     b     a      r
+    // 48-51 52-55 56-59 60-63  64-67
 
     // vPosition
     vPosition = gl.getAttribLocation(program, "vPosition");
-    gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 96, 0);
+    gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 67, 0);
     gl.enableVertexAttribArray(vPosition);
 
     // vColor
     vColor = gl.getAttribLocation(program, "vColor");
-    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 96, 16);
+    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 67, 16);
     gl.enableVertexAttribArray(vColor);
 
     // vNormal
     vNormal = gl.getAttribLocation(program, "vNormal");
-    gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 96, 32);
+    gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 67, 32);
     gl.enableVertexAttribArray(vNormal);
-
-    // vAmbient
-    vAmbient = gl.getAttribLocation(program, "vAmbientDiffuseColor");
-    gl.vertexAttribPointer(vAmbient, 4, gl.FLOAT, false, 96, 48);
-    gl.enableVertexAttribArray(vAmbient);
 
     // vSpecular
     vSpecular = gl.getAttribLocation(program, "vSpecularColor");
-    gl.vertexAttribPointer(vSpecular, 4, gl.FLOAT, false, 96, 64);
+    gl.vertexAttribPointer(vSpecular, 4, gl.FLOAT, false, 67, 48);
     gl.enableVertexAttribArray(vSpecular);
 
     // vSpecularExp
     vSpecularExp = gl.getAttribLocation(program, "vSpecularExponent");
-    gl.vertexAttribPointer(vSpecularExp, 4, gl.FLOAT, false, 96, 80);
+    gl.vertexAttribPointer(vSpecularExp, 4, gl.FLOAT, false, 67, 64);
     gl.enableVertexAttribArray(vSpecularExp);
 }

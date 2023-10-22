@@ -22,8 +22,9 @@ export class BoatRudder extends RenderObject {
         return ts;
     }
 
-    createObjectTris(): void {
-        this.objectTris = [];
+    createObjectPoints(): void {
+        this.positions = [];
+        this.colors = [];
 
         //    E-----F
         //   /|    /|
@@ -43,95 +44,94 @@ export class BoatRudder extends RenderObject {
         let color:vec4 = new vec4(0.2, 0.2, 0.2, 1);
 
         // 1: ABCD  -- left facing
-        this.objectTris.push(a);
-        this.objectTris.push(color);
-        this.objectTris.push(c);
-        this.objectTris.push(color);
-        this.objectTris.push(b);
-        this.objectTris.push(color);
+        this.positions.push(a);
+        this.colors.push(color);
+        this.positions.push(c);
+        this.colors.push(color);
+        this.positions.push(b);
+        this.colors.push(color);
 
-        this.objectTris.push(a);
-        this.objectTris.push(color);
-        this.objectTris.push(d);
-        this.objectTris.push(color);
-        this.objectTris.push(c);
-        this.objectTris.push(color);
+        this.positions.push(a);
+        this.colors.push(color);
+        this.positions.push(d);
+        this.colors.push(color);
+        this.positions.push(c);
+        this.colors.push(color);
 
         // 2: EFGH -- right facing
-        this.objectTris.push(e);
-        this.objectTris.push(color);
-        this.objectTris.push(f);
-        this.objectTris.push(color);
-        this.objectTris.push(g);
-        this.objectTris.push(color);
+        this.positions.push(e);
+        this.colors.push(color);
+        this.positions.push(f);
+        this.colors.push(color);
+        this.positions.push(g);
+        this.colors.push(color);
 
-        this.objectTris.push(e);
-        this.objectTris.push(color);
-        this.objectTris.push(g);
-        this.objectTris.push(color);
-        this.objectTris.push(h);
-        this.objectTris.push(color);
+        this.positions.push(e);
+        this.colors.push(color);
+        this.positions.push(g);
+        this.colors.push(color);
+        this.positions.push(h);
+        this.colors.push(color);
 
         // 3: BCGF -- back facing
-        this.objectTris.push(b);
-        this.objectTris.push(color);
-        this.objectTris.push(c);
-        this.objectTris.push(color);
-        this.objectTris.push(f);
-        this.objectTris.push(color);
+        this.positions.push(b);
+        this.colors.push(color);
+        this.positions.push(c);
+        this.colors.push(color);
+        this.positions.push(f);
+        this.colors.push(color);
 
-        this.objectTris.push(c);
-        this.objectTris.push(color);
-        this.objectTris.push(g);
-        this.objectTris.push(color);
-        this.objectTris.push(f);
-        this.objectTris.push(color);
+        this.positions.push(c);
+        this.colors.push(color);
+        this.positions.push(g);
+        this.colors.push(color);
+        this.positions.push(f);
+        this.colors.push(color);
 
         // 4: ADEH -- front facing
-        this.objectTris.push(a);
-        this.objectTris.push(color);
-        this.objectTris.push(e);
-        this.objectTris.push(color);
-        this.objectTris.push(d);
-        this.objectTris.push(color);
+        this.positions.push(a);
+        this.colors.push(color);
+        this.positions.push(e);
+        this.colors.push(color);
+        this.positions.push(d);
+        this.colors.push(color);
 
-        this.objectTris.push(e);
-        this.objectTris.push(color);
-        this.objectTris.push(d);
-        this.objectTris.push(color);
-        this.objectTris.push(h);
-        this.objectTris.push(color);
+        this.positions.push(e);
+        this.colors.push(color);
+        this.positions.push(d);
+        this.colors.push(color);
+        this.positions.push(h);
+        this.colors.push(color);
 
         // 5: ABFE -- top facing
-        this.objectTris.push(a);
-        this.objectTris.push(color);
-        this.objectTris.push(e);
-        this.objectTris.push(color);
-        this.objectTris.push(b);
-        this.objectTris.push(color);
+        this.positions.push(a);
+        this.colors.push(color);
+        this.positions.push(e);
+        this.colors.push(color);
+        this.positions.push(b);
+        this.colors.push(color);
 
-        this.objectTris.push(b);
-        this.objectTris.push(color);
-        this.objectTris.push(e);
-        this.objectTris.push(color);
-        this.objectTris.push(f);
-        this.objectTris.push(color);
+        this.positions.push(b);
+        this.colors.push(color);
+        this.positions.push(e);
+        this.colors.push(color);
+        this.positions.push(f);
+        this.colors.push(color);
 
         // 6 : ABFE - bottom facing
-        this.objectTris.push(c);
-        this.objectTris.push(color);
-        this.objectTris.push(g);
-        this.objectTris.push(color);
-        this.objectTris.push(d);
-        this.objectTris.push(color);
+        this.positions.push(c);
+        this.colors.push(color);
+        this.positions.push(g);
+        this.colors.push(color);
+        this.positions.push(d);
+        this.colors.push(color);
 
-        this.objectTris.push(d);
-        this.objectTris.push(color);
-        this.objectTris.push(g);
-        this.objectTris.push(color);
-        this.objectTris.push(h);
-        this.objectTris.push(color);
-
+        this.positions.push(d);
+        this.colors.push(color);
+        this.positions.push(g);
+        this.colors.push(color);
+        this.positions.push(h);
+        this.colors.push(color);
     }
 
     setLogDebugName(): void {

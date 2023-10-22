@@ -39,8 +39,9 @@ export class BoatBody extends RenderObject {
         ];
     }
 
-    createObjectTris() {
-        this.objectTris = [];
+    createObjectPoints() {
+        this.positions = [];
+        this.colors = [];
         //color palette
         let frontFaceColor:vec4 = new vec4(1, 0, 0, 1); // ABCD
         let backFaceColor:vec4 = new vec4(1, 0, 0, 1); // EFGH
@@ -74,126 +75,126 @@ export class BoatBody extends RenderObject {
         let fanAttachment:vec4 = new vec4(0, 0.9, -0.9, 1);
 
         //front face ABCD
-        this.objectTris.push(c);
-        this.objectTris.push(frontFaceColor);
-        this.objectTris.push(a);
-        this.objectTris.push(frontFaceColor);
-        this.objectTris.push(b);
-        this.objectTris.push(frontFaceColor);
+        this.positions.push(c);
+        this.colors.push(frontFaceColor);
+        this.positions.push(a);
+        this.colors.push(frontFaceColor);
+        this.positions.push(b);
+        this.colors.push(frontFaceColor);
 
-        this.objectTris.push(a);
-        this.objectTris.push(frontFaceColor);
-        this.objectTris.push(c);
-        this.objectTris.push(frontFaceColor);
-        this.objectTris.push(d);
-        this.objectTris.push(frontFaceColor);
+        this.positions.push(a);
+        this.colors.push(frontFaceColor);
+        this.positions.push(c);
+        this.colors.push(frontFaceColor);
+        this.positions.push(d);
+        this.colors.push(frontFaceColor);
 
         //back face EFGH
-        this.objectTris.push(e);
-        this.objectTris.push(backFaceColor);
-        this.objectTris.push(g);
-        this.objectTris.push(backFaceColor);
-        this.objectTris.push(f);
-        this.objectTris.push(backFaceColor);
+        this.positions.push(e);
+        this.colors.push(backFaceColor);
+        this.positions.push(g);
+        this.colors.push(backFaceColor);
+        this.positions.push(f);
+        this.colors.push(backFaceColor);
 
-        this.objectTris.push(e);
-        this.objectTris.push(backFaceColor);
-        this.objectTris.push(h);
-        this.objectTris.push(backFaceColor);
-        this.objectTris.push(g);
-        this.objectTris.push(backFaceColor);
+        this.positions.push(e);
+        this.colors.push(backFaceColor);
+        this.positions.push(h);
+        this.colors.push(backFaceColor);
+        this.positions.push(g);
+        this.colors.push(backFaceColor);
 
         //left face BCFG
-        this.objectTris.push(b);
-        this.objectTris.push(leftFaceColor);
-        this.objectTris.push(g);
-        this.objectTris.push(leftFaceColor);
-        this.objectTris.push(c);
-        this.objectTris.push(leftFaceColor);
+        this.positions.push(b);
+        this.colors.push(leftFaceColor);
+        this.positions.push(g);
+        this.colors.push(leftFaceColor);
+        this.positions.push(c);
+        this.colors.push(leftFaceColor);
 
-        this.objectTris.push(b);
-        this.objectTris.push(leftFaceColor);
-        this.objectTris.push(f);
-        this.objectTris.push(leftFaceColor);
-        this.objectTris.push(g);
-        this.objectTris.push(leftFaceColor);
+        this.positions.push(b);
+        this.colors.push(leftFaceColor);
+        this.positions.push(f);
+        this.colors.push(leftFaceColor);
+        this.positions.push(g);
+        this.colors.push(leftFaceColor);
 
         //right face ADEH
-        this.objectTris.push(a);
-        this.objectTris.push(rightFaceColor);
-        this.objectTris.push(d);
-        this.objectTris.push(rightFaceColor);
-        this.objectTris.push(e);
-        this.objectTris.push(rightFaceColor);
+        this.positions.push(a);
+        this.colors.push(rightFaceColor);
+        this.positions.push(d);
+        this.colors.push(rightFaceColor);
+        this.positions.push(e);
+        this.colors.push(rightFaceColor);
 
-        this.objectTris.push(d);
-        this.objectTris.push(rightFaceColor);
-        this.objectTris.push(h);
-        this.objectTris.push(rightFaceColor);
-        this.objectTris.push(e);
-        this.objectTris.push(rightFaceColor);
+        this.positions.push(d);
+        this.colors.push(rightFaceColor);
+        this.positions.push(h);
+        this.colors.push(rightFaceColor);
+        this.positions.push(e);
+        this.colors.push(rightFaceColor);
 
         //top ABEF
-        this.objectTris.push(a);
-        this.objectTris.push(topFaceColor);
-        this.objectTris.push(b);
-        this.objectTris.push(topFaceColor);
-        this.objectTris.push(e);
-        this.objectTris.push(topFaceColor);
+        this.positions.push(a);
+        this.colors.push(topFaceColor);
+        this.positions.push(b);
+        this.colors.push(topFaceColor);
+        this.positions.push(e);
+        this.colors.push(topFaceColor);
 
-        this.objectTris.push(b);
-        this.objectTris.push(topFaceColor);
-        this.objectTris.push(f);
-        this.objectTris.push(topFaceColor);
-        this.objectTris.push(e);
-        this.objectTris.push(topFaceColor);
+        this.positions.push(b);
+        this.colors.push(topFaceColor);
+        this.positions.push(f);
+        this.colors.push(topFaceColor);
+        this.positions.push(e);
+        this.colors.push(topFaceColor);
 
         //bottom CDGH
-        this.objectTris.push(c);
-        this.objectTris.push(bottomFaceColor);
-        this.objectTris.push(d);
-        this.objectTris.push(bottomFaceColor);
-        this.objectTris.push(h);
-        this.objectTris.push(bottomFaceColor);
+        this.positions.push(c);
+        this.colors.push(bottomFaceColor);
+        this.positions.push(d);
+        this.colors.push(bottomFaceColor);
+        this.positions.push(h);
+        this.colors.push(bottomFaceColor);
 
-        this.objectTris.push(h);
-        this.objectTris.push(bottomFaceColor);
-        this.objectTris.push(g);
-        this.objectTris.push(bottomFaceColor);
-        this.objectTris.push(c);
-        this.objectTris.push(bottomFaceColor);
+        this.positions.push(h);
+        this.colors.push(bottomFaceColor);
+        this.positions.push(g);
+        this.colors.push(bottomFaceColor);
+        this.positions.push(c);
+        this.colors.push(bottomFaceColor);
 
 
         //fan base
         // ALR -- back
-        this.objectTris.push(fanAttachment);
-        this.objectTris.push(fanAttachmentColor);
-        this.objectTris.push(fanBaseR);
-        this.objectTris.push(fanAttachmentColor);
-        this.objectTris.push(fanBaseL);
-        this.objectTris.push(fanAttachmentColor);
+        this.positions.push(fanAttachment);
+        this.colors.push(fanAttachmentColor);
+        this.positions.push(fanBaseR);
+        this.colors.push(fanAttachmentColor);
+        this.positions.push(fanBaseL);
+        this.colors.push(fanAttachmentColor);
         // ACL -- left front
-        this.objectTris.push(fanAttachment);
-        this.objectTris.push(fanAttachmentColor);
-        this.objectTris.push(fanBaseL);
-        this.objectTris.push(fanAttachmentColor);
-        this.objectTris.push(fanBaseC);
-        this.objectTris.push(fanAttachmentColor);
+        this.positions.push(fanAttachment);
+        this.colors.push(fanAttachmentColor);
+        this.positions.push(fanBaseL);
+        this.colors.push(fanAttachmentColor);
+        this.positions.push(fanBaseC);
+        this.colors.push(fanAttachmentColor);
         // ARC  -- right front
-        this.objectTris.push(fanAttachment);
-        this.objectTris.push(fanAttachmentColor);
-        this.objectTris.push(fanBaseC);
-        this.objectTris.push(fanAttachmentColor);
-        this.objectTris.push(fanBaseR);
-        this.objectTris.push(fanAttachmentColor);
+        this.positions.push(fanAttachment);
+        this.colors.push(fanAttachmentColor);
+        this.positions.push(fanBaseC);
+        this.colors.push(fanAttachmentColor);
+        this.positions.push(fanBaseR);
+        this.colors.push(fanAttachmentColor);
 
         // CRL - bottom
-        this.objectTris.push(fanBaseR);
-        this.objectTris.push(fanAttachmentColor);
-        this.objectTris.push(fanBaseC);
-        this.objectTris.push(fanAttachmentColor);
-        this.objectTris.push(fanBaseL);
-        this.objectTris.push(fanAttachmentColor);
+        this.positions.push(fanBaseR);
+        this.colors.push(fanAttachmentColor);
+        this.positions.push(fanBaseC);
+        this.colors.push(fanAttachmentColor);
+        this.positions.push(fanBaseL);
+        this.colors.push(fanAttachmentColor);
     }
 
     setLogDebugName(): void {

@@ -15,8 +15,9 @@ export class MarshPlants extends RenderObject {
     }
 
     // Generates a random tree
-    createObjectTris(): void {
-        this.objectTris = [];
+    createObjectPoints(): void {
+        this.positions = [];
+        this.colors = []
 
        // Get a random selection of leaf colors to use in drawing trees
         let leafColorR:number = 0.2;
@@ -61,12 +62,12 @@ export class MarshPlants extends RenderObject {
                 1
             );
 
-            this.objectTris.push(leafBottomPos1);
-            this.objectTris.push(leafColors[l%numLeafColors]);
-            this.objectTris.push(leafBottomPos2);
-            this.objectTris.push(leafColors[l%numLeafColors]);
-            this.objectTris.push(leafTopPos);
-            this.objectTris.push(leafColors[l%numLeafColors]);
+            this.positions.push(leafBottomPos1);
+            this.colors.push(leafColors[l%numLeafColors]);
+            this.positions.push(leafBottomPos2);
+            this.colors.push(leafColors[l%numLeafColors]);
+            this.positions.push(leafTopPos);
+            this.colors.push(leafColors[l%numLeafColors]);
         } // end leaf for loop
     }
 

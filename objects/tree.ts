@@ -15,8 +15,9 @@ export class Tree extends RenderObject {
     }
 
     // Generates a random tree
-    createObjectTris(): void {
-        this.objectTris = [];
+    createObjectPoints(): void {
+        this.positions = [];
+        this.colors = [];
 
         // Get a random selection of trunk colors to use in drawing trees
         let trunkColorR:number = 55/255;
@@ -105,42 +106,42 @@ export class Tree extends RenderObject {
         // create the tree trunk
         for(let i:number = 0; i < ptsPerCircle; i++) {
             // create the level 1 sides
-            this.objectTris.push(new vec4(trunkBaseX0[i], heights[0], trunkBaseZ0[i], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(trunkBaseX0[i + 1], 0, trunkBaseZ0[i + 1], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(trunkBaseX1[i], heights[1], trunkBaseZ1[i], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX0[i], heights[0], trunkBaseZ0[i], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX0[i + 1], 0, trunkBaseZ0[i + 1], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX1[i], heights[1], trunkBaseZ1[i], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
 
-            this.objectTris.push(new vec4(trunkBaseX0[i + 1], heights[0], trunkBaseZ0[i + 1], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(trunkBaseX1[i + 1], heights[1], trunkBaseZ1[i + 1], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(trunkBaseX1[i], heights[1], trunkBaseZ1[i], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX0[i + 1], heights[0], trunkBaseZ0[i + 1], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX1[i + 1], heights[1], trunkBaseZ1[i + 1], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX1[i], heights[1], trunkBaseZ1[i], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
 
             // create the level 2 sides
-            this.objectTris.push(new vec4(trunkBaseX1[i], heights[1], trunkBaseZ1[i], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(trunkBaseX1[i + 1], heights[1], trunkBaseZ1[i + 1], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(trunkBaseX2[i], heights[2], trunkBaseZ2[i], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX1[i], heights[1], trunkBaseZ1[i], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX1[i + 1], heights[1], trunkBaseZ1[i + 1], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX2[i], heights[2], trunkBaseZ2[i], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
 
-            this.objectTris.push(new vec4(trunkBaseX1[i + 1], heights[1], trunkBaseZ1[i + 1], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(trunkBaseX2[i + 1], heights[2], trunkBaseZ2[i + 1], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(trunkBaseX2[i], heights[2], trunkBaseZ2[i], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX1[i + 1], heights[1], trunkBaseZ1[i + 1], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX2[i + 1], heights[2], trunkBaseZ2[i + 1], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX2[i], heights[2], trunkBaseZ2[i], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
 
             // create the level 3 sides
-            this.objectTris.push(new vec4(trunkBaseX2[i], heights[2], trunkBaseZ2[i], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(trunkBaseX2[i + 1], heights[2], trunkBaseZ2[i + 1], 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
-            this.objectTris.push(new vec4(centerX, heights[3], centerZ, 1));
-            this.objectTris.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX2[i], heights[2], trunkBaseZ2[i], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX2[i + 1], heights[2], trunkBaseZ2[i + 1], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(centerX, heights[3], centerZ, 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
         }
 
         // create the branches at levels 2 and 3
@@ -184,28 +185,28 @@ export class Tree extends RenderObject {
                     );
 
                     // bottom of the branch
-                    this.objectTris.push(end);
-                    this.objectTris.push(trunkColors[0%numTrunkColors]);
-                    this.objectTris.push(baseL);
-                    this.objectTris.push(trunkColors[0%numTrunkColors]);
-                    this.objectTris.push(baseR);
-                    this.objectTris.push(trunkColors[0%numTrunkColors]);
+                    this.positions.push(end);
+                    this.colors.push(trunkColors[0%numTrunkColors]);
+                    this.positions.push(baseL);
+                    this.colors.push(trunkColors[0%numTrunkColors]);
+                    this.positions.push(baseR);
+                    this.colors.push(trunkColors[0%numTrunkColors]);
 
                     // top left of the branch
-                    this.objectTris.push(end);
-                    this.objectTris.push(trunkColors[1%numTrunkColors]);
-                    this.objectTris.push(baseT);
-                    this.objectTris.push(trunkColors[1%numTrunkColors]);
-                    this.objectTris.push(baseL);
-                    this.objectTris.push(trunkColors[1%numTrunkColors]);
+                    this.positions.push(end);
+                    this.colors.push(trunkColors[1%numTrunkColors]);
+                    this.positions.push(baseT);
+                    this.colors.push(trunkColors[1%numTrunkColors]);
+                    this.positions.push(baseL);
+                    this.colors.push(trunkColors[1%numTrunkColors]);
 
                     // top right of the branch
-                    this.objectTris.push(end);
-                    this.objectTris.push(trunkColors[2%numTrunkColors]);
-                    this.objectTris.push(baseL);
-                    this.objectTris.push(trunkColors[2%numTrunkColors]);
-                    this.objectTris.push(baseR);
-                    this.objectTris.push(trunkColors[2%numTrunkColors]);
+                    this.positions.push(end);
+                    this.colors.push(trunkColors[2%numTrunkColors]);
+                    this.positions.push(baseL);
+                    this.colors.push(trunkColors[2%numTrunkColors]);
+                    this.positions.push(baseR);
+                    this.colors.push(trunkColors[2%numTrunkColors]);
 
                     // add leaves
                     let numLeaves = (Math.random() * 30 + 10)/(h - 1);
@@ -232,12 +233,12 @@ export class Tree extends RenderObject {
                             1
                         );
 
-                        this.objectTris.push(leafTopPos1);
-                        this.objectTris.push(leafColors[l%numLeafColors]);
-                        this.objectTris.push(leafTopPos2);
-                        this.objectTris.push(leafColors[l%numLeafColors]);
-                        this.objectTris.push(leafbottomPos);
-                        this.objectTris.push(leafColors[l%numLeafColors]);
+                        this.positions.push(leafTopPos1);
+                        this.colors.push(leafColors[l%numLeafColors]);
+                        this.positions.push(leafTopPos2);
+                        this.colors.push(leafColors[l%numLeafColors]);
+                        this.positions.push(leafbottomPos);
+                        this.colors.push(leafColors[l%numLeafColors]);
 
                     } // end leaf for loop
 

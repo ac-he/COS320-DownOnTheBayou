@@ -28,8 +28,9 @@ export class BoatLight extends RenderObject {
         return ts;
     }
 
-    createObjectTris(): void {
-        this.objectTris = [];
+    createObjectPoints(): void {
+        this.positions = [];
+        this.colors = [];
 
         let lightColor:vec4 = new vec4(1, 1, 1, 1);
         let shellColor1:vec4 = new vec4(0.5, 0.5, 0.5, 1);
@@ -55,35 +56,35 @@ export class BoatLight extends RenderObject {
         // connect those points
         for(let i:number = 0; i < ptsPerCircle; i++){
             // create the front face
-            this.objectTris.push(new vec4(centerX, centerY, length, 1));
-            this.objectTris.push(lightColor);
-            this.objectTris.push(new vec4(circleX[i+1], circleY[i+1], length, 1));
-            this.objectTris.push(lightColor);
-            this.objectTris.push(new vec4(circleX[i], circleY[i], length, 1));
-            this.objectTris.push(lightColor);
+            this.positions.push(new vec4(centerX, centerY, length, 1));
+            this.colors.push(lightColor);
+            this.positions.push(new vec4(circleX[i+1], circleY[i+1], length, 1));
+            this.colors.push(lightColor);
+            this.positions.push(new vec4(circleX[i], circleY[i], length, 1));
+            this.colors.push(lightColor);
 
             // create the back face
-            this.objectTris.push(new vec4(centerX, centerY, -length, 1));
-            this.objectTris.push(shellColor1);
-            this.objectTris.push(new vec4(circleX[i], circleY[i], -length, 1));
-            this.objectTris.push(shellColor1);
-            this.objectTris.push(new vec4(circleX[i+1], circleY[i+1], -length, 1));
-            this.objectTris.push(shellColor1);
+            this.positions.push(new vec4(centerX, centerY, -length, 1));
+            this.colors.push(shellColor1);
+            this.positions.push(new vec4(circleX[i], circleY[i], -length, 1));
+            this.colors.push(shellColor1);
+            this.positions.push(new vec4(circleX[i+1], circleY[i+1], -length, 1));
+            this.colors.push(shellColor1);
 
             // create the rounded edges
-            this.objectTris.push(new vec4(circleX[i], circleY[i], length, 1));
-            this.objectTris.push(shellColor2);
-            this.objectTris.push(new vec4(circleX[i], circleY[i], -length, 1));
-            this.objectTris.push(shellColor2);
-            this.objectTris.push(new vec4(circleX[i+1], circleY[i+1], -length, 1));
-            this.objectTris.push(shellColor2);
+            this.positions.push(new vec4(circleX[i], circleY[i], length, 1));
+            this.colors.push(shellColor2);
+            this.positions.push(new vec4(circleX[i], circleY[i], -length, 1));
+            this.colors.push(shellColor2);
+            this.positions.push(new vec4(circleX[i+1], circleY[i+1], -length, 1));
+            this.colors.push(shellColor2);
 
-            this.objectTris.push(new vec4(circleX[(i+1)%ptsPerCircle], circleY[(i+1)%ptsPerCircle], -length, 1));
-            this.objectTris.push(shellColor2);
-            this.objectTris.push(new vec4(circleX[i+1], circleY[i+1], length, 1));
-            this.objectTris.push(shellColor2);
-            this.objectTris.push(new vec4(circleX[i], circleY[i], length, 1));
-            this.objectTris.push(shellColor2);
+            this.positions.push(new vec4(circleX[(i+1)%ptsPerCircle], circleY[(i+1)%ptsPerCircle], -length, 1));
+            this.colors.push(shellColor2);
+            this.positions.push(new vec4(circleX[i+1], circleY[i+1], length, 1));
+            this.colors.push(shellColor2);
+            this.positions.push(new vec4(circleX[i], circleY[i], length, 1));
+            this.colors.push(shellColor2);
         }
     }
 

@@ -20,8 +20,9 @@ export class BoatFan extends RenderObject {
         return ts;
     }
 
-    createObjectTris():void {
-        this.objectTris = [];
+    createObjectPoints():void {
+        this.positions = [];
+        this.colors = [];
 
         let bladeColor:vec4[] = [
             new vec4(0.3, 0.3, 0.3, 1),
@@ -53,19 +54,19 @@ export class BoatFan extends RenderObject {
         ];
 
         for(let i = 0; i < 4; i++){
-            this.objectTris.push(centerIn);
-            this.objectTris.push(bladeColor[i]);
-            this.objectTris.push(bladeInA[i]);
-            this.objectTris.push(bladeColor[i]);
-            this.objectTris.push(centerOut);
-            this.objectTris.push(bladeColor[i]);
+            this.positions.push(centerIn);
+            this.colors.push(bladeColor[i]);
+            this.positions.push(bladeInA[i]);
+            this.colors.push(bladeColor[i]);
+            this.positions.push(centerOut);
+            this.colors.push(bladeColor[i]);
 
-            this.objectTris.push(bladeOutA[i]);
-            this.objectTris.push(bladeColor[i]);
-            this.objectTris.push(centerOut);
-            this.objectTris.push(bladeColor[i]);
-            this.objectTris.push(bladeInA[i]);
-            this.objectTris.push(bladeColor[i]);
+            this.positions.push(bladeOutA[i]);
+            this.colors.push(bladeColor[i]);
+            this.positions.push(centerOut);
+            this.colors.push(bladeColor[i]);
+            this.positions.push(bladeInA[i]);
+            this.colors.push(bladeColor[i]);
         }
     }
 
