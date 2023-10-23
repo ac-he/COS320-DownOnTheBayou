@@ -22,26 +22,32 @@ export class Water extends RenderObject{
         this.colors = [];
         this.normals = [];
 
-        this.positions.push(new vec4(-this.size, 0, this.size, enabled));
-        this.colors.push(color);
-        this.positions.push(new vec4(this.size, 0, this.size, enabled));
-        this.colors.push(color);
-        this.positions.push(new vec4(-this.size, 0, -this.size, enabled));
-        this.colors.push(color);
-        this.normals.push(new vec4(0, 1, 0, 0));
-        this.normals.push(new vec4(0, 1, 0, 0));
-        this.normals.push(new vec4(0, 1, 0, 0));
+        let granularity:number = this.size/4;
 
-        this.positions.push(new vec4(-this.size, 0, -this.size, enabled));
-        this.colors.push(color);
-        this.positions.push(new vec4(this.size, 0, this.size, enabled));
-        this.colors.push(color);
-        this.positions.push(new vec4(this.size, 0, -this.size, enabled));
-        this.colors.push(color);
-        this.normals.push(new vec4(0, 1, 0, 0));
-        this.normals.push(new vec4(0, 1, 0, 0));
-        this.normals.push(new vec4(0, 1, 0, 0));
+        for(let x:number = -this.size; x <= this.size; x += granularity){
+            for(let z:number = -this.size; z <= this.size; z += granularity){
+                this.positions.push(new vec4(x, 0, z + granularity, enabled));
+                this.colors.push(color);
+                this.positions.push(new vec4(x + granularity, 0, z + granularity, enabled));
+                this.colors.push(color);
+                this.positions.push(new vec4(x, 0, z, enabled));
+                this.colors.push(color);
 
+                this.positions.push(new vec4(x, 0, z, enabled));
+                this.colors.push(color);
+                this.positions.push(new vec4(x + granularity, 0, z + granularity, enabled));
+                this.colors.push(color);
+                this.positions.push(new vec4(x + granularity, 0, z, enabled));
+                this.colors.push(color);
+
+                this.normals.push(new vec4(0, 1, 0, 0));
+                this.normals.push(new vec4(0, 1, 0, 0));
+                this.normals.push(new vec4(0, 1, 0, 0));
+                this.normals.push(new vec4(0, 1, 0, 0));
+                this.normals.push(new vec4(0, 1, 0, 0));
+                this.normals.push(new vec4(0, 1, 0, 0));
+            }
+        }
     }
 
     getTransformsSequence(): any[] {
