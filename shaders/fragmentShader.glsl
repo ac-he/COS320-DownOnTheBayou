@@ -23,6 +23,10 @@ void main()
     vec3 N = normalize(normal); // NORMAL
     vec3 R = normalize(reflection); // REFLECT
 
+    if(dot(N, V) < 0.0){
+        N = N * -1.0;
+    }
+
     vec4 amb = color * ambLight;
     vec4 diff = max(dot(L,N), 0.0) * color * lightColor;
     vec4 spec = pow(max(dot(R,V), 0.0), specularExponent) * specularColor * lightColor;
@@ -31,6 +35,11 @@ void main()
         spec = vec4(0, 0, 0, 0);
     }
 
+
     fColor = amb + diff + spec;
+    //fColor = vec4(normal, 1.0);
     fColor.a = 1.0;
 }
+// n.v = negative, looking at back. can negate it to get a positive just be careful about w coord
+// hard code normal
+// cylinder (cos theta, sin theta 0, 0);

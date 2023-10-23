@@ -24,7 +24,6 @@ export abstract class RenderObject {
 
         this.setLogDebugName();
         this.createObjectPoints();
-        this.calculateNormals();
     }
 
     // specify a name for this object in case it needs to be logged
@@ -73,6 +72,21 @@ export abstract class RenderObject {
         if(this.direction >= 360) {
             this.direction -= 360;
         }
+    }
+
+    calculateTriangleNormal(vertex1:vec4, vertex2:vec4, vertex3:vec4): vec4{
+        // obtain two vectors that lie in the plane
+        let vector1:vec4 = vertex2.subtract(vertex1);
+        let vector2:vec4 = vertex3.subtract(vertex1);
+
+        // normalize those vectors
+        vector1 = vector1.normalize();
+        vector2 = vector2.normalize();
+
+        // find triangle normal
+        let normal:vec4 = vector1.cross(vector2);
+        normal = normal.normalize();
+        return normal;
     }
 
     calculateNormals():void{

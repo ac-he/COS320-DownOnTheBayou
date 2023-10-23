@@ -31,6 +31,7 @@ export class BoatLight extends RenderObject {
     createObjectPoints(): void {
         this.positions = [];
         this.colors = [];
+        this.normals = [];
 
         let lightColor:vec4 = new vec4(1, 1, 1, 1);
         let shellColor1:vec4 = new vec4(0.5, 0.5, 0.5, 1);
@@ -38,7 +39,7 @@ export class BoatLight extends RenderObject {
 
         let centerX:number = 0;
         let centerY:number = 0;
-        let ptsPerCircle:number = 30;
+        let ptsPerCircle:number = 60;
         let radius:number = 0.15;
         let length:number = 0.2;
 
@@ -56,35 +57,49 @@ export class BoatLight extends RenderObject {
         // connect those points
         for(let i:number = 0; i < ptsPerCircle; i++){
             // create the front face
-            this.positions.push(new vec4(centerX, centerY, length, 1));
+            let center1:vec4 = new vec4(centerX, centerY, length, 1);
+            let a1:vec4 = new vec4(circleX[i+1], circleY[i+1], length, 1);
+            let b1:vec4 = new vec4(circleX[i], circleY[i], length, 1);
+            this.positions.push(center1);
             this.colors.push(lightColor);
-            this.positions.push(new vec4(circleX[i+1], circleY[i+1], length, 1));
+            this.positions.push(a1);
             this.colors.push(lightColor);
-            this.positions.push(new vec4(circleX[i], circleY[i], length, 1));
+            this.positions.push(b1);
             this.colors.push(lightColor);
+            let n:vec4 = this.calculateTriangleNormal(center1, b1, a1);
+            this.normals.push(n, n, n);
 
             // create the back face
-            this.positions.push(new vec4(centerX, centerY, -length, 1));
+            let center2 = new vec4(centerX, centerY, -length, 1);
+            let a2 = new vec4(circleX[i], circleY[i], -length, 1);
+            let b2 = new vec4(circleX[i+1], circleY[i+1], -length, 1);
+            this.positions.push(center2);
             this.colors.push(shellColor1);
-            this.positions.push(new vec4(circleX[i], circleY[i], -length, 1));
+            this.positions.push(a2);
             this.colors.push(shellColor1);
-            this.positions.push(new vec4(circleX[i+1], circleY[i+1], -length, 1));
+            this.positions.push(b2);
             this.colors.push(shellColor1);
+            n = this.calculateTriangleNormal(center2, b2, a2);
+            this.normals.push(n, n, n);
 
             // create the rounded edges
-            this.positions.push(new vec4(circleX[i], circleY[i], length, 1));
+            this.positions.push(b1);
             this.colors.push(shellColor2);
-            this.positions.push(new vec4(circleX[i], circleY[i], -length, 1));
+            this.positions.push(a2);
             this.colors.push(shellColor2);
-            this.positions.push(new vec4(circleX[i+1], circleY[i+1], -length, 1));
+            this.positions.push(b2);
             this.colors.push(shellColor2);
+            n = this.calculateTriangleNormal(b1, a2, b2);
+            this.normals.push(n, n, n);
 
-            this.positions.push(new vec4(circleX[(i+1)%ptsPerCircle], circleY[(i+1)%ptsPerCircle], -length, 1));
+            this.positions.push(b2);
             this.colors.push(shellColor2);
-            this.positions.push(new vec4(circleX[i+1], circleY[i+1], length, 1));
+            this.positions.push(a1);
             this.colors.push(shellColor2);
-            this.positions.push(new vec4(circleX[i], circleY[i], length, 1));
+            this.positions.push(b1);
             this.colors.push(shellColor2);
+            n = this.calculateTriangleNormal(b2, a1, b1);
+            this.normals.push(n, n, n);
         }
     }
 

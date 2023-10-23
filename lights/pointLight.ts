@@ -7,7 +7,7 @@ export class Light {
     direction:vec4;
     radiusAngle:number;
     constructor() {
-        this.position = new vec4(0, 3, 0, 1);
+        this.position = new vec4(3, 3, 3, 1);
         this.color = new vec4(1, 1, 1, 1);
         this.direction = new vec4(1, 1, 1, 0);
         this.radiusAngle = 20;

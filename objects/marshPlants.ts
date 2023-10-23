@@ -18,6 +18,7 @@ export class MarshPlants extends RenderObject {
     createObjectPoints(): void {
         this.positions = [];
         this.colors = []
+        this.normals = [];
 
        // Get a random selection of leaf colors to use in drawing trees
         let leafColorR:number = 0.2;
@@ -68,6 +69,8 @@ export class MarshPlants extends RenderObject {
             this.colors.push(leafColors[l%numLeafColors]);
             this.positions.push(leafTopPos);
             this.colors.push(leafColors[l%numLeafColors]);
+            let n:vec4 = this.calculateTriangleNormal(leafBottomPos1, leafBottomPos2, leafTopPos);
+            this.normals.push(n, n, n);
         } // end leaf for loop
     }
 

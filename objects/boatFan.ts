@@ -23,6 +23,7 @@ export class BoatFan extends RenderObject {
     createObjectPoints():void {
         this.positions = [];
         this.colors = [];
+        this.normals = [];
 
         let bladeColor:vec4[] = [
             new vec4(0.3, 0.3, 0.3, 1),
@@ -60,6 +61,8 @@ export class BoatFan extends RenderObject {
             this.colors.push(bladeColor[i]);
             this.positions.push(centerOut);
             this.colors.push(bladeColor[i]);
+            let n:vec4 = this.calculateTriangleNormal(centerIn, bladeInA[i], centerOut);
+            this.normals.push(n, n, n);
 
             this.positions.push(bladeOutA[i]);
             this.colors.push(bladeColor[i]);
@@ -67,6 +70,9 @@ export class BoatFan extends RenderObject {
             this.colors.push(bladeColor[i]);
             this.positions.push(bladeInA[i]);
             this.colors.push(bladeColor[i]);
+
+            n = this.calculateTriangleNormal(bladeOutA[i], centerOut, bladeInA[i]);
+            this.normals.push(n, n, n);
         }
     }
 

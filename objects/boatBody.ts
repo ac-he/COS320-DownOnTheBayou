@@ -42,6 +42,8 @@ export class BoatBody extends RenderObject {
     createObjectPoints() {
         this.positions = [];
         this.colors = [];
+        this.normals = [];
+
         //color palette
         let frontFaceColor:vec4 = new vec4(1, 0, 0, 1); // ABCD
         let backFaceColor:vec4 = new vec4(1, 0, 0, 1); // EFGH
@@ -81,6 +83,8 @@ export class BoatBody extends RenderObject {
         this.colors.push(frontFaceColor);
         this.positions.push(b);
         this.colors.push(frontFaceColor);
+        let n:vec4 = this.calculateTriangleNormal(c, b, a);
+        this.normals.push(n, n, n);
 
         this.positions.push(a);
         this.colors.push(frontFaceColor);
@@ -88,6 +92,8 @@ export class BoatBody extends RenderObject {
         this.colors.push(frontFaceColor);
         this.positions.push(d);
         this.colors.push(frontFaceColor);
+        n = this.calculateTriangleNormal(a, d, c);
+        this.normals.push(n, n, n);
 
         //back face EFGH
         this.positions.push(e);
@@ -96,6 +102,8 @@ export class BoatBody extends RenderObject {
         this.colors.push(backFaceColor);
         this.positions.push(f);
         this.colors.push(backFaceColor);
+        n = this.calculateTriangleNormal(e, f, g);
+        this.normals.push(n, n, n);
 
         this.positions.push(e);
         this.colors.push(backFaceColor);
@@ -103,6 +111,8 @@ export class BoatBody extends RenderObject {
         this.colors.push(backFaceColor);
         this.positions.push(g);
         this.colors.push(backFaceColor);
+        n = this.calculateTriangleNormal(e, g, h);
+        this.normals.push(n, n, n);
 
         //left face BCFG
         this.positions.push(b);
@@ -111,6 +121,8 @@ export class BoatBody extends RenderObject {
         this.colors.push(leftFaceColor);
         this.positions.push(c);
         this.colors.push(leftFaceColor);
+        n = this.calculateTriangleNormal(b, c, g);
+        this.normals.push(n, n, n);
 
         this.positions.push(b);
         this.colors.push(leftFaceColor);
@@ -118,6 +130,8 @@ export class BoatBody extends RenderObject {
         this.colors.push(leftFaceColor);
         this.positions.push(g);
         this.colors.push(leftFaceColor);
+        n = this.calculateTriangleNormal(b, g, f);
+        this.normals.push(n, n, n);
 
         //right face ADEH
         this.positions.push(a);
@@ -126,6 +140,8 @@ export class BoatBody extends RenderObject {
         this.colors.push(rightFaceColor);
         this.positions.push(e);
         this.colors.push(rightFaceColor);
+        n = this.calculateTriangleNormal(a, e, d);
+        this.normals.push(n, n, n);
 
         this.positions.push(d);
         this.colors.push(rightFaceColor);
@@ -133,6 +149,8 @@ export class BoatBody extends RenderObject {
         this.colors.push(rightFaceColor);
         this.positions.push(e);
         this.colors.push(rightFaceColor);
+        n = this.calculateTriangleNormal(d, e, h);
+        this.normals.push(n, n, n);
 
         //top ABEF
         this.positions.push(a);
@@ -141,6 +159,8 @@ export class BoatBody extends RenderObject {
         this.colors.push(topFaceColor);
         this.positions.push(e);
         this.colors.push(topFaceColor);
+        n = this.calculateTriangleNormal(a, b, e);
+        this.normals.push(n, n, n);
 
         this.positions.push(b);
         this.colors.push(topFaceColor);
@@ -148,6 +168,8 @@ export class BoatBody extends RenderObject {
         this.colors.push(topFaceColor);
         this.positions.push(e);
         this.colors.push(topFaceColor);
+        n = this.calculateTriangleNormal(b, f, e);
+        this.normals.push(n, n, n);
 
         //bottom CDGH
         this.positions.push(c);
@@ -156,6 +178,8 @@ export class BoatBody extends RenderObject {
         this.colors.push(bottomFaceColor);
         this.positions.push(h);
         this.colors.push(bottomFaceColor);
+        n = this.calculateTriangleNormal(c, h, d);
+        this.normals.push(n, n, n);
 
         this.positions.push(h);
         this.colors.push(bottomFaceColor);
@@ -163,7 +187,8 @@ export class BoatBody extends RenderObject {
         this.colors.push(bottomFaceColor);
         this.positions.push(c);
         this.colors.push(bottomFaceColor);
-
+        n = this.calculateTriangleNormal(h, c, g);
+        this.normals.push(n, n, n);
 
         //fan base
         // ALR -- back
@@ -173,6 +198,9 @@ export class BoatBody extends RenderObject {
         this.colors.push(fanAttachmentColor);
         this.positions.push(fanBaseL);
         this.colors.push(fanAttachmentColor);
+        n = this.calculateTriangleNormal(fanAttachment, fanBaseR, fanBaseL);
+        this.normals.push(n, n, n);
+
         // ACL -- left front
         this.positions.push(fanAttachment);
         this.colors.push(fanAttachmentColor);
@@ -180,21 +208,18 @@ export class BoatBody extends RenderObject {
         this.colors.push(fanAttachmentColor);
         this.positions.push(fanBaseC);
         this.colors.push(fanAttachmentColor);
+        n = this.calculateTriangleNormal(fanAttachment, fanBaseL, fanBaseC);
+        this.normals.push(n, n, n);
+
         // ARC  -- right front
         this.positions.push(fanAttachment);
         this.colors.push(fanAttachmentColor);
-        this.positions.push(fanBaseC);
-        this.colors.push(fanAttachmentColor);
-        this.positions.push(fanBaseR);
-        this.colors.push(fanAttachmentColor);
-
-        // CRL - bottom
         this.positions.push(fanBaseR);
         this.colors.push(fanAttachmentColor);
         this.positions.push(fanBaseC);
         this.colors.push(fanAttachmentColor);
-        this.positions.push(fanBaseL);
-        this.colors.push(fanAttachmentColor);
+        n = this.calculateTriangleNormal(fanAttachment, fanBaseC, fanBaseR);
+        this.normals.push(n, n, n);
     }
 
     setLogDebugName(): void {

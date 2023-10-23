@@ -1,5 +1,5 @@
 import {RenderObject} from "../helpers/renderObject.js";
-import {rotateY, translate, vec4} from "../helpers/helperfunctions.js";
+import {rotateY, scalem, translate, vec4} from "../helpers/helperfunctions.js";
 import {BoatBody} from "./boatBody.js";
 
 export class BoatRudder extends RenderObject {
@@ -25,6 +25,7 @@ export class BoatRudder extends RenderObject {
     createObjectPoints(): void {
         this.positions = [];
         this.colors = [];
+        this.normals = [];
 
         //    E-----F
         //   /|    /|
@@ -50,6 +51,8 @@ export class BoatRudder extends RenderObject {
         this.colors.push(color);
         this.positions.push(b);
         this.colors.push(color);
+        let n:vec4 = this.calculateTriangleNormal(a, b, c);
+        this.normals.push(n, n, n);
 
         this.positions.push(a);
         this.colors.push(color);
@@ -57,6 +60,8 @@ export class BoatRudder extends RenderObject {
         this.colors.push(color);
         this.positions.push(c);
         this.colors.push(color);
+        n = this.calculateTriangleNormal(a, c, d);
+        this.normals.push(n, n, n);
 
         // 2: EFGH -- right facing
         this.positions.push(e);
@@ -65,6 +70,8 @@ export class BoatRudder extends RenderObject {
         this.colors.push(color);
         this.positions.push(g);
         this.colors.push(color);
+        n = this.calculateTriangleNormal(e, g, f);
+        this.normals.push(n, n, n);
 
         this.positions.push(e);
         this.colors.push(color);
@@ -72,6 +79,8 @@ export class BoatRudder extends RenderObject {
         this.colors.push(color);
         this.positions.push(h);
         this.colors.push(color);
+        n = this.calculateTriangleNormal(e, h, g);
+        this.normals.push(n, n, n);
 
         // 3: BCGF -- back facing
         this.positions.push(b);
@@ -80,6 +89,8 @@ export class BoatRudder extends RenderObject {
         this.colors.push(color);
         this.positions.push(f);
         this.colors.push(color);
+        n = this.calculateTriangleNormal(b, f, c);
+        this.normals.push(n, n, n);
 
         this.positions.push(c);
         this.colors.push(color);
@@ -87,6 +98,8 @@ export class BoatRudder extends RenderObject {
         this.colors.push(color);
         this.positions.push(f);
         this.colors.push(color);
+        n = this.calculateTriangleNormal(c, f, g);
+        this.normals.push(n, n, n);
 
         // 4: ADEH -- front facing
         this.positions.push(a);
@@ -95,6 +108,8 @@ export class BoatRudder extends RenderObject {
         this.colors.push(color);
         this.positions.push(d);
         this.colors.push(color);
+        n = this.calculateTriangleNormal(a, d, e);
+        this.normals.push(n, n, n);
 
         this.positions.push(e);
         this.colors.push(color);
@@ -102,6 +117,8 @@ export class BoatRudder extends RenderObject {
         this.colors.push(color);
         this.positions.push(h);
         this.colors.push(color);
+        n = this.calculateTriangleNormal(e, d, h);
+        this.normals.push(n, n, n);
 
         // 5: ABFE -- top facing
         this.positions.push(a);
@@ -110,6 +127,8 @@ export class BoatRudder extends RenderObject {
         this.colors.push(color);
         this.positions.push(b);
         this.colors.push(color);
+        n = this.calculateTriangleNormal(a, e, b);
+        this.normals.push(n, n, n);
 
         this.positions.push(b);
         this.colors.push(color);
@@ -117,21 +136,8 @@ export class BoatRudder extends RenderObject {
         this.colors.push(color);
         this.positions.push(f);
         this.colors.push(color);
-
-        // 6 : ABFE - bottom facing
-        this.positions.push(c);
-        this.colors.push(color);
-        this.positions.push(g);
-        this.colors.push(color);
-        this.positions.push(d);
-        this.colors.push(color);
-
-        this.positions.push(d);
-        this.colors.push(color);
-        this.positions.push(g);
-        this.colors.push(color);
-        this.positions.push(h);
-        this.colors.push(color);
+        n = this.calculateTriangleNormal(b, e, f);
+        this.normals.push(n, n, n);
     }
 
     setLogDebugName(): void {

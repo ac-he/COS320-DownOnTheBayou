@@ -20,6 +20,7 @@ export class Water extends RenderObject{
 
         this.positions = [];
         this.colors = [];
+        this.normals = [];
 
         this.positions.push(new vec4(-this.size, 0, this.size, enabled));
         this.colors.push(color);
@@ -27,6 +28,9 @@ export class Water extends RenderObject{
         this.colors.push(color);
         this.positions.push(new vec4(-this.size, 0, -this.size, enabled));
         this.colors.push(color);
+        this.normals.push(new vec4(0, 1, 0, 0));
+        this.normals.push(new vec4(0, 1, 0, 0));
+        this.normals.push(new vec4(0, 1, 0, 0));
 
         this.positions.push(new vec4(-this.size, 0, -this.size, enabled));
         this.colors.push(color);
@@ -34,6 +38,9 @@ export class Water extends RenderObject{
         this.colors.push(color);
         this.positions.push(new vec4(this.size, 0, -this.size, enabled));
         this.colors.push(color);
+        this.normals.push(new vec4(0, 1, 0, 0));
+        this.normals.push(new vec4(0, 1, 0, 0));
+        this.normals.push(new vec4(0, 1, 0, 0));
 
     }
 

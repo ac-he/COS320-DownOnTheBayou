@@ -12,6 +12,8 @@ export class Tree extends RenderObject {
         this.direction = direction;
         this.xPos = xPos;
         this.zPos = zPos;
+
+        this.calculateNormals();
     }
 
     // Generates a random tree
@@ -24,7 +26,7 @@ export class Tree extends RenderObject {
         let trunkColorG:number = 49/255;
         let trunkColorB:number = 33/255;
         let trunkColors:vec4[] = [];
-        let numTrunkColors:number = 5;
+        let numTrunkColors:number = 1;
         for (let i = 0; i < numTrunkColors; i++){
             trunkColors.push(new vec4(
                 trunkColorR * (Math.random() * 0.4 + 1) ,
@@ -108,39 +110,39 @@ export class Tree extends RenderObject {
             // create the level 1 sides
             this.positions.push(new vec4(trunkBaseX0[i], heights[0], trunkBaseZ0[i], 1));
             this.colors.push(trunkColors[i % numTrunkColors]);
-            this.positions.push(new vec4(trunkBaseX0[i + 1], 0, trunkBaseZ0[i + 1], 1));
-            this.colors.push(trunkColors[i % numTrunkColors]);
             this.positions.push(new vec4(trunkBaseX1[i], heights[1], trunkBaseZ1[i], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX0[i + 1], 0, trunkBaseZ0[i + 1], 1));
             this.colors.push(trunkColors[i % numTrunkColors]);
 
             this.positions.push(new vec4(trunkBaseX0[i + 1], heights[0], trunkBaseZ0[i + 1], 1));
             this.colors.push(trunkColors[i % numTrunkColors]);
-            this.positions.push(new vec4(trunkBaseX1[i + 1], heights[1], trunkBaseZ1[i + 1], 1));
-            this.colors.push(trunkColors[i % numTrunkColors]);
             this.positions.push(new vec4(trunkBaseX1[i], heights[1], trunkBaseZ1[i], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX1[i + 1], heights[1], trunkBaseZ1[i + 1], 1));
             this.colors.push(trunkColors[i % numTrunkColors]);
 
             // create the level 2 sides
             this.positions.push(new vec4(trunkBaseX1[i], heights[1], trunkBaseZ1[i], 1));
             this.colors.push(trunkColors[i % numTrunkColors]);
-            this.positions.push(new vec4(trunkBaseX1[i + 1], heights[1], trunkBaseZ1[i + 1], 1));
-            this.colors.push(trunkColors[i % numTrunkColors]);
             this.positions.push(new vec4(trunkBaseX2[i], heights[2], trunkBaseZ2[i], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX1[i + 1], heights[1], trunkBaseZ1[i + 1], 1));
             this.colors.push(trunkColors[i % numTrunkColors]);
 
             this.positions.push(new vec4(trunkBaseX1[i + 1], heights[1], trunkBaseZ1[i + 1], 1));
             this.colors.push(trunkColors[i % numTrunkColors]);
-            this.positions.push(new vec4(trunkBaseX2[i + 1], heights[2], trunkBaseZ2[i + 1], 1));
-            this.colors.push(trunkColors[i % numTrunkColors]);
             this.positions.push(new vec4(trunkBaseX2[i], heights[2], trunkBaseZ2[i], 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX2[i + 1], heights[2], trunkBaseZ2[i + 1], 1));
             this.colors.push(trunkColors[i % numTrunkColors]);
 
             // create the level 3 sides
             this.positions.push(new vec4(trunkBaseX2[i], heights[2], trunkBaseZ2[i], 1));
             this.colors.push(trunkColors[i % numTrunkColors]);
-            this.positions.push(new vec4(trunkBaseX2[i + 1], heights[2], trunkBaseZ2[i + 1], 1));
-            this.colors.push(trunkColors[i % numTrunkColors]);
             this.positions.push(new vec4(centerX, heights[3], centerZ, 1));
+            this.colors.push(trunkColors[i % numTrunkColors]);
+            this.positions.push(new vec4(trunkBaseX2[i + 1], heights[2], trunkBaseZ2[i + 1], 1));
             this.colors.push(trunkColors[i % numTrunkColors]);
         }
 
@@ -187,25 +189,25 @@ export class Tree extends RenderObject {
                     // bottom of the branch
                     this.positions.push(end);
                     this.colors.push(trunkColors[0%numTrunkColors]);
-                    this.positions.push(baseL);
-                    this.colors.push(trunkColors[0%numTrunkColors]);
                     this.positions.push(baseR);
+                    this.colors.push(trunkColors[0%numTrunkColors]);
+                    this.positions.push(baseL);
                     this.colors.push(trunkColors[0%numTrunkColors]);
 
                     // top left of the branch
                     this.positions.push(end);
                     this.colors.push(trunkColors[1%numTrunkColors]);
-                    this.positions.push(baseT);
-                    this.colors.push(trunkColors[1%numTrunkColors]);
                     this.positions.push(baseL);
+                    this.colors.push(trunkColors[1%numTrunkColors]);
+                    this.positions.push(baseT);
                     this.colors.push(trunkColors[1%numTrunkColors]);
 
                     // top right of the branch
                     this.positions.push(end);
                     this.colors.push(trunkColors[2%numTrunkColors]);
-                    this.positions.push(baseL);
-                    this.colors.push(trunkColors[2%numTrunkColors]);
                     this.positions.push(baseR);
+                    this.colors.push(trunkColors[2%numTrunkColors]);
+                    this.positions.push(baseL);
                     this.colors.push(trunkColors[2%numTrunkColors]);
 
                     // add leaves
