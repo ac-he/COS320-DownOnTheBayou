@@ -14,6 +14,7 @@ import {Chase} from "./cameras/chase.js";
 import {SearchLightCamera} from "./cameras/searchLight.js";
 import {SceneryManager} from "./helpers/sceneryManager.js";
 import {SpotLight} from "./lights/spotLight.js";
+import {Light} from "./helpers/light";
 
 // webGL objects
 let gl:WebGLRenderingContext;
@@ -35,7 +36,10 @@ let uAmbient:WebGLUniformLocation;
 // light controls
 let lightLevel:number;
 let uLights:WebGLUniformLocation;
+let uLightCount:WebGLUniformLocation;
 
+let spotLight:SpotLight;
+let lights:Light[];
 
 // to store all objects in the scene
 let boat:BoatBody;
@@ -78,6 +82,7 @@ window.onload = function init() {
     uproj = gl.getUniformLocation(program, "uProjection");
     uAmbient = gl.getUniformLocation(program, "uAmbientLight");
     uLights = gl.getUniformLocation(program, "uLightList");
+    uLightCount = gl.getUniformLocation(program, "uLightCount");
 
     // create event listeners to deal with keyboard input
     window.addEventListener("keydown", keydownHandler);
@@ -126,6 +131,14 @@ window.onload = function init() {
     ];
     let sm = new SceneryManager(water);
     objects.push(...sm.getScenery());
+
+    // set up lights
+    spotLight = new SpotLight(light);
+
+    // put all lights into a list for easy iteration
+    lights = [
+        spotLight
+    ]
 
     // create all the objects
     makeObjectsAndBuffer();
@@ -192,6 +205,9 @@ function keydownHandler(event) {
             if(camera === frCamera) {
                 frCamera.reset();
             }
+            break;
+        case "s":
+            spotLight.toggleOnOff();
             break;
         case "x":
             if(camera === frCamera){
@@ -309,8 +325,16 @@ function render() {
 
     gl.uniformMatrix4fv(umv, false, mv.flatten());
 
-    let sl:SpotLight = new SpotLight(light);
-    gl.uniform1fv(uLights, sl.getLightData(mv));
+    let lightList:number[] = [];
+    let lightCount:number = 0;
+    lights.forEach((light:Light) => {
+        if(light.isOn){
+            lightList.push(...light.getLightData(mv));
+            lightCount++;
+        }
+    });
+    gl.uniform1fv(uLights, lightList);
+    gl.uniform1i(uLightCount, lightCount);
 
     // bind buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);

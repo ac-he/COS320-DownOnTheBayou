@@ -8,12 +8,16 @@ export abstract class Light {
     position:vec4;
     direction:vec4;
 
+    isOn:boolean;
+
     protected constructor(object:RenderObject, color:vec4, radiusAngle:number, position:vec4, direction:vec4) {
         this.object = object;
         this.color = color;
         this.radiusAngle = radiusAngle;
         this.position = position;
         this.direction = direction;
+
+        this.isOn = false;
     }
 
     getLightData(modelView:mat4):number[] {
@@ -32,5 +36,10 @@ export abstract class Light {
         retList.push(...newDir.flatten()); // 8-11
         retList.push(Math.cos(this.radiusAngle * Math.PI / 180)); // 12
         return retList;
+    }
+
+    toggleOnOff():boolean {
+        this.isOn = !this.isOn;
+        return this.isOn;
     }
 }
