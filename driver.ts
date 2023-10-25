@@ -74,10 +74,10 @@ window.onload = function init() {
     gl.useProgram(program); //and we want to use that program for our rendering
 
     // set up uniform views
-    umv = gl.getUniformLocation(program, "model_view");
-    uproj = gl.getUniformLocation(program, "projection");
-    uAmbient = gl.getUniformLocation(program, "ambient_light");
-    uLights = gl.getUniformLocation(program, "light_list");
+    umv = gl.getUniformLocation(program, "uModelView");
+    uproj = gl.getUniformLocation(program, "uProjection");
+    uAmbient = gl.getUniformLocation(program, "uAmbientLight");
+    uLights = gl.getUniformLocation(program, "uLightList");
 
     // create event listeners to deal with keyboard input
     window.addEventListener("keydown", keydownHandler);
