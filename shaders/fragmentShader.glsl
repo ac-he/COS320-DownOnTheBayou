@@ -16,7 +16,8 @@ in vec3 reflection;
 
 in vec3 lightDirection;
 in float lightRadiusAngle;
-in vec3 surfaceToLightDirection;
+in vec3 surfacePosition;
+in vec3 lightPosition;
 
 out vec4  fColor;
 
@@ -40,9 +41,10 @@ void main()
     }
 
     fColor = amb;
-    vec3 surfaceToLight = -light;
-    float angle = dot(normalize(lightDirection), normalize(surfaceToLight));// * 180.00 / 3.1415;
-    if(angle <= lightRadiusAngle){
+    vec3 surfaceToLight = normalize(surfacePosition) - normalize(lightPosition);
+    surfaceToLight = light;
+    float angle = dot(normalize(lightDirection), normalize(surfaceToLight));
+    if(angle >= lightRadiusAngle){
         fColor = amb + diff + spec;
     }
     else {

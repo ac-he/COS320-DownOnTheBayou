@@ -30,7 +30,7 @@ export abstract class Light {
         retList.push(...newPos.flatten()); //0-3
         retList.push(...this.color.flatten()); //4-7
         retList.push(...newDir.flatten()); // 8-11
-        retList.push(this.radiusAngle); // 12
+        retList.push(Math.cos(this.radiusAngle * Math.PI / 180)); // 12
         return retList;
     }
 }

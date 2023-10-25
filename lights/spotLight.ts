@@ -8,8 +8,8 @@ export class SpotLight extends Light{
         super(
             boatLight,
             new vec4(1, 1, 1, 1),
-            15,
-            new vec4(0, 0, 0.25, 1),
+            13,
+            new vec4(0, 0, -0.19, 1),
             new vec4(0, 0, -1, 0)
         );
     }

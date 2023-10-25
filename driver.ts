@@ -309,8 +309,8 @@ function render() {
 
     gl.uniformMatrix4fv(umv, false, mv.flatten());
 
-    let pl:SpotLight = new SpotLight(light);
-    gl.uniform1fv(uLights, pl.getLightData(mv));
+    let sl:SpotLight = new SpotLight(light);
+    gl.uniform1fv(uLights, sl.getLightData(mv));
 
     // bind buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
