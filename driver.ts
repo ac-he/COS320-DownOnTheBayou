@@ -13,7 +13,7 @@ import {Overhead} from "./cameras/overhead.js";
 import {Chase} from "./cameras/chase.js";
 import {SearchLightCamera} from "./cameras/searchLight.js";
 import {SceneryManager} from "./helpers/sceneryManager.js";
-import {Light} from "./lights/pointLight.js";
+import {SpotLight} from "./lights/spotLight.js";
 
 // webGL objects
 let gl:WebGLRenderingContext;
@@ -103,7 +103,7 @@ window.onload = function init() {
     lightMoving = 0;
 
     // basic light
-    lightLevel = 0.75;
+    lightLevel = 0.35;
 
     // set up initial array of render objects
     water = new Water(0, 0);
@@ -309,8 +309,8 @@ function render() {
 
     gl.uniformMatrix4fv(umv, false, mv.flatten());
 
-    let pl:Light = new Light()
-    gl.uniform1fv(uLights, pl.getLightData());
+    let pl:SpotLight = new SpotLight(light);
+    gl.uniform1fv(uLights, pl.getLightData(mv));
 
     // bind buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
@@ -340,7 +340,7 @@ function makeObjectsAndBuffer(){
     let curIndex:number = 0;
     objects.forEach((rOb:RenderObject) => {
         rOb.bufferIndex = curIndex;
-        let numPoints = rOb.getNumPoints();
+        let numPoints:number = rOb.getNumPoints();
         let positions:vec4[] = rOb.getObjectPositions();
         let colors:vec4[] = rOb.getObjectColors();
         let normals:vec4[] = rOb.getObjectNormals();

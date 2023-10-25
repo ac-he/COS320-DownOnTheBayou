@@ -22,7 +22,7 @@ export class Water extends RenderObject{
         this.colors = [];
         this.normals = [];
 
-        let granularity:number = this.size/4;
+        let granularity:number = this.size/2;
 
         for(let x:number = -this.size; x <= this.size; x += granularity){
             for(let z:number = -this.size; z <= this.size; z += granularity){

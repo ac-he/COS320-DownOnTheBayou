@@ -53,12 +53,12 @@ export abstract class RenderObject {
 
     // Get the specular color associated with this object
     getSpecularColor():vec4 {
-        return new vec4(1, 1, 1, 1);
+        return new vec4(0.5, 0.5, 0.5, 1);
     }
 
     // Get the specular exponent associated with this object
     getSpecularExponent():number {
-        return 10;
+        return 15;
     }
 
     // Get the number of points that make up this object

@@ -26,15 +26,19 @@ out vec3 view;
 out vec3 normal;
 out vec3 reflection;
 
+out vec3 lightDirection;
+out float lightRadiusAngle;
+out vec3 surfaceToLightDirection;
+
 void main() {
     vec4 veyepos = model_view * vPosition; // move vertex from model space to eye space
     gl_Position = projection * veyepos;
     // plus implicit "divide by w coordinate" phase
 
     vec4 light_position = vec4(light_list[0], light_list[1], light_list[2], light_list[3]);
-    vec4 light_color = vec4(light_list[4], light_list[5], light_list[6], light_list[7]);
     vec4 light_direction = vec4(light_list[8], light_list[9], light_list[10], light_list[11]);
     float light_radius_angle = light_list[12];
+    vec4 light_color = vec4(light_list[4], light_list[5], light_list[6], light_list[7]);
 
     color = vColor;
     ambLight = ambient_light;
@@ -42,6 +46,13 @@ void main() {
     lightColor = light_color;
     specularColor = vSpecularColor;
     specularExponent = vSpecularExponent;
+
+    lightDirection = light_direction.xyz;
+    lightRadiusAngle = lightRadiusAngle;
+
+    surfaceToLightDirection = -light_position.xyz;
+    surfaceToLightDirection += surfaceToLightDirection;
+    // i had to do it this screwy way because it didn't like the type of light position.xyz??
 
     light = normalize(light_position.xyz - veyepos.xyz);
     view = normalize(-veyepos.xyz);

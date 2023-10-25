@@ -14,6 +14,10 @@ in vec3 view;
 in vec3 normal;
 in vec3 reflection;
 
+in vec3 lightDirection;
+in float lightRadiusAngle;
+in vec3 surfaceToLightDirection;
+
 out vec4  fColor;
 
 void main()
@@ -35,11 +39,15 @@ void main()
         spec = vec4(0, 0, 0, 0);
     }
 
-
-    fColor = amb + diff + spec;
+    fColor = amb;
+    vec3 surfaceToLight = -light;
+    float angle = dot(normalize(lightDirection), normalize(surfaceToLight));// * 180.00 / 3.1415;
+    if(angle <= lightRadiusAngle){
+        fColor = amb + diff + spec;
+    }
+    else {
+        fColor = amb;
+    }
     //fColor = vec4(normal, 1.0);
     fColor.a = 1.0;
 }
-// n.v = negative, looking at back. can negate it to get a positive just be careful about w coord
-// hard code normal
-// cylinder (cos theta, sin theta 0, 0);
