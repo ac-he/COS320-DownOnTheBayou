@@ -6,11 +6,11 @@ export class NavigationLight extends Light{
 
     constructor(boatBody:BoatBody, color:vec4, direction:vec4) {
         super(
-            boatBody,
-            color,
-            39,
-            new vec4(0, 0.8, 0, 1),
-            direction
+            boatBody, // object
+            color, // color
+            39, // radiusAngle
+            new vec4(0, 0.8, 0, 1), //position (above the water, centered over the boat)
+            direction // direction
         );
 
         // the light facing the back of the boat intersects strangely with the fan and rudders without this offset

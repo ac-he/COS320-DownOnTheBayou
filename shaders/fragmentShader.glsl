@@ -31,13 +31,12 @@ void main()
         vec3 L = normalize(lightPosition.xyz - position.xyz);// LIGHT
         vec3 V = normalize(-position.xyz);// VIEW
         vec3 N = normalize(normal.xyz);// NORMAL
-        vec3 R = reflect(-L, N);// REFLECT
-
         // if the normal vector is backwards, reverse it
         if (dot(N, V) < 0.0){
             N = N * -1.0;
         }
         // this helps with the one-sided geometry (leaves, fan blades, etc)
+        vec3 R = reflect(-L, N);// REFLECT
 
         // calculate the two non-ambient terms of phong lighting
         vec4 diff = max(dot(L, N), 0.0) * color * lightColor;

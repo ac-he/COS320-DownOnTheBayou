@@ -2,8 +2,8 @@
 
 precision mediump float;
 
-uniform mat4 uModelView; // gets us into eye space
-uniform mat4 uProjection; // gets us from eye space to normalized device space
+uniform mat4 uModelView;
+uniform mat4 uProjection;
 
 in vec4 vPosition;
 in vec4 vColor;

@@ -74,6 +74,7 @@ export abstract class RenderObject {
         }
     }
 
+    // calculate the normal for a triangle defined by these three vertices
     calculateTriangleNormal(vertex1:vec4, vertex2:vec4, vertex3:vec4): vec4{
         // obtain two vectors that lie in the plane
         let vector1:vec4 = vertex2.subtract(vertex1);
@@ -89,6 +90,8 @@ export abstract class RenderObject {
         return normal;
     }
 
+    // calculate vertex normals for a whole object at once
+    // creates a smoother look but increases the load time
     calculateNormals():void{
         let vertices:Map<string, vec4> = new Map<string, vec4>();
         let numTrisAndColors:number = this.positions.length;
