@@ -16,7 +16,7 @@ export class NavigationLight extends Light{
         // the light facing the back of the boat intersects strangely with the fan and rudders without this offset
         // due to the difference in boat width and length
         if(direction[2] == 1){
-            this.position[2] = -0.9;
+            this.position[2] = -1;
         }
     }
 

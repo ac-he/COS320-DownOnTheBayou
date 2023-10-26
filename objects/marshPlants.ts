@@ -14,6 +14,11 @@ export class MarshPlants extends RenderObject {
         this.zPos = zPos;
     }
 
+    // Get the specular exponent associated with this object
+    getSpecularExponent():number {
+        return 250;
+    }
+
     // Generates a random tree
     createObjectPoints(): void {
         this.positions = [];

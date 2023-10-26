@@ -13,6 +13,11 @@ export class Water extends RenderObject{
         this.zPos = zPos;
     }
 
+    // Get the specular exponent associated with this object
+    getSpecularExponent():number {
+        return 3;
+    }
+
     createObjectPoints() {
         let color:vec4 = new vec4(0.2, 0.4, 0.7,1);
         let enabled:number = 1; // for debugging purposes, allows me to show/hide the water as desired

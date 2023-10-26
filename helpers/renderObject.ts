@@ -58,7 +58,7 @@ export abstract class RenderObject {
 
     // Get the specular exponent associated with this object
     getSpecularExponent():number {
-        return 15;
+        return 50;
     }
 
     // Get the number of points that make up this object

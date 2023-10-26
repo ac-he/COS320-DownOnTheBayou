@@ -16,6 +16,11 @@ export class Tree extends RenderObject {
         this.calculateNormals();
     }
 
+    // Get the specular exponent associated with this object
+    getSpecularExponent():number {
+        return 250;
+    }
+
     // Generates a random tree
     createObjectPoints(): void {
         this.positions = [];
