@@ -1,4 +1,4 @@
-import {mat4, vec4} from "./helperfunctions.js";
+import {mat4, rotateY, vec4} from "./helperfunctions.js";
 import {RenderObject} from "./renderObject.js";
 
 export abstract class Light {
@@ -7,6 +7,8 @@ export abstract class Light {
     object:RenderObject;
     position:vec4;
     direction:vec4;
+
+    rotation:number;
 
     isOn:boolean;
 
@@ -18,6 +20,7 @@ export abstract class Light {
         this.direction = direction;
 
         this.isOn = false;
+        this.rotation = 0;
     }
 
     getLightData(modelView:mat4):number[] {
@@ -26,6 +29,8 @@ export abstract class Light {
         transforms.forEach((transformation) => {
             mv = mv.mult(transformation);
         });
+        mv = mv.mult(rotateY(this.rotation));
+
         let newPos:vec4 = mv.mult(this.position);
         let newDir:vec4 = mv.mult(this.direction);
         newDir = newDir.normalize();

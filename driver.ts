@@ -16,6 +16,7 @@ import {SceneryManager} from "./helpers/sceneryManager.js";
 import {SpotLight} from "./lights/spotLight.js";
 import {Light} from "./helpers/light.js";
 import {NavigationLight} from "./lights/navigationLight.js";
+import {HazardLight} from "./lights/hazardLight.js";
 
 // webGL objects
 let gl:WebGLRenderingContext;
@@ -43,6 +44,8 @@ let spotLight:SpotLight;
 let leftNavLight:NavigationLight;
 let rightNavLight:NavigationLight;
 let backNavLight:NavigationLight;
+let hazardLightA:HazardLight;
+let hazardLightB:HazardLight;
 let lights:Light[];
 
 // to store all objects in the scene
@@ -141,13 +144,17 @@ window.onload = function init() {
     leftNavLight = new NavigationLight(boat, new vec4(0, 0.5, 0, 1), new vec4(-1, 0, 0, 0));
     rightNavLight = new NavigationLight(boat, new vec4(0.5, 0, 0, 1), new vec4(1, 0, 0, 0));
     backNavLight = new NavigationLight(boat, new vec4(0.5, 0.5, 0.5, 1), new vec4(0, 0, 1, 0));
+    hazardLightA = new HazardLight(boat, new vec4(-1, 0, 0, 0));
+    hazardLightB = new HazardLight(boat, new vec4(1, 0, 0, 0));
 
     // put all lights into a list for easy iteration
     lights = [
         spotLight,
         leftNavLight,
         rightNavLight,
-        backNavLight
+        backNavLight,
+        hazardLightA,
+        hazardLightB
     ]
 
     // create all the objects
@@ -205,6 +212,10 @@ function keydownHandler(event) {
             if(camera === frCamera){
                 frCamera.toggleBoatCentered();
             }
+            break;
+        case "h":
+            hazardLightA.toggleOnOff();
+            hazardLightB.toggleOnOff();
             break;
         case "n":
             leftNavLight.toggleOnOff();
@@ -321,6 +332,9 @@ function update() {
 
     // rotate the light
     light.rotateBy(lightMoving);
+
+    hazardLightA.rotate();
+    hazardLightB.rotate();
 
     requestAnimationFrame(render);
 }
