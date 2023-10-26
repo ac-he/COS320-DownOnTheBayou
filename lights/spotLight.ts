@@ -1,6 +1,6 @@
-import {mat4, vec4} from "../helpers/helperfunctions.js";
+import {vec4} from "../helpers/helperfunctions.js";
 import {Light} from "../helpers/light.js";
-import {BoatLight} from "../objects/boatLight";
+import {BoatLight} from "../objects/boatLight.js";
 
 export class SpotLight extends Light{
 

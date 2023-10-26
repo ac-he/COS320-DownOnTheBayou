@@ -14,7 +14,8 @@ import {Chase} from "./cameras/chase.js";
 import {SearchLightCamera} from "./cameras/searchLight.js";
 import {SceneryManager} from "./helpers/sceneryManager.js";
 import {SpotLight} from "./lights/spotLight.js";
-import {Light} from "./helpers/light";
+import {Light} from "./helpers/light.js";
+import {NavigationLight} from "./lights/navigationLight.js";
 
 // webGL objects
 let gl:WebGLRenderingContext;
@@ -39,6 +40,9 @@ let uLights:WebGLUniformLocation;
 let uLightCount:WebGLUniformLocation;
 
 let spotLight:SpotLight;
+let leftNavLight:NavigationLight;
+let rightNavLight:NavigationLight;
+let backNavLight:NavigationLight;
 let lights:Light[];
 
 // to store all objects in the scene
@@ -134,10 +138,16 @@ window.onload = function init() {
 
     // set up lights
     spotLight = new SpotLight(light);
+    leftNavLight = new NavigationLight(boat, new vec4(0, 0.5, 0, 1), new vec4(-1, 0, 0, 0));
+    rightNavLight = new NavigationLight(boat, new vec4(0.5, 0, 0, 1), new vec4(1, 0, 0, 0));
+    backNavLight = new NavigationLight(boat, new vec4(0.5, 0.5, 0.5, 1), new vec4(0, 0, 1, 0));
 
     // put all lights into a list for easy iteration
     lights = [
-        spotLight
+        spotLight,
+        leftNavLight,
+        rightNavLight,
+        backNavLight
     ]
 
     // create all the objects
@@ -195,6 +205,11 @@ function keydownHandler(event) {
             if(camera === frCamera){
                 frCamera.toggleBoatCentered();
             }
+            break;
+        case "n":
+            leftNavLight.toggleOnOff();
+            rightNavLight.toggleOnOff();
+            backNavLight.toggleOnOff();
             break;
         case "q":
             if(camera === frCamera){
