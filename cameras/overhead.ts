@@ -18,21 +18,21 @@ export class Overhead extends Camera {
     getLookAtMat(): mat4 {
         // locate the eye above the boat, but rotated to match the direction of the boat
         let eye:vec4 = new vec4(
-            // boat position    // rotate to match direction
-            this.boat.xPos - Math.sin(this.boat.direction * Math.PI / 180),
+            // boat position
+            this.boat.xPos,
             // locate the camera 20 units above the water. I picked this number because it allows for almost all of the
             //      navigable map to be seen at any given angle.
             20,
-            // boat position    // rotate to match direction
-            this.boat.zPos - Math.cos(this.boat.direction * Math.PI / 180),
+            // boat position
+            this.boat.zPos,
             1
         );
 
         // the canvas is always centered at the boat
         let at:vec4 = new vec4(this.boat.xPos, 0, this.boat.zPos, 1);
 
-        // up is always going to be in the pos Y direction
-        let up:vec4 = new vec4(0, 1, 0, 0) // up
+        // up is the direction that the boat is facing
+        let up:vec4 = new vec4(Math.sin(this.boat.direction * Math.PI / 180), 0, Math.cos(this.boat.direction * Math.PI / 180), 0) // up
 
         return lookAt(eye, at, up);
     }
