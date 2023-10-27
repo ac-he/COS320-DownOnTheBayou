@@ -2,6 +2,7 @@ import {RenderObject} from "./renderObject.js";
 import {Tree} from "../objects/tree.js";
 import {MarshPlants} from "../objects/marshPlants.js";
 import {Water} from "../objects/water.js";
+import {Cabin} from "../objects/cabin.js";
 
 export class SceneryManager{
 
@@ -21,6 +22,9 @@ export class SceneryManager{
                 }
             }
         }
+
+        // cabin
+        scenery.push(new Cabin(this.water, 0, 0, 0));
 
         // add a few trees close to the water
         scenery.push(new Tree(this.water, 0, this.water.size * 1.2, this.water.size * 1.1));
