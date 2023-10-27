@@ -35,7 +35,6 @@ export abstract class RenderObject {
     // generate all the transforms needed to properly render this object in its current state
     abstract getTransformsSequence() :any[];
 
-
     // Get the list of positions associated with this object
     getObjectPositions():vec4[] {
         return this.positions;

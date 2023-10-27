@@ -17,58 +17,64 @@ import {SpotLight} from "./lights/spotLight.js";
 import {Light} from "./helpers/light.js";
 import {NavigationLight} from "./lights/navigationLight.js";
 import {HazardLight} from "./lights/hazardLight.js";
+import {Coin} from "./objects/coin.js";
 
 // webGL objects
-let gl:WebGLRenderingContext;
-let canvas:HTMLCanvasElement;
-let program:WebGLProgram;
-let bufferId:WebGLBuffer;
-let cameraButtons:HTMLButtonElement[];
-let cameraControlFeedback:HTMLDivElement;
+let gl: WebGLRenderingContext;
+let canvas: HTMLCanvasElement;
+let program: WebGLProgram;
+let bufferId: WebGLBuffer;
+let cameraButtons: HTMLButtonElement[];
+let cameraControlFeedback: HTMLDivElement;
+let coinModeFeedback: HTMLDivElement;
 
 // shader variables
-let umv:WebGLUniformLocation; // model_view uniform
-let uproj:WebGLUniformLocation; // projection uniform
-let vPosition:GLint; // vPosition vector
-let vColor:GLint; // vColor vector
-let vNormal:GLint; // vNormal vector
-let vSpecular:GLint;
-let vSpecularExp:GLint;
-let uAmbient:WebGLUniformLocation;
+let umv: WebGLUniformLocation; // model_view uniform
+let uproj: WebGLUniformLocation; // projection uniform
+let vPosition: GLint; // vPosition vector
+let vColor: GLint; // vColor vector
+let vNormal: GLint; // vNormal vector
+let vSpecular: GLint;
+let vSpecularExp: GLint;
+let uAmbient: WebGLUniformLocation;
 // light controls
-let lightLevel:number;
-let uLights:WebGLUniformLocation;
-let uLightCount:WebGLUniformLocation;
+let lightLevel: number;
+let uLights: WebGLUniformLocation;
+let uLightCount: WebGLUniformLocation;
 
-let spotLight:SpotLight;
-let leftNavLight:NavigationLight;
-let rightNavLight:NavigationLight;
-let backNavLight:NavigationLight;
-let hazardLightA:HazardLight;
-let hazardLightB:HazardLight;
-let lights:Light[];
+let spotLight: SpotLight;
+let leftNavLight: NavigationLight;
+let rightNavLight: NavigationLight;
+let backNavLight: NavigationLight;
+let hazardLightA: HazardLight;
+let hazardLightB: HazardLight;
+let lights: Light[];
 
 // to store all objects in the scene
-let boat:BoatBody;
-let water:Water;
-let fan:BoatFan;
-let rudder1:BoatRudder;
-let rudder2:BoatRudder;
-let rudder3:BoatRudder;
-let light:BoatLight;
+let boat: BoatBody;
+let water: Water;
+let fan: BoatFan;
+let rudder1: BoatRudder;
+let rudder2: BoatRudder;
+let rudder3: BoatRudder;
+let light: BoatLight;
+let coin: Coin;
 // these will also be added to a list for easy iteration over
-let objects:RenderObject[];
+let objects: RenderObject[];
 
 // to track the state of the boat as it moves
-let moving:number; // [-1, 0, 1] used as a multiplier for boat movement
-let turning:number; // [-1, 0, 1] used as a multiplier for boat rotation
-let lightMoving:number; // [-1, 0, 1] used as a multiplier for light movement
+let moving: number; // [-1, 0, 1] used as a multiplier for boat movement
+let turning: number; // [-1, 0, 1] used as a multiplier for boat rotation
+let lightMoving: number; // [-1, 0, 1] used as a multiplier for light movement
 
 // to keep track of the camera
-let camera:Camera;
-let frCamera:FreeRoam;
-let aspectRatio:number;
+let camera: Camera;
+let frCamera: FreeRoam;
+let aspectRatio: number;
 
+// coin mode
+let coinCount: number;
+let coinMode: boolean;
 
 // initial setup
 window.onload = function init() {
@@ -108,6 +114,7 @@ window.onload = function init() {
     cameraButtons[3].addEventListener("click", setSearchLightCamera);
 
     cameraControlFeedback = document.getElementById("camera-control-feedback") as HTMLDivElement;
+    coinModeFeedback = document.getElementById("coin-mode-feedback") as HTMLDivElement;
 
     // the boat is still to begin with
     moving = 0;
@@ -116,6 +123,7 @@ window.onload = function init() {
 
     // basic light
     lightLevel = 0.35;
+    coinMode = false;
 
     // set up initial array of render objects
     water = new Water(0, 0);
@@ -125,6 +133,7 @@ window.onload = function init() {
     rudder2 = new BoatRudder(boat, 0);
     rudder3 = new BoatRudder(boat, -0.3);
     light = new BoatLight(boat);
+    coin = new Coin(water);
 
     // put these objects into a list for easy iteration
     objects = [
@@ -134,7 +143,8 @@ window.onload = function init() {
         rudder1,
         rudder2,
         rudder3,
-        light
+        light,
+        coin,
     ];
     let sm = new SceneryManager(water);
     objects.push(...sm.getScenery());
@@ -178,7 +188,7 @@ window.onload = function init() {
 };
 
 function keydownHandler(event) {
-    switch(event.key) {
+    switch (event.key) {
         case "ArrowLeft":
             turning = 1;
             break;
@@ -194,41 +204,51 @@ function keydownHandler(event) {
         case "a":
             lightMoving = 1;
             break;
+        case "b":
+            if (!coinMode) {
+                if (lightLevel > 1) {
+                    lightLevel = 0;
+                }
+                lightLevel += 0.05;
+            }
+            break;
+        case "c":
+            toggleCoinMode();
+            break;
         case "d":
             lightMoving = -1;
             break;
-        case "b":
-            if(lightLevel > 1){
-                lightLevel = 0;
-            }
-            lightLevel += 0.05;
-            break;
+
         case "e":
-            if(camera === frCamera){
+            if (camera === frCamera) {
                 frCamera.changeDollyZoomBy(2);
             }
             break;
         case "f":
-            if(camera === frCamera){
+            if (camera === frCamera) {
                 frCamera.toggleBoatCentered();
             }
             break;
         case "h":
-            hazardLightA.toggleOnOff();
-            hazardLightB.toggleOnOff();
+            if (!coinMode) {
+                hazardLightA.toggleOnOff();
+                hazardLightB.toggleOnOff();
+            }
             break;
         case "n":
-            leftNavLight.toggleOnOff();
-            rightNavLight.toggleOnOff();
-            backNavLight.toggleOnOff();
+            if (!coinMode) {
+                leftNavLight.toggleOnOff();
+                rightNavLight.toggleOnOff();
+                backNavLight.toggleOnOff();
+            }
             break;
         case "q":
-            if(camera === frCamera){
+            if (camera === frCamera) {
                 frCamera.changeDollyZoomBy(-2);
             }
             break;
         case "r":
-            if(camera === frCamera) {
+            if (camera === frCamera) {
                 frCamera.reset();
             }
             break;
@@ -236,12 +256,12 @@ function keydownHandler(event) {
             spotLight.toggleOnOff();
             break;
         case "x":
-            if(camera === frCamera){
+            if (camera === frCamera) {
                 frCamera.changeLensZoomBy(-5);
             }
             break;
         case "z":
-            if(camera === frCamera){
+            if (camera === frCamera) {
                 frCamera.changeLensZoomBy(5);
             }
             break;
@@ -261,7 +281,7 @@ function keydownHandler(event) {
 }
 
 function keyupHandler(event) {
-    switch(event.key) {
+    switch (event.key) {
         case "ArrowLeft":
         case "ArrowRight":
             turning = 0;
@@ -277,8 +297,21 @@ function keyupHandler(event) {
     }
 }
 
-function setFreeRoamCamera(){
-    cameraButtons.forEach((button:HTMLButtonElement) => {
+function toggleCoinMode(){
+    coinMode = !coinMode;
+    if(coinMode){
+        setSearchLightCamera();
+        coin.move();
+        coinCount = 0;
+        coinModeFeedback.innerText = "Coins: " + coinCount;
+    } else {
+        setFreeRoamCamera();
+        coin.hide();
+    }
+}
+
+function setFreeRoamCamera() {
+    cameraButtons.forEach((button: HTMLButtonElement) => {
         button.className = "";
     });
     cameraButtons[0].className = "selected";
@@ -292,8 +325,8 @@ function setFreeRoamCamera(){
     camera = frCamera;
 }
 
-function setOverheadCamera(){
-    cameraButtons.forEach((button:HTMLButtonElement) => {
+function setOverheadCamera() {
+    cameraButtons.forEach((button: HTMLButtonElement) => {
         button.className = "";
     });
     cameraButtons[1].className = "selected";
@@ -301,8 +334,8 @@ function setOverheadCamera(){
     camera = new Overhead(boat, aspectRatio);
 }
 
-function setChaseCamera(){
-    cameraButtons.forEach((button:HTMLButtonElement) => {
+function setChaseCamera() {
+    cameraButtons.forEach((button: HTMLButtonElement) => {
         button.className = "";
     });
     cameraButtons[2].className = "selected";
@@ -310,8 +343,8 @@ function setChaseCamera(){
     camera = new Chase(boat, aspectRatio);
 }
 
-function setSearchLightCamera(){
-    cameraButtons.forEach((button:HTMLButtonElement) => {
+function setSearchLightCamera() {
+    cameraButtons.forEach((button: HTMLButtonElement) => {
         button.className = "";
     });
     cameraButtons[3].className = "selected";
@@ -336,6 +369,17 @@ function update() {
     hazardLightA.rotate();
     hazardLightB.rotate();
 
+    if(coinMode){
+    let distanceToCoin = Math.sqrt((boat.xPos - coin.xPos) ** 2 + (boat.zPos - coin.zPos) ** 2);
+        if (distanceToCoin < 1) {
+            coin.move();
+            coinCount++;
+            coinModeFeedback.innerText = "Coins: " + coinCount;
+        }
+    }
+
+    coin.rotateBy(2);
+
     requestAnimationFrame(render);
 }
 
@@ -344,20 +388,20 @@ function render() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // set up projection matrix
-    let p:mat4 = camera.getPerspectiveMat();
+    let p: mat4 = camera.getPerspectiveMat();
     gl.uniformMatrix4fv(uproj, false, p.flatten());
 
     // set up model view matrix
-    let mv:mat4 = camera.getLookAtMat();
+    let mv: mat4 = camera.getLookAtMat();
     mv = mv.mult(translate(0, 0, 0));
-    let commonMat:mat4 = mv;
+    let commonMat: mat4 = mv;
 
     gl.uniformMatrix4fv(umv, false, mv.flatten());
 
-    let lightList:number[] = [];
-    let lightCount:number = 0;
-    lights.forEach((light:Light) => {
-        if(light.isOn){
+    let lightList: number[] = [];
+    let lightCount: number = 0;
+    lights.forEach((light: Light) => {
+        if (light.isOn) {
             lightList.push(...light.getLightData(mv));
             lightCount++;
         }
@@ -369,7 +413,7 @@ function render() {
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
 
     // send over triangles, one object at a time
-    objects.forEach((rOb:RenderObject) => {
+    objects.forEach((rOb: RenderObject) => {
         // reset the transformation matrix
         mv = commonMat;
 
@@ -381,24 +425,31 @@ function render() {
 
         // draw the object
         gl.uniformMatrix4fv(umv, false, mv.flatten());
-        gl.uniform4fv(uAmbient, [lightLevel, lightLevel, lightLevel, 1]);
+
+        // set ambient light
+        if (coinMode) {
+            gl.uniform4fv(uAmbient, [0.1, 0.1, 0.1, 1]);
+        } else {
+            gl.uniform4fv(uAmbient, [lightLevel, lightLevel, lightLevel, 1]);
+        }
 
         gl.drawArrays(gl.TRIANGLES, rOb.bufferIndex, rOb.getNumPoints());
+
     });
 }
 
-function makeObjectsAndBuffer(){
+function makeObjectsAndBuffer() {
     //Make all objects and send over to the graphics card
-    let allPoints:number[] = [];
-    let curIndex:number = 0;
-    objects.forEach((rOb:RenderObject) => {
+    let allPoints: number[] = [];
+    let curIndex: number = 0;
+    objects.forEach((rOb: RenderObject) => {
         rOb.bufferIndex = curIndex;
-        let numPoints:number = rOb.getNumPoints();
-        let positions:vec4[] = rOb.getObjectPositions();
-        let colors:vec4[] = rOb.getObjectColors();
-        let normals:vec4[] = rOb.getObjectNormals();
+        let numPoints: number = rOb.getNumPoints();
+        let positions: vec4[] = rOb.getObjectPositions();
+        let colors: vec4[] = rOb.getObjectColors();
+        let normals: vec4[] = rOb.getObjectNormals();
 
-        for(let i:number = 0; i < numPoints; i++){
+        for (let i: number = 0; i < numPoints; i++) {
             allPoints.push(...positions[i].flatten());
             allPoints.push(...colors[i].flatten());
             allPoints.push(...normals[i].flatten());
