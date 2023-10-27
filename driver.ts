@@ -26,6 +26,7 @@ let program: WebGLProgram;
 let bufferId: WebGLBuffer;
 let cameraButtons: HTMLButtonElement[];
 let cameraControlFeedback: HTMLDivElement;
+let coinModeFeedback: HTMLDivElement;
 
 // shader variables
 let umv: WebGLUniformLocation; // model_view uniform
@@ -113,6 +114,7 @@ window.onload = function init() {
     cameraButtons[3].addEventListener("click", setSearchLightCamera);
 
     cameraControlFeedback = document.getElementById("camera-control-feedback") as HTMLDivElement;
+    coinModeFeedback = document.getElementById("coin-mode-feedback") as HTMLDivElement;
 
     // the boat is still to begin with
     moving = 0;
@@ -211,14 +213,7 @@ function keydownHandler(event) {
             }
             break;
         case "c":
-            coinMode = !coinMode;
-            if(coinMode){
-                setSearchLightCamera();
-                coin.move();
-            } else {
-                setFreeRoamCamera();
-                coin.hide();
-            }
+            toggleCoinMode();
             break;
         case "d":
             lightMoving = -1;
@@ -302,6 +297,19 @@ function keyupHandler(event) {
     }
 }
 
+function toggleCoinMode(){
+    coinMode = !coinMode;
+    if(coinMode){
+        setSearchLightCamera();
+        coin.move();
+        coinCount = 0;
+        coinModeFeedback.innerText = "Coins: " + coinCount;
+    } else {
+        setFreeRoamCamera();
+        coin.hide();
+    }
+}
+
 function setFreeRoamCamera() {
     cameraButtons.forEach((button: HTMLButtonElement) => {
         button.className = "";
@@ -365,6 +373,8 @@ function update() {
     let distanceToCoin = Math.sqrt((boat.xPos - coin.xPos) ** 2 + (boat.zPos - coin.zPos) ** 2);
         if (distanceToCoin < 1) {
             coin.move();
+            coinCount++;
+            coinModeFeedback.innerText = "Coins: " + coinCount;
         }
     }
 
