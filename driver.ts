@@ -71,6 +71,9 @@ let camera:Camera;
 let frCamera:FreeRoam;
 let aspectRatio:number;
 
+// coin mode
+let coinCount:number;
+let coinMode:boolean;
 
 // initial setup
 window.onload = function init() {
@@ -118,6 +121,7 @@ window.onload = function init() {
 
     // basic light
     lightLevel = 0.35;
+    coinMode = false;
 
     // set up initial array of render objects
     water = new Water(0, 0);
@@ -198,15 +202,21 @@ function keydownHandler(event) {
         case "a":
             lightMoving = 1;
             break;
+        case "b":
+            if (!coinMode){
+                if (lightLevel > 1) {
+                    lightLevel = 0;
+                }
+            lightLevel += 0.05;
+            }
+            break;
+        case "c":
+            coinMode = !coinMode;
+            break;
         case "d":
             lightMoving = -1;
             break;
-        case "b":
-            if(lightLevel > 1){
-                lightLevel = 0;
-            }
-            lightLevel += 0.05;
-            break;
+
         case "e":
             if(camera === frCamera){
                 frCamera.changeDollyZoomBy(2);
@@ -218,13 +228,17 @@ function keydownHandler(event) {
             }
             break;
         case "h":
-            hazardLightA.toggleOnOff();
-            hazardLightB.toggleOnOff();
+            if(!coinMode){
+                hazardLightA.toggleOnOff();
+                hazardLightB.toggleOnOff();
+            }
             break;
         case "n":
-            leftNavLight.toggleOnOff();
-            rightNavLight.toggleOnOff();
-            backNavLight.toggleOnOff();
+            if(!coinMode) {
+                leftNavLight.toggleOnOff();
+                rightNavLight.toggleOnOff();
+                backNavLight.toggleOnOff();
+            }
             break;
         case "q":
             if(camera === frCamera){
@@ -392,7 +406,13 @@ function render() {
 
         // draw the object
         gl.uniformMatrix4fv(umv, false, mv.flatten());
-        gl.uniform4fv(uAmbient, [lightLevel, lightLevel, lightLevel, 1]);
+
+        // set ambient light
+        if(coinMode){
+            gl.uniform4fv(uAmbient, [0.1, 0.1, 0.1, 1]);
+        } else {
+            gl.uniform4fv(uAmbient, [lightLevel, lightLevel, lightLevel, 1]);
+        }
 
         gl.drawArrays(gl.TRIANGLES, rOb.bufferIndex, rOb.getNumPoints());
     });
