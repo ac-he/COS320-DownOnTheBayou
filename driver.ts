@@ -17,6 +17,7 @@ import {SpotLight} from "./lights/spotLight.js";
 import {Light} from "./helpers/light.js";
 import {NavigationLight} from "./lights/navigationLight.js";
 import {HazardLight} from "./lights/hazardLight.js";
+import {Coin} from "./objects/coin.js";
 
 // webGL objects
 let gl:WebGLRenderingContext;
@@ -56,6 +57,7 @@ let rudder1:BoatRudder;
 let rudder2:BoatRudder;
 let rudder3:BoatRudder;
 let light:BoatLight;
+let coin:Coin;
 // these will also be added to a list for easy iteration over
 let objects:RenderObject[];
 
@@ -125,6 +127,7 @@ window.onload = function init() {
     rudder2 = new BoatRudder(boat, 0);
     rudder3 = new BoatRudder(boat, -0.3);
     light = new BoatLight(boat);
+    coin = new Coin(water);
 
     // put these objects into a list for easy iteration
     objects = [
@@ -134,7 +137,8 @@ window.onload = function init() {
         rudder1,
         rudder2,
         rudder3,
-        light
+        light,
+        coin,
     ];
     let sm = new SceneryManager(water);
     objects.push(...sm.getScenery());
@@ -335,6 +339,13 @@ function update() {
 
     hazardLightA.rotate();
     hazardLightB.rotate();
+
+    let distanceToCoin = Math.sqrt((boat.xPos - coin.xPos) ** 2 + (boat.zPos - coin.zPos) ** 2);
+    if(distanceToCoin < 1){
+        coin.move();
+    }
+
+    coin.rotateBy(2);
 
     requestAnimationFrame(render);
 }
