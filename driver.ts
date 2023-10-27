@@ -190,16 +190,16 @@ window.onload = function init() {
 function keydownHandler(event) {
     switch (event.key) {
         case "ArrowLeft":
-            turning = 1;
+            turning = 1.2;
             break;
         case "ArrowRight":
-            turning = -1;
+            turning = -1.2;
             break;
         case "ArrowDown":
-            moving = -1;
+            moving = -1.2;
             break;
         case "ArrowUp":
-            moving = 1;
+            moving = 1.2;
             break;
         case "a":
             lightMoving = 1;
@@ -266,10 +266,14 @@ function keydownHandler(event) {
             }
             break;
         case "1":
-            setFreeRoamCamera();
+            if (!coinMode) {
+                setFreeRoamCamera();
+            }
             break;
         case "2":
-            setOverheadCamera();
+            if (!coinMode) {
+                setOverheadCamera();
+            }
             break;
         case "3":
             setChaseCamera();
