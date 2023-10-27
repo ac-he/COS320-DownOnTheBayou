@@ -6,18 +6,26 @@ export class Coin extends RenderObject {
 
     water:Water;
 
+    yPos:number;
+
     constructor(water: Water) {
         super();
         this.water = water;
         this.move();
+        this.hide();
     }
     rotateBy(angle:number){
         this.direction += angle;
     }
 
+    hide():void {
+        this.yPos = -5;
+    }
+
     move(){
-        this.xPos = (Math.random() - 0.5) * this.water.size;
-        this.zPos = (Math.random() - 0.5) * this.water.size;
+        this.xPos = (Math.random() - 0.5) * this.water.size * 2;
+        this.yPos = 0.5;
+        this.zPos = (Math.random() - 0.5) * this.water.size * 2;
     }
 
     // Get the specular exponent associated with this object
@@ -28,7 +36,7 @@ export class Coin extends RenderObject {
     getTransformsSequence(): any[] {
         let ts:any[] = this.water.getTransformsSequence(); // use the boat's transform sequence first
         ts.push(
-            translate(this.xPos, 0.5, this.zPos),
+            translate(this.xPos, this.yPos, this.zPos),
             rotateY(this.direction) // rotate around this object's own center to make it turn
         );
         return ts;
