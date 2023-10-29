@@ -1,8 +1,9 @@
 body {
-    background-color: darkslategrey;
-    font-family: "Bradley Hand ITC", serif;
+    background-color: black;
+    font-family: "Book Antiqua", serif;
     color: antiquewhite;
     text-align: center;
+    font-size: 0.8em;
 }
 
 .row {
@@ -15,7 +16,7 @@ body {
 
 h1 {
     font-family: "Book Antiqua", serif;
-    font-size: xxx-large;
+    font-size: x-large;
     color: antiquewhite;
 }
 
@@ -27,7 +28,7 @@ button {
     background-color: antiquewhite;
     color: darkslategrey;
     font-family: "Book Antiqua", serif;
-    font-size: 1em;
+    font-size: 0.8em;
     margin: 5px;
 }
 

@@ -308,6 +308,10 @@ function toggleCoinMode(){
         coin.move();
         coinCount = 0;
         coinModeFeedback.innerText = "Coins: " + coinCount;
+        lights.forEach((light:Light)=> {
+            light.isOn = false;
+        });
+        spotLight.isOn = true;
     } else {
         setFreeRoamCamera();
         coin.hide();
