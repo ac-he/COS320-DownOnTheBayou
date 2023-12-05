@@ -2,7 +2,7 @@ import {initFileShaders, mat4, vec4} from "./helperfunctions.js";
 import {RenderObject} from "./renderObject.js";
 
 
-export abstract class glContext {
+export abstract class GLContext {
 
     protected canvas:HTMLCanvasElement;
     protected gl:WebGLRenderingContext;
@@ -27,8 +27,7 @@ export abstract class glContext {
     constructor(canvas:HTMLCanvasElement) {
         this.canvas = canvas;
         this.gl = this.canvas.getContext('webgl2') as WebGLRenderingContext;
-        this.program = initFileShaders(this.gl, "../shaders/vertexShader.glsl",
-            "../shaders/fragmentShader.glsl");
+        this.program = this.getFileShaders();
         this.gl.useProgram(this.program);
 
         // set up uniform views

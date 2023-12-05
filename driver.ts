@@ -19,9 +19,15 @@ import {NavigationLight} from "./lights/navigationLight.js";
 import {HazardLight} from "./lights/hazardLight.js";
 import {Coin} from "./objects/coin.js";
 import {RegularGLContext} from "./gl-contexts/RegularGLContext.js";
+import {LayeredDepthGLContext} from "./gl-contexts/layeredDepthGLContext.js";
+import {AccumulationDepthGLContext} from "./gl-contexts/accumulationDepthGLContext.js";
+import {GLContext} from "./helpers/glContext.js";
 
-// webGL objects
+// webGL contexts
 let regularGLContext: RegularGLContext;
+let ldofGLContext: LayeredDepthGLContext;
+let abGLContext: AccumulationDepthGLContext;
+
 //html elements
 let cameraButtons: HTMLButtonElement[];
 let cameraControlFeedback: HTMLDivElement;
@@ -64,15 +70,30 @@ let lightLevel:number;
 let coinCount: number;
 let coinMode: boolean;
 
+// to keep track of the page mode
+let isDepthEffects:boolean;
+
 // initial setup
 window.onload = function init() {
+    // get mode/what html is being viewed by checking the page's name
+    isDepthEffects = !!window.location.pathname.match("DepthOfField");
+
     // set up canvas
-    let canvas = document.getElementById("gl-canvas") as HTMLCanvasElement;
-    regularGLContext = new RegularGLContext(canvas);
-    // todo catch error if the context is not there
-    // if (!gl) {
-    //     alert("WebGL isn't available");
-    // }
+    if(isDepthEffects){
+        let canvas = document.getElementById("gl-canvas-ab") as HTMLCanvasElement;
+        abGLContext = new AccumulationDepthGLContext(canvas);
+        canvas = document.getElementById("gl-canvas-ldof") as HTMLCanvasElement;
+        ldofGLContext = new LayeredDepthGLContext(canvas);
+        if (!abGLContext || !ldofGLContext) {
+            alert("WebGL isn't available");
+        }
+    } else {
+        let canvas = document.getElementById("gl-canvas") as HTMLCanvasElement;
+        regularGLContext = new RegularGLContext(canvas);
+        if (!regularGLContext) {
+            alert("WebGL isn't available");
+        }
+    }
 
     // create event listeners to deal with keyboard input
     window.addEventListener("keydown", keydownHandler);
@@ -147,8 +168,15 @@ window.onload = function init() {
     // create all the objects
     makeObjectsAndBuffer();
 
-    // TODO GL use
-    aspectRatio = regularGLContext.getAspectRatio();
+    if(isDepthEffects){
+        if(ldofGLContext.getAspectRatio() != abGLContext.getAspectRatio()){
+            alert("GL Contexts have different aspect ratios.");
+        } else {
+            aspectRatio = ldofGLContext.getAspectRatio();
+        }
+    } else {
+        aspectRatio = regularGLContext.getAspectRatio();
+    }
     frCamera = new FreeRoam(boat, aspectRatio);
     setFreeRoamCamera();
 
@@ -159,15 +187,19 @@ function keydownHandler(event) {
     switch (event.key) {
         case "ArrowLeft":
             turning = 1.2;
+            event.preventDefault();
             break;
         case "ArrowRight":
             turning = -1.2;
+            event.preventDefault();
             break;
         case "ArrowDown":
             moving = -1.2;
+            event.preventDefault();
             break;
         case "ArrowUp":
             moving = 1.2;
+            event.preventDefault();
             break;
         case "a":
             lightMoving = 1;
@@ -360,19 +392,27 @@ function update() {
 }
 
 function render() {
-    // TODO GL use
+    if(isDepthEffects){
+        renderWithContext(abGLContext);
+        renderWithContext(ldofGLContext);
+    } else {
+        renderWithContext(regularGLContext);
+    }
+}
+
+function renderWithContext(context:GLContext):void {
     // clear out old color and depth info
-    regularGLContext.clear();
+    context.clear();
 
     // set up projection matrix
     let p: mat4 = camera.getPerspectiveMat();
-    regularGLContext.setUProj(p);
+    context.setUProj(p);
 
     // set up model view matrix
     let mv: mat4 = camera.getLookAtMat();
     mv = mv.mult(translate(0, 0, 0));
     let commonMat: mat4 = mv;
-    regularGLContext.setUMV(p);
+    context.setUMV(p);
 
     let lightList: number[] = [];
     let lightCount: number = 0;
@@ -382,10 +422,10 @@ function render() {
             lightCount++;
         }
     });
-    regularGLContext.setLights(lightList,lightCount);
+    context.setLights(lightList,lightCount);
 
     // bind buffer
-    regularGLContext.bindBuffer();
+    context.bindBuffer();
 
     // send over triangles, one object at a time
     objects.forEach((rOb: RenderObject) => {
@@ -399,16 +439,16 @@ function render() {
         });
 
         // draw the object
-        regularGLContext.setUMV(mv)
+        context.setUMV(mv)
 
         // set ambient light
         if (coinMode) {
-            regularGLContext.setAmbientLight(new vec4(0.1, 0.1, 0.1, 1));
+            context.setAmbientLight(new vec4(0.1, 0.1, 0.1, 1));
         } else {
-            regularGLContext.setAmbientLight(new vec4(lightLevel, lightLevel, lightLevel, 1));
+            context.setAmbientLight(new vec4(lightLevel, lightLevel, lightLevel, 1));
         }
 
-        regularGLContext.drawTriangles(rOb);
+        context.drawTriangles(rOb);
 
     });
 }
@@ -435,6 +475,11 @@ function makeObjectsAndBuffer() {
     })
 
     //bind and buffer all points
-    regularGLContext.bindAndBufferPoints(allPoints);
+    if(isDepthEffects){
+        abGLContext.bindAndBufferPoints(allPoints);
+        ldofGLContext.bindAndBufferPoints(allPoints);
+    } else {
+        regularGLContext.bindAndBufferPoints(allPoints);
+    }
 
 }
