@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Depth Of Field Example</title>
+
+    <script type="module" src="../driver.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+</head>
+<body>
+    <canvas id="gl-canvas-ldof" width="500" height=500%>
+        Sorry; your web browser doesn't support HTML5's canvas element.
+    </canvas>
+
+    <canvas id="gl-canvas-ab" width="500" height=500%>
+        Sorry; your web browser doesn't support HTML5's canvas element.
+    </canvas>
+
+    <div>
+        <h3>Controls</h3>
+        <table>
+            <tr>
+                <th>Rotate right</th>
+                <td>Right arrow</td>
+            </tr>
+            <tr>
+                <th>Rotate left</th>
+                <td>Left arrow</td>
+            </tr>
+            <tr>
+                <th>Move forward</th>
+                <td>Up arrow</td>
+            </tr>
+            <tr>
+                <th>Move backward</th>
+                <td>Down arrow</td>
+            </tr>
+            <tr>
+                <th>Point light to the right</th>
+                <td>D</td>
+            </tr>
+            <tr>
+                <th>Point light to the left</th>
+                <td>A</td>
+            </tr>
+            <tr>
+                <th>Raise ambient light level</th>
+                <td>B</td>
+            </tr>
+            <tr>
+                <th>Toggle search light</th>
+                <td>S</td>
+            </tr>
+            <tr>
+                <th>Toggle navigation lights</th>
+                <td>N</td>
+            </tr>
+            <tr>
+                <th>Toggle hazard lights</th>
+                <td>H</td>
+            </tr>
+        </table>
+        <h3>Coin Mode</h3>
+        Press C to start Coin Mode. Can you track down the coin in the dark, using only the search light?
+        (Cameras 1 and 2 unavailable.)
+        <div id="coin-mode-feedback"></div>
+            <h3>Cameras</h3>
+            <button id="free-roam" class="selected">Free Roam [1]</button>
+            <button id="overhead">Overhead [2]</button>
+            </br>
+            <button id="chase">Chase [3]</button>
+            <button id="search-light">Search Light [4]</button>
+        <div id="camera-control-feedback">
+
+        </div>
+    </div>
+</body>

@@ -1,6 +1,6 @@
 "use strict"
 
-import {vec4, mat4, translate, initFileShaders} from './helpers/helperfunctions.js';
+import {vec4, mat4, translate} from './helpers/helperfunctions.js';
 import {BoatBody} from "./objects/boatBody.js";
 import {Water} from "./objects/water.js";
 import {BoatFan} from "./objects/boatFan.js"
@@ -18,29 +18,14 @@ import {Light} from "./helpers/light.js";
 import {NavigationLight} from "./lights/navigationLight.js";
 import {HazardLight} from "./lights/hazardLight.js";
 import {Coin} from "./objects/coin.js";
+import {RegularGLContext} from "./gl-contexts/RegularGLContext.js";
 
 // webGL objects
-let gl: WebGLRenderingContext;
-let canvas: HTMLCanvasElement;
-let program: WebGLProgram;
-let bufferId: WebGLBuffer;
+let regularGLContext: RegularGLContext;
+//html elements
 let cameraButtons: HTMLButtonElement[];
 let cameraControlFeedback: HTMLDivElement;
 let coinModeFeedback: HTMLDivElement;
-
-// shader variables
-let umv: WebGLUniformLocation; // model_view uniform
-let uproj: WebGLUniformLocation; // projection uniform
-let vPosition: GLint; // vPosition vector
-let vColor: GLint; // vColor vector
-let vNormal: GLint; // vNormal vector
-let vSpecular: GLint;
-let vSpecularExp: GLint;
-let uAmbient: WebGLUniformLocation;
-// light controls
-let lightLevel: number;
-let uLights: WebGLUniformLocation;
-let uLightCount: WebGLUniformLocation;
 
 let spotLight: SpotLight;
 let leftNavLight: NavigationLight;
@@ -72,6 +57,9 @@ let camera: Camera;
 let frCamera: FreeRoam;
 let aspectRatio: number;
 
+// keep track of ambient light level
+let lightLevel:number;
+
 // coin mode
 let coinCount: number;
 let coinMode: boolean;
@@ -79,23 +67,12 @@ let coinMode: boolean;
 // initial setup
 window.onload = function init() {
     // set up canvas
-    canvas = document.getElementById("gl-canvas") as HTMLCanvasElement;
-    gl = canvas.getContext('webgl2') as WebGLRenderingContext;
-    if (!gl) {
-        alert("WebGL isn't available");
-    }
-
-    // compile shaders
-    program = initFileShaders(gl, "../shaders/vertexShader.glsl",
-        "../shaders/fragmentShader.glsl");
-    gl.useProgram(program); //and we want to use that program for our rendering
-
-    // set up uniform views
-    umv = gl.getUniformLocation(program, "uModelView");
-    uproj = gl.getUniformLocation(program, "uProjection");
-    uAmbient = gl.getUniformLocation(program, "uAmbientLight");
-    uLights = gl.getUniformLocation(program, "uLightList");
-    uLightCount = gl.getUniformLocation(program, "uLightCount");
+    let canvas = document.getElementById("gl-canvas") as HTMLCanvasElement;
+    regularGLContext = new RegularGLContext(canvas);
+    // todo catch error if the context is not there
+    // if (!gl) {
+    //     alert("WebGL isn't available");
+    // }
 
     // create event listeners to deal with keyboard input
     window.addEventListener("keydown", keydownHandler);
@@ -170,19 +147,10 @@ window.onload = function init() {
     // create all the objects
     makeObjectsAndBuffer();
 
-    // set up the viewport
-    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-
-    // create the initial camera
-    aspectRatio = canvas.clientWidth / canvas.clientHeight
+    // TODO GL use
+    aspectRatio = regularGLContext.getAspectRatio();
     frCamera = new FreeRoam(boat, aspectRatio);
     setFreeRoamCamera();
-
-    // set up background
-    gl.clearColor(0, 0, 0.2, 1);
-
-    // configure so that object overlap corresponds to depth
-    gl.enable(gl.DEPTH_TEST);
 
     window.setInterval(update, 16); // targeting 60fps
 };
@@ -392,19 +360,19 @@ function update() {
 }
 
 function render() {
+    // TODO GL use
     // clear out old color and depth info
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    regularGLContext.clear();
 
     // set up projection matrix
     let p: mat4 = camera.getPerspectiveMat();
-    gl.uniformMatrix4fv(uproj, false, p.flatten());
+    regularGLContext.setUProj(p);
 
     // set up model view matrix
     let mv: mat4 = camera.getLookAtMat();
     mv = mv.mult(translate(0, 0, 0));
     let commonMat: mat4 = mv;
-
-    gl.uniformMatrix4fv(umv, false, mv.flatten());
+    regularGLContext.setUMV(p);
 
     let lightList: number[] = [];
     let lightCount: number = 0;
@@ -414,11 +382,10 @@ function render() {
             lightCount++;
         }
     });
-    gl.uniform1fv(uLights, lightList);
-    gl.uniform1i(uLightCount, lightCount);
+    regularGLContext.setLights(lightList,lightCount);
 
     // bind buffer
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
+    regularGLContext.bindBuffer();
 
     // send over triangles, one object at a time
     objects.forEach((rOb: RenderObject) => {
@@ -432,16 +399,16 @@ function render() {
         });
 
         // draw the object
-        gl.uniformMatrix4fv(umv, false, mv.flatten());
+        regularGLContext.setUMV(mv)
 
         // set ambient light
         if (coinMode) {
-            gl.uniform4fv(uAmbient, [0.1, 0.1, 0.1, 1]);
+            regularGLContext.setAmbientLight(new vec4(0.1, 0.1, 0.1, 1));
         } else {
-            gl.uniform4fv(uAmbient, [lightLevel, lightLevel, lightLevel, 1]);
+            regularGLContext.setAmbientLight(new vec4(lightLevel, lightLevel, lightLevel, 1));
         }
 
-        gl.drawArrays(gl.TRIANGLES, rOb.bufferIndex, rOb.getNumPoints());
+        regularGLContext.drawTriangles(rOb);
 
     });
 }
@@ -468,39 +435,6 @@ function makeObjectsAndBuffer() {
     })
 
     //bind and buffer all points
-    bufferId = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(allPoints), gl.STATIC_DRAW);
+    regularGLContext.bindAndBufferPoints(allPoints);
 
-    // position            color                    normal
-    //  x   y   z     w      r     g     b     a      x     y     z     w
-    // 0-3 4-7 8-11 12-15  16-19 20-23 24-27 28-31  32-35 36-39 40-43 44-47
-    // specularColor             specularExponent
-    //   r     g     b     a      r
-    // 48-51 52-55 56-59 60-63  64-67
-
-    // vPosition
-    vPosition = gl.getAttribLocation(program, "vPosition");
-    gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 68, 0);
-    gl.enableVertexAttribArray(vPosition);
-
-    // vColor
-    vColor = gl.getAttribLocation(program, "vColor");
-    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 68, 16);
-    gl.enableVertexAttribArray(vColor);
-
-    // vNormal
-    vNormal = gl.getAttribLocation(program, "vNormal");
-    gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 68, 32);
-    gl.enableVertexAttribArray(vNormal);
-
-    // vSpecular
-    vSpecular = gl.getAttribLocation(program, "vSpecularColor");
-    gl.vertexAttribPointer(vSpecular, 4, gl.FLOAT, false, 68, 48);
-    gl.enableVertexAttribArray(vSpecular);
-
-    // vSpecularExp
-    vSpecularExp = gl.getAttribLocation(program, "vSpecularExponent");
-    gl.vertexAttribPointer(vSpecularExp, 4, gl.FLOAT, false, 68, 64);
-    gl.enableVertexAttribArray(vSpecularExp);
 }
