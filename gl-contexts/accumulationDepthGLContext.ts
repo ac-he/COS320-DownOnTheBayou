@@ -4,8 +4,8 @@ import {initFileShaders} from "../helpers/helperfunctions.js";
 
 export class AccumulationDepthGLContext extends GLContext {
     getFileShaders():WebGLProgram {
-        return initFileShaders(this.gl, "../shaders/vertexShader.glsl",
-            "../shaders/fragmentShader.glsl");
+        return initFileShaders(this.gl, "../shaders/ab-vertexShader.glsl",
+            "../shaders/ab-fragmentShader.glsl");
     }
 
 }
