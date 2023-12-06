@@ -5,10 +5,15 @@ import {BoatLight} from "../objects/boatLight.js";
 export class SearchLightCamera extends Camera {
 
     boatLight:BoatLight;
+    cameraHeight:number;
+    viewOffset:number;
 
     constructor(boatLight:BoatLight, aspectRatio:number) {
         super(aspectRatio);
         this.boatLight = boatLight;
+        this.cameraHeight = 1.1; // height of the camera above the water
+        this.viewOffset = 0.3; // how far forward on the boat to locate the camera
+        // (should be near the search light)
     }
 
     /* ~~~ Search Light Camera's LookAt Matrix ~~~
@@ -20,51 +25,9 @@ export class SearchLightCamera extends Camera {
     *   in a forward direction.
     */
     getLookAtMat(): mat4 {
-        let cameraHeight:number = 1.1; // height of the camera above the water
-        let viewOffset:number = 0.3; // how far forward on the boat to locate the camera
-                                    // (should be near the search light)
-
-        // locate the eye above the boat, but rotated to match the direction of the boat
-        let eye:vec4 = new vec4(
-            // the camera is located at the boat position...
-            this.boatLight.boat.xPos
-                // ...offset by the specified amount...
-                - viewOffset
-                // ...in the direction of the boat
-                * Math.sin(this.boatLight.boat.direction * Math.PI / 180),
-            // locate the camera 30 units above the water
-            cameraHeight,
-            // the camera is located at the boat position...
-                this.boatLight.boat.zPos
-                // ...offset by the specified amount...
-                - viewOffset
-                // ...in the direction of the boat
-                * Math.cos(this.boatLight.boat.direction * Math.PI / 180),
-            1
-        );
-
-        // look at the location just in front of the search light
-        let at:vec4 = new vec4(
-            // the camera is located at the boat position...
-            this.boatLight.boat.xPos
-                // ...offset by the specified amount, and shifted forward slightly...
-                - (viewOffset - 1)
-                // ...in the direction of the boat light...as well as the boat it is attached to
-                * Math.sin((this.boatLight.direction + this.boatLight.boat.direction) * Math.PI / 180),
-            // locate the camera 30 units above the water
-            cameraHeight,
-            /// the camera is located at the boat position...
-            this.boatLight.boat.zPos
-                // ...offset by the specified amount, and shifted forward slightly...
-                - (viewOffset - 1)
-                // ...in the direction of the boat light...as well as the boat it is attached to
-                * Math.cos((this.boatLight.direction + this.boatLight.boat.direction) * Math.PI / 180),
-            1
-        );
-
-        // up is always going to be in the pos Y direction
-        let up:vec4 = new vec4(0, 1, 0, 0); // up
-
+        let eye:vec4 = this.getEye();
+        let at:vec4 = this.getAt();
+        let up:vec4 = this.getUp();
         return lookAt(eye, at, up);
     }
 
@@ -75,6 +38,53 @@ export class SearchLightCamera extends Camera {
     getPerspectiveMat(): mat4 {
         // lens zoom controls the field of view
         return perspective(45, this.aspectRatio, 1, 100);
+    }
+
+    getAt(): vec4 {
+        // look at the location just in front of the search light
+        return new vec4(
+            // the camera is located at the boat position...
+            this.boatLight.boat.xPos
+            // ...offset by the specified amount, and shifted forward slightly...
+            - (this.viewOffset - 1)
+            // ...in the direction of the boat light...as well as the boat it is attached to
+            * Math.sin((this.boatLight.direction + this.boatLight.boat.direction) * Math.PI / 180),
+            // locate the camera 30 units above the water
+            this.cameraHeight,
+            /// the camera is located at the boat position...
+            this.boatLight.boat.zPos
+            // ...offset by the specified amount, and shifted forward slightly...
+            - (this.viewOffset - 1)
+            // ...in the direction of the boat light...as well as the boat it is attached to
+            * Math.cos((this.boatLight.direction + this.boatLight.boat.direction) * Math.PI / 180),
+            1
+        );
+    }
+
+    getEye(): vec4 {
+        // locate the eye above the boat, but rotated to match the direction of the boat
+        return new vec4(
+            // the camera is located at the boat position...
+            this.boatLight.boat.xPos
+            // ...offset by the specified amount...
+            - this.viewOffset
+            // ...in the direction of the boat
+            * Math.sin(this.boatLight.boat.direction * Math.PI / 180),
+            // locate the camera 30 units above the water
+            this.cameraHeight,
+            // the camera is located at the boat position...
+            this.boatLight.boat.zPos
+            // ...offset by the specified amount...
+            - this.viewOffset
+            // ...in the direction of the boat
+            * Math.cos(this.boatLight.boat.direction * Math.PI / 180),
+            1
+        );
+    }
+
+    getUp(): vec4 {
+        // up is always going to be in the pos Y direction
+        return new vec4(0, 1, 0, 0); // up
     }
 
 }

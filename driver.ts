@@ -180,6 +180,9 @@ window.onload = function init() {
     frCamera = new FreeRoam(boat, aspectRatio);
     setFreeRoamCamera();
 
+    toggleCoinMode();
+    toggleCoinMode();
+
     window.setInterval(update, 16); // targeting 60fps
 };
 
@@ -303,18 +306,29 @@ function keyupHandler(event) {
 
 function toggleCoinMode(){
     coinMode = !coinMode;
-    if(coinMode){
+
+    let newLightLevel:number[];
+    if (coinMode) {
         setSearchLightCamera();
         coin.move();
         coinCount = 0;
         coinModeFeedback.innerText = "Coins: " + coinCount;
-        lights.forEach((light:Light)=> {
+        lights.forEach((light: Light) => {
             light.isOn = false;
         });
         spotLight.isOn = true;
+        newLightLevel = [0.1, 0.1, 0.1, 1.0];
     } else {
         setFreeRoamCamera();
         coin.hide();
+        newLightLevel = [lightLevel, lightLevel, lightLevel, 1];
+    }
+
+    if(isDepthEffects){
+        ldofGLContext.setAmbientLightAmount(newLightLevel);
+        abGLContext.setAmbientLightAmount(newLightLevel);
+    } else {
+        regularGLContext.setAmbientLightAmount(newLightLevel);
     }
 }
 
@@ -393,64 +407,11 @@ function update() {
 
 function render() {
     if(isDepthEffects){
-        renderWithContext(abGLContext);
-        renderWithContext(ldofGLContext);
+        abGLContext.render(lights, camera, objects);
+        ldofGLContext.render(lights, camera, objects);
     } else {
-        renderWithContext(regularGLContext);
+        regularGLContext.render(lights, camera, objects);
     }
-}
-
-function renderWithContext(context:GLContext):void {
-    // clear out old color and depth info
-    context.clear();
-
-    // set up projection matrix
-    let p: mat4 = camera.getPerspectiveMat();
-    context.setUProj(p);
-
-    // set up model view matrix
-    let mv: mat4 = camera.getLookAtMat();
-    mv = mv.mult(translate(0, 0, 0));
-    let commonMat: mat4 = mv;
-    context.setUMV(p);
-
-    let lightList: number[] = [];
-    let lightCount: number = 0;
-    lights.forEach((light: Light) => {
-        if (light.isOn) {
-            lightList.push(...light.getLightData(mv));
-            lightCount++;
-        }
-    });
-    context.setLights(lightList,lightCount);
-
-    // bind buffer
-    context.bindBuffer();
-
-    // send over triangles, one object at a time
-    objects.forEach((rOb: RenderObject) => {
-        // reset the transformation matrix
-        mv = commonMat;
-
-        // apply every transformation associated with this object
-        let transforms = rOb.getTransformsSequence();
-        transforms.forEach((transform) => {
-            mv = mv.mult(transform);
-        });
-
-        // draw the object
-        context.setUMV(mv)
-
-        // set ambient light
-        if (coinMode) {
-            context.setAmbientLight(new vec4(0.1, 0.1, 0.1, 1));
-        } else {
-            context.setAmbientLight(new vec4(lightLevel, lightLevel, lightLevel, 1));
-        }
-
-        context.drawTriangles(rOb);
-
-    });
 }
 
 function makeObjectsAndBuffer() {

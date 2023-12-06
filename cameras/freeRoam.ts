@@ -66,26 +66,9 @@ export class FreeRoam extends Camera {
     *   zoom parameter in the X and Z directions only. It also aims at the origin rather than at the boat.
     */
     getLookAtMat(): mat4 {
-        let eye:vec4;
-        let at:vec4;
-
-        // if the camera is centered on the boat...
-        if(this.boatCentered){
-            // move the camera towards/away from the boat as desired
-            eye = new vec4(this.boat.xPos, this.dollyZoom, this.boat.zPos - this.dollyZoom, 1);
-            // look at the boat
-            at = new vec4(this.boat.xPos, 0, this.boat.zPos, 1);
-        }
-        // if the camera is centered at the origin...
-        else {
-            // move the camera towards/away from origin as desired
-            eye = new vec4(0, this.dollyZoom, -this.dollyZoom, 1);
-            // look at the origin
-            at = new vec4(0, 0, 0, 1);
-        }
-
-        // up is always going to be in the pos Y direction
-        let up:vec4 = new vec4(0, 1, 0, 0) // up
+        let eye:vec4 = this.getEye();
+        let at:vec4 = this.getAt();
+        let up:vec4 = this.getUp();
 
         return lookAt(eye, at, up);
     }
@@ -98,6 +81,37 @@ export class FreeRoam extends Camera {
     getPerspectiveMat(): mat4 {
         // lens zoom controls the field of view
         return perspective(this.lensZoom, this.aspectRatio, 1, 100);
+    }
+
+    getAt(): vec4 {
+        // if the camera is centered on the boat..
+        if(this.boatCentered) {
+            // look at the boat
+            return new vec4(this.boat.xPos, 0, this.boat.zPos, 1);
+        }
+        // if the camera is centered at the origin...
+        else {
+            // look at the origin
+            return new vec4(0, 0, 0, 1);
+        }
+    }
+
+    getEye(): vec4 {
+        // if the camera is centered on the boat..
+        if(this.boatCentered){
+            // move the camera towards/away from the boat as desired
+            return new vec4(this.boat.xPos, this.dollyZoom, this.boat.zPos - this.dollyZoom, 1);
+        }
+        // if the camera is centered at the origin...
+        else {
+            // move the camera towards/away from origin as desired
+           return new vec4(0, this.dollyZoom, -this.dollyZoom, 1);
+        }
+    }
+
+    getUp(): vec4 {
+        // up is always going to be in the pos Y direction
+        return new vec4(0, 1, 0, 0) // up;
     }
 
 }

@@ -16,24 +16,9 @@ export class Overhead extends Camera {
     * The camera always aims directly down at the boat.
     */
     getLookAtMat(): mat4 {
-        // locate the eye above the boat, but rotated to match the direction of the boat
-        let eye:vec4 = new vec4(
-            // boat position
-            this.boat.xPos,
-            // locate the camera 20 units above the water. I picked this number because it allows for almost all of the
-            //      navigable map to be seen at any given angle.
-            20,
-            // boat position
-            this.boat.zPos,
-            1
-        );
-
-        // the canvas is always centered at the boat
-        let at:vec4 = new vec4(this.boat.xPos, 0, this.boat.zPos, 1);
-
-        // up is the direction that the boat is facing
-        let up:vec4 = new vec4(Math.sin(this.boat.direction * Math.PI / 180), 0, Math.cos(this.boat.direction * Math.PI / 180), 0) // up
-
+        let eye:vec4 = this.getEye();
+        let at:vec4 = this.getAt();
+        let up:vec4 = this.getUp();
         return lookAt(eye, at, up);
     }
 
@@ -44,6 +29,35 @@ export class Overhead extends Camera {
     getPerspectiveMat(): mat4 {
         // lens zoom controls the field of view
         return perspective(45, this.aspectRatio, 1, 100);
+    }
+
+    getAt(): vec4 {
+        // the canvas is always centered at the boat
+        return new vec4(this.boat.xPos, 0, this.boat.zPos, 1);;
+    }
+
+    getEye(): vec4 {
+        // locate the eye above the boat, but rotated to match the direction of the boat
+        return new vec4(
+            // boat position
+            this.boat.xPos,
+            // locate the camera 20 units above the water. I picked this number because it allows for almost all of the
+            //      navigable map to be seen at any given angle.
+            20,
+            // boat position
+            this.boat.zPos,
+            1
+        );
+    }
+
+    getUp(): vec4 {
+        // up is the direction that the boat is facing
+        return new vec4(
+            Math.sin(this.boat.direction * Math.PI / 180),
+            0,
+            Math.cos(this.boat.direction * Math.PI / 180),
+            0
+        ); // up
     }
 
 }

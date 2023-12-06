@@ -1,5 +1,7 @@
-import {initFileShaders, mat4, vec4} from "./helperfunctions.js";
+import {mat4, translate, vec4} from "./helperfunctions.js";
 import {RenderObject} from "./renderObject.js";
+import {Light} from "./light";
+import {Camera} from "./camera";
 
 
 export abstract class GLContext {
@@ -23,6 +25,8 @@ export abstract class GLContext {
 
     protected uLights: WebGLUniformLocation;
     protected uLightCount: WebGLUniformLocation;
+
+    public ambientLightLevel:number[];
 
     constructor(canvas:HTMLCanvasElement) {
         this.canvas = canvas;
@@ -51,37 +55,12 @@ export abstract class GLContext {
 
     abstract getFileShaders():WebGLProgram;
 
+    setAmbientLightAmount(level:number[]):void{
+        this.ambientLightLevel = level;
+    }
+
     getAspectRatio():number{
         return this.aspectRatio;
-    }
-
-    clear():void{
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-    }
-
-    setUProj(p:mat4):void{
-        this.gl.uniformMatrix4fv(this.uproj, false, p.flatten());
-    }
-
-    setUMV(mv:mat4):void{
-        this.gl.uniformMatrix4fv(this.umv, false, mv.flatten());
-    }
-
-    setLights(lightList:number[], lightCount:number):void{
-        this.gl.uniform1fv(this.uLights, lightList);
-        this.gl.uniform1i(this.uLightCount, lightCount);
-    }
-
-    bindBuffer():void{
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.bufferId);
-    }
-
-    setAmbientLight(level:vec4):void{
-        this.gl.uniform4fv(this.uAmbient, level);
-    }
-
-    drawTriangles(renderObject:RenderObject):void{
-        this.gl.drawArrays(this.gl.TRIANGLES, renderObject.bufferIndex, renderObject.getNumPoints());
     }
 
     bindAndBufferPoints(points:number[]):void{
@@ -121,4 +100,65 @@ export abstract class GLContext {
         this.gl.vertexAttribPointer(this.vSpecularExp, 4, this.gl.FLOAT, false, 68, 64);
         this.gl.enableVertexAttribArray(this.vSpecularExp);
     }
+
+    // parameters = Lights, camera, action!
+    render(lights:Light[], camera:Camera, objects:RenderObject[]):void{
+
+        // set up projection matrix
+        let p: mat4 = camera.getPerspectiveMat();
+
+        this.clearAndSetPerspective(p);
+
+        // set up model view matrix
+        let mv: mat4 = camera.getLookAtMat();
+        mv = mv.mult(translate(0, 0, 0));
+        let commonMat: mat4 = mv;
+
+        this.setLights(lights, mv);
+        this.draw(commonMat, objects);
+
+    }
+
+    private clearAndSetPerspective(p:mat4):void{
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        this.gl.uniformMatrix4fv(this.uproj, false, p.flatten());
+    }
+
+    private setLights(lights:Light[], mv:mat4):void{
+        let lightList:number[] = []
+        let lightCount:number = 0;
+        lights.forEach((light: Light) => {
+            if (light.isOn) {
+                lightList.push(...light.getLightData(mv));
+                lightCount++;
+            }
+        });
+        this.gl.uniform1fv(this.uLights, lightList);
+        this.gl.uniform1i(this.uLightCount, lightCount);
+        this.gl.uniform4fv(this.uAmbient, new Float32Array(this.ambientLightLevel));
+    }
+
+    private draw(commonMat:mat4, objects:RenderObject[]):void{
+        // bind buffer
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.bufferId);
+
+        let mv = commonMat
+        // send over triangles, one object at a time
+        objects.forEach((rOb: RenderObject) => {
+            // reset the transformation matrix
+            mv = commonMat;
+
+            // apply every transformation associated with this object
+            let transforms = rOb.getTransformsSequence();
+            transforms.forEach((transform) => {
+                mv = mv.mult(transform);
+            });
+
+            // draw the object
+            this.gl.uniformMatrix4fv(this.umv, false, mv.flatten());
+
+            this.gl.drawArrays(this.gl.TRIANGLES, rOb.bufferIndex, rOb.getNumPoints());
+        });
+    }
+
 }

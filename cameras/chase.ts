@@ -5,10 +5,16 @@ import {BoatBody} from "../objects/boatBody.js";
 export class Chase extends Camera {
 
     boat:BoatBody;
+    chaseOffset:number;
+    cameraHeight:number;
 
     constructor(boat:BoatBody, aspectRatio:number) {
         super(aspectRatio);
         this.boat = boat;
+
+        this.chaseOffset = 5; // how far behind the boat is the camera?
+        this.cameraHeight = 1.5;  // what is the height of the camera?
+        // I landed on these numbers because they look nice and do a good job of capturing the boat and the environment!
     }
 
     /* ~~~ Chase Camera's LookAt Matrix ~~~
@@ -21,35 +27,9 @@ export class Chase extends Camera {
     *   scene at eye-level.
     */
     getLookAtMat(): mat4 {
-        let chaseOffset:number = 5; // how far behind the boat is the camera?
-        let cameraHeight:number = 1.5;  // what is the height of the camera?
-        // I landed on these numbers because they look nice and do a good job of capturing the boat and the environment!
-
-        // locate the eye above the boat and behind it by the specified offset
-        let eye:vec4 = new vec4(
-            // boat position    // rotate to match direction and offset
-            this.boat.xPos - chaseOffset * Math.sin(this.boat.direction * Math.PI / 180),
-            // locate the camera at the specified height above the water
-            cameraHeight,
-            // boat position    // rotate to match direction and offset
-            this.boat.zPos - chaseOffset * Math.cos(this.boat.direction * Math.PI / 180),
-            1
-        );
-
-        // center the camera at the boat
-        let at:vec4 = new vec4(
-            // boat position
-            this.boat.xPos,
-            // locate the camera at the specified height above the water.
-            // Looking at the same height as the camera is what allows the boat to be seen at "eye level"
-            cameraHeight,
-            // boat position
-            this.boat.zPos,
-            1
-        );
-
-        // up is always going to be in the pos Y direction
-        let up:vec4 = new vec4(0, 1, 0, 0); // up
+        let eye:vec4 = this.getEye();
+        let at:vec4 = this.getAt();
+        let up:vec4 = this.getUp();
 
         return lookAt(eye, at, up);
     }
@@ -61,6 +41,37 @@ export class Chase extends Camera {
     getPerspectiveMat(): mat4 {
         // lens zoom controls the field of view
         return perspective(45, this.aspectRatio, 1, 100);
+    }
+
+    getAt(): vec4 {
+        // center the camera at the boat
+        return new vec4(
+            // boat position
+            this.boat.xPos,
+            // locate the camera at the specified height above the water.
+            // Looking at the same height as the camera is what allows the boat to be seen at "eye level"
+            this.cameraHeight,
+            // boat position
+            this.boat.zPos,
+            1);
+    }
+
+    getEye(): vec4 {
+        // locate the eye above the boat and behind it by the specified offset
+        return new vec4(
+            // boat position    // rotate to match direction and offset
+            this.boat.xPos - this.chaseOffset * Math.sin(this.boat.direction * Math.PI / 180),
+            // locate the camera at the specified height above the water
+            this.cameraHeight,
+            // boat position    // rotate to match direction and offset
+            this.boat.zPos - this.chaseOffset * Math.cos(this.boat.direction * Math.PI / 180),
+            1
+        );
+    }
+
+    getUp(): vec4 {
+        // up is always going to be in the pos Y direction
+        return new vec4(0, 1, 0, 0); // up
     }
 
 }
