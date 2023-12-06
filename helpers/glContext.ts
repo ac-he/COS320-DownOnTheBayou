@@ -1,4 +1,4 @@
-import {mat4, translate, vec4} from "./helperfunctions.js";
+import {initFileShaders, mat4, translate, vec4} from "./helperfunctions.js";
 import {RenderObject} from "./renderObject.js";
 import {Light} from "./light";
 import {Camera} from "./camera";
@@ -53,7 +53,11 @@ export abstract class GLContext {
         this.gl.enable(this.gl.DEPTH_TEST);
     }
 
-    abstract getFileShaders():WebGLProgram;
+    getFileShaders():WebGLProgram
+    {
+        return initFileShaders(this.gl, "../shaders/vertexShader.glsl",
+            "../shaders/fragmentShader.glsl");
+    }
 
     setAmbientLightAmount(level:number[]):void{
         this.ambientLightLevel = level;
@@ -119,12 +123,12 @@ export abstract class GLContext {
 
     }
 
-    private clearAndSetPerspective(p:mat4):void{
+    protected clearAndSetPerspective(p:mat4):void{
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
         this.gl.uniformMatrix4fv(this.uproj, false, p.flatten());
     }
 
-    private setLights(lights:Light[], mv:mat4):void{
+    protected setLights(lights:Light[], mv:mat4):void{
         let lightList:number[] = []
         let lightCount:number = 0;
         lights.forEach((light: Light) => {
@@ -138,7 +142,7 @@ export abstract class GLContext {
         this.gl.uniform4fv(this.uAmbient, new Float32Array(this.ambientLightLevel));
     }
 
-    private draw(commonMat:mat4, objects:RenderObject[]):void{
+    protected draw(commonMat:mat4, objects:RenderObject[], toFrameBuffer?:boolean):void{
         // bind buffer
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.bufferId);
 

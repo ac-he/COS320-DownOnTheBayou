@@ -1,6 +1,6 @@
 "use strict"
 
-import {vec4, mat4, translate} from './helpers/helperfunctions.js';
+import {vec4} from './helpers/helperfunctions.js';
 import {BoatBody} from "./objects/boatBody.js";
 import {Water} from "./objects/water.js";
 import {BoatFan} from "./objects/boatFan.js"
@@ -21,7 +21,6 @@ import {Coin} from "./objects/coin.js";
 import {RegularGLContext} from "./gl-contexts/RegularGLContext.js";
 import {LayeredDepthGLContext} from "./gl-contexts/layeredDepthGLContext.js";
 import {AccumulationDepthGLContext} from "./gl-contexts/accumulationDepthGLContext.js";
-import {GLContext} from "./helpers/glContext.js";
 
 // webGL contexts
 let regularGLContext: RegularGLContext;
@@ -180,8 +179,15 @@ window.onload = function init() {
     frCamera = new FreeRoam(boat, aspectRatio);
     setFreeRoamCamera();
 
+    // toggling coin mode on and off ensures that everything coin mode impacts (html, lighting, etc) gets set up properly
     toggleCoinMode();
     toggleCoinMode();
+
+    if(isDepthEffects){
+        abGLContext.setAperture(0.005);
+        abGLContext.setLightRayCount(10);
+        abGLContext.setFocalDistance(5);
+    }
 
     window.setInterval(update, 16); // targeting 60fps
 };
