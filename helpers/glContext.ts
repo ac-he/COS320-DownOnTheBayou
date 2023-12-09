@@ -7,7 +7,7 @@ import {Camera} from "./camera";
 export abstract class GLContext {
 
     protected canvas:HTMLCanvasElement;
-    protected gl:WebGLRenderingContext;
+    protected gl:WebGL2RenderingContext;
     protected program:WebGLProgram;
     protected bufferId:WebGLBuffer;
 
@@ -30,7 +30,7 @@ export abstract class GLContext {
 
     constructor(canvas:HTMLCanvasElement) {
         this.canvas = canvas;
-        this.gl = this.canvas.getContext('webgl2') as WebGLRenderingContext;
+        this.gl = this.canvas.getContext('webgl2') as WebGL2RenderingContext;
         this.program = this.getFileShaders();
         this.gl.useProgram(this.program);
 
@@ -68,10 +68,18 @@ export abstract class GLContext {
     }
 
     bindAndBufferPoints(points:number[]):void{
+        this.gl.useProgram(this.program);
+
         this.bufferId = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.bufferId);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(points), this.gl.STATIC_DRAW);
 
+        this.setVertexArrays();
+    }
+
+    protected setVertexArrays(){
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.bufferId);
         // position            color                    normal
         //  x   y   z     w      r     g     b     a      x     y     z     w
         // 0-3 4-7 8-11 12-15  16-19 20-23 24-27 28-31  32-35 36-39 40-43 44-47
@@ -105,9 +113,17 @@ export abstract class GLContext {
         this.gl.enableVertexAttribArray(this.vSpecularExp);
     }
 
+    protected disableVertexArrays(){
+        // disable all after use
+        this.gl.disableVertexAttribArray(this.vPosition);
+        this.gl.disableVertexAttribArray(this.vColor);
+        this.gl.disableVertexAttribArray(this.vNormal);
+        this.gl.disableVertexAttribArray(this.vSpecular);
+        this.gl.disableVertexAttribArray(this.vSpecularExp);
+    }
+
     // parameters = Lights, camera, action!
     render(lights:Light[], camera:Camera, objects:RenderObject[]):void{
-
         // set up projection matrix
         let p: mat4 = camera.getPerspectiveMat();
 
@@ -124,6 +140,7 @@ export abstract class GLContext {
     }
 
     protected clearAndSetPerspective(p:mat4):void{
+        this.gl.clearColor(0, 0, 0.2, 1);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
         this.gl.uniformMatrix4fv(this.uproj, false, p.flatten());
     }
@@ -142,8 +159,8 @@ export abstract class GLContext {
         this.gl.uniform4fv(this.uAmbient, new Float32Array(this.ambientLightLevel));
     }
 
-    protected draw(commonMat:mat4, objects:RenderObject[], toFrameBuffer?:boolean):void{
-        // bind buffer
+    protected draw(commonMat:mat4, objects:RenderObject[]):void{
+
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.bufferId);
 
         let mv = commonMat
@@ -163,6 +180,14 @@ export abstract class GLContext {
 
             this.gl.drawArrays(this.gl.TRIANGLES, rOb.bufferIndex, rOb.getNumPoints());
         });
+    }
+
+    protected setupTextureBuffer(tex:WebGLTexture){
+        this.gl.bindTexture(this.gl.TEXTURE_2D, tex);
+
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.canvas.width, this.canvas.height, 0,
+            this.gl.RGBA, this.gl.UNSIGNED_BYTE, null); //null data for now
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
     }
 
 }

@@ -31,6 +31,12 @@ let abGLContext: AccumulationDepthGLContext;
 let cameraButtons: HTMLButtonElement[];
 let cameraControlFeedback: HTMLDivElement;
 let coinModeFeedback: HTMLDivElement;
+let apertureSlider: HTMLInputElement;
+let focalDepthSlider: HTMLInputElement;
+let lightRaysSlider: HTMLInputElement;
+let apertureFeedback: HTMLDivElement;
+let focalDepthFeedback:HTMLDivElement;
+let lightRayFeedback:HTMLDivElement;
 
 let spotLight: SpotLight;
 let leftNavLight: NavigationLight;
@@ -113,6 +119,19 @@ window.onload = function init() {
     cameraControlFeedback = document.getElementById("camera-control-feedback") as HTMLDivElement;
     coinModeFeedback = document.getElementById("coin-mode-feedback") as HTMLDivElement;
 
+    if(isDepthEffects){
+        apertureSlider = document.getElementById("aperture") as HTMLInputElement;
+        apertureSlider.addEventListener("change", handleDepthEffectChange);
+        focalDepthSlider = document.getElementById("focal-distance") as HTMLInputElement;
+        focalDepthSlider.addEventListener("change", handleDepthEffectChange);
+        lightRaysSlider = document.getElementById("light-rays") as HTMLInputElement;
+        lightRaysSlider.addEventListener("change", handleDepthEffectChange);
+
+        apertureFeedback = document.getElementById("aperture-feedback") as HTMLDivElement;
+        focalDepthFeedback = document.getElementById("focal-distance-feedback") as HTMLDivElement;
+        lightRayFeedback = document.getElementById("light-ray-feedback") as HTMLDivElement;
+    }
+
     // the boat is still to begin with
     moving = 0;
     turning = 0;
@@ -184,9 +203,7 @@ window.onload = function init() {
     toggleCoinMode();
 
     if(isDepthEffects){
-        abGLContext.setAperture(0.005);
-        abGLContext.setLightRayCount(10);
-        abGLContext.setFocalDistance(5);
+        handleDepthEffectChange();
     }
 
     window.setInterval(update, 16); // targeting 60fps
@@ -219,6 +236,12 @@ function keydownHandler(event) {
                     lightLevel = 0;
                 }
                 lightLevel += 0.05;
+            }
+            if(isDepthEffects){
+                abGLContext.setAmbientLightAmount(new vec4(lightLevel, lightLevel, lightLevel, 1.0));
+                ldofGLContext.setAmbientLightAmount(new vec4(lightLevel, lightLevel, lightLevel, 1.0));
+            } else {
+                regularGLContext.setAmbientLightAmount(new vec4(lightLevel, lightLevel, lightLevel, 1.0));
             }
             break;
         case "c":
@@ -378,6 +401,18 @@ function setSearchLightCamera() {
     cameraButtons[3].className = "selected";
     cameraControlFeedback.innerText = "";
     camera = new SearchLightCamera(light, aspectRatio);
+}
+
+function handleDepthEffectChange(){
+    abGLContext.setFocalDistance(parseInt(focalDepthSlider.value));
+    abGLContext.setAperture(parseInt(apertureSlider.value));
+    abGLContext.setLightRayCount(parseInt(lightRaysSlider.value));
+
+    apertureFeedback.innerText = abGLContext.aperture.toString();
+    focalDepthFeedback.innerText = abGLContext.focalDistance.toString();
+    lightRayFeedback.innerText = abGLContext.lightRays.toString();
+
+    requestAnimationFrame(render);
 }
 
 function update() {

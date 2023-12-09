@@ -9,70 +9,113 @@
     <link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
 <body>
-    <canvas id="gl-canvas-ldof" width="500" height=500%>
-        Sorry; your web browser doesn't support HTML5's canvas element.
-    </canvas>
+    <h1>Depth of Field/Bokeh Effects</h1>
+    <p>COS320 Final Project</p>
+    <table>
+        <tr>
+            <td>
+                <canvas id="gl-canvas-ldof" width="500" height=500>
+                    Sorry; your web browser doesn't support HTML5's canvas element.
+                </canvas>
+            </td>
+            <td>
+                <div>
+                    <h3>Controls</h3>
+                    <table>
+                        <tr>
+                            <th>Rotate right</th>
+                            <td>Right arrow</td>
+                        </tr>
+                        <tr>
+                            <th>Rotate left</th>
+                            <td>Left arrow</td>
+                        </tr>
+                        <tr>
+                            <th>Move forward</th>
+                            <td>Up arrow</td>
+                        </tr>
+                        <tr>
+                            <th>Move backward</th>
+                            <td>Down arrow</td>
+                        </tr>
+                        <tr>
+                            <th>Point light to the right</th>
+                            <td>D</td>
+                        </tr>
+                        <tr>
+                            <th>Point light to the left</th>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <th>Raise ambient light level</th>
+                            <td>B</td>
+                        </tr>
+                        <tr>
+                            <th>Toggle search light</th>
+                            <td>S</td>
+                        </tr>
+                        <tr>
+                            <th>Toggle navigation lights</th>
+                            <td>N</td>
+                        </tr>
+                        <tr>
+                            <th>Toggle hazard lights</th>
+                            <td>H</td>
+                        </tr>
+                    </table>
+                    <h3>Coin Mode</h3>
+                    Press C to start Coin Mode. Can you track down the coin in the dark, using only the search light?
+                    (Cameras 1 and 2 unavailable.)
+                    <div id="coin-mode-feedback"></div>
+                    <h3>Cameras</h3>
+                    <button id="free-roam" class="selected">Free Roam [1]</button>
+                    <button id="overhead">Overhead [2]</button>
+                    </br>
+                    <button id="chase">Chase [3]</button>
+                    <button id="search-light">Search Light [4]</button>
+                    <div id="camera-control-feedback">
 
-    <canvas id="gl-canvas-ab" width="500" height=500%>
-        Sorry; your web browser doesn't support HTML5's canvas element.
-    </canvas>
-
-    <div>
-        <h3>Controls</h3>
-        <table>
-            <tr>
-                <th>Rotate right</th>
-                <td>Right arrow</td>
-            </tr>
-            <tr>
-                <th>Rotate left</th>
-                <td>Left arrow</td>
-            </tr>
-            <tr>
-                <th>Move forward</th>
-                <td>Up arrow</td>
-            </tr>
-            <tr>
-                <th>Move backward</th>
-                <td>Down arrow</td>
-            </tr>
-            <tr>
-                <th>Point light to the right</th>
-                <td>D</td>
-            </tr>
-            <tr>
-                <th>Point light to the left</th>
-                <td>A</td>
-            </tr>
-            <tr>
-                <th>Raise ambient light level</th>
-                <td>B</td>
-            </tr>
-            <tr>
-                <th>Toggle search light</th>
-                <td>S</td>
-            </tr>
-            <tr>
-                <th>Toggle navigation lights</th>
-                <td>N</td>
-            </tr>
-            <tr>
-                <th>Toggle hazard lights</th>
-                <td>H</td>
-            </tr>
-        </table>
-        <h3>Coin Mode</h3>
-        Press C to start Coin Mode. Can you track down the coin in the dark, using only the search light?
-        (Cameras 1 and 2 unavailable.)
-        <div id="coin-mode-feedback"></div>
-            <h3>Cameras</h3>
-            <button id="free-roam" class="selected">Free Roam [1]</button>
-            <button id="overhead">Overhead [2]</button>
-            </br>
-            <button id="chase">Chase [3]</button>
-            <button id="search-light">Search Light [4]</button>
-        <div id="camera-control-feedback">
-
-        </div>
-    </div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <canvas id="gl-canvas-ab" width="500" height=500%>
+                    Sorry; your web browser doesn't support HTML5's canvas element.
+                </canvas>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h2>Layered Depth of Field</h2>
+                <h3>Image Space Technique</h3>
+            </td>
+            <td>
+            </td>
+            <td>
+                <h2>Accumulation Buffer</h2>
+                <h3>Object Space Technique</h3>
+                <div>
+                    <h4>Aperture</h4>
+                    Size of the virtual lens.
+                    Manipulating this will change the size of the region that is in focus (???)<br>
+                    <input type="range" min="1" max="100" value="50" class="slider" id="aperture">
+                    <div id="aperture-feedback"></div>
+                </div>
+                <div>
+                    <h4>Focal Distance</h4>
+                    Distance between the camera and the focal point. <br>
+                    Manipulating this value will bring objects at different distances into focus.<br>
+                    <input type="range" min="1" max="300" value="10" class="slider" id="focal-distance">
+                    <div id="focal-distance-feedback"></div>
+                </div>
+                <div>
+                    <h4>Light Rays</h4>
+                    Number of light rays that pass through the virtual lens. <br>
+                    Essentially, this is how many slightly-offset images are sent to the accumulation buffer.<br>
+                    <input type="range" min="1" max="20" value="5" class="slider" id="light-rays">
+                    <div id="light-ray-feedback"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
 </body>

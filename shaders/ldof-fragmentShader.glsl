@@ -56,7 +56,7 @@ void main()
         }
     }
 
-    fColor = fColor.gbra;
+    //fColor = fColor.gbra;
 
     //make sure the alpha value remains at 1 after all the calculations
     fColor.a = 1.0;

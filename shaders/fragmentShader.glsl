@@ -12,12 +12,13 @@ in vec4 normal;
 in vec4 specularColor;
 in float specularExponent;
 
-out vec4 fColor;
+layout (location = 0) out vec4 fColor;
 
 void main()
 {
     // start with only the ambient term of the phong lighting equation
     vec4 amb = color * uAmbientLight;
+
     fColor = amb;
 
     for(int i = 0; i < uLightCount * 13; i+=13){
