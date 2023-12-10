@@ -13,6 +13,7 @@ export class AccumulationDepthGLContext extends GLContext {
 
     private uNumLightRays:WebGLUniformLocation;
     private uFragColorSampler:WebGLUniformLocation;
+    private uDepthSampler:WebGLUniformLocation;
 
     private squareBufferId:WebGLBuffer;
 
@@ -24,26 +25,46 @@ export class AccumulationDepthGLContext extends GLContext {
 
     private secondPassProgram:WebGLProgram;
 
+    private depthTexture:WebGLTexture;
+
     constructor(canvas:HTMLCanvasElement) {
         super(canvas);
 
         this.secondPassProgram = initFileShaders(this.gl, "../shaders/ab-vertexShader.glsl",
             "../shaders/ab-fragmentShader.glsl");
         this.gl.useProgram(this.secondPassProgram);
-        this.uFragColorSampler = this.gl.getUniformLocation(this.secondPassProgram, "uFragColorSampler")
+        this.uFragColorSampler = this.gl.getUniformLocation(this.secondPassProgram, "uFragColorSampler");
+        this.uDepthSampler = this.gl.getUniformLocation(this.secondPassProgram, "uDepthSampler");
 
         this.gl.useProgram(this.program);
         this.makeSquareAndBuffer();
 
+        this.gl.enable(this.gl.DEPTH_TEST);
+
         // set up textures we can render to
         this.texture = this.gl.createTexture();
         this.setupTextureBuffer(this.texture);
+        this.depthTexture = this.gl.createTexture();
+
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.depthTexture);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.DEPTH_COMPONENT32F, this.canvas.clientWidth,
+            this.canvas.clientHeight, 0, this.gl.DEPTH_COMPONENT, this.gl.FLOAT, null); //null data for now
+        //you have to specify all 4 filters to be able to read back out from a depth texture
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
 
         // set up frame buffer
         this.fb = this.gl.createFramebuffer();
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fb);
+
+        // add textures to frame buffer
         this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, this.texture,
             0);
+        this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.TEXTURE_2D, this.depthTexture,
+            0);
+
         this.gl.drawBuffers([this.gl.COLOR_ATTACHMENT0]);
     }
 
@@ -96,7 +117,6 @@ export class AccumulationDepthGLContext extends GLContext {
 
         //setting background color to black for render to screen
         this.gl.clearColor(1, 0, 0, 1.0);
-        //using default orthgraphic projection
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
         this.gl.enable(this.gl.DEPTH_TEST);
@@ -104,6 +124,10 @@ export class AccumulationDepthGLContext extends GLContext {
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
         this.gl.uniform1i(this.uFragColorSampler, 0);
+
+        this.gl.activeTexture(this.gl.TEXTURE1);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.depthTexture);
+        this.gl.uniform1i(this.uDepthSampler, 1);
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.squareBufferId);
 

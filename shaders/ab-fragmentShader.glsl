@@ -5,6 +5,7 @@ precision mediump float;
 in vec2 fTexCoord;
 
 uniform sampler2D uFragColorSampler;
+uniform sampler2D uDepthSampler;
 
 out vec4 fColor;
 
@@ -14,4 +15,6 @@ void main()
 
     fColor = color / 10.0;
     fColor = texture(uFragColorSampler, fTexCoord);
+
+    float depth = texture(uDepthSampler, fTexCoord).x;
 }
