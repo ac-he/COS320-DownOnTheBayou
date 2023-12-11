@@ -11,13 +11,13 @@ export class AccumulationDepthGLContext extends GLContext {
     aperture:number;
     focalDistance:number;
 
-    private uNumLightRays:WebGLUniformLocation;
-    private uFragColorSampler:WebGLUniformLocation;
+    private uFragColorSamplers:WebGLUniformLocation[];
     private uDepthSampler:WebGLUniformLocation;
 
     private squareBufferId:WebGLBuffer;
 
-    private texture:WebGLTexture;
+    private textures:WebGLTexture[];
+    private depthTexture:WebGLTexture;
     private fb:WebGLFramebuffer;
 
     private vPositionSquare:GLint;
@@ -25,27 +25,50 @@ export class AccumulationDepthGLContext extends GLContext {
 
     private secondPassProgram:WebGLProgram;
 
-    private depthTexture:WebGLTexture;
+    private activeTextures = [
+        this.gl.TEXTURE0,
+        this.gl.TEXTURE1,
+        this.gl.TEXTURE2,
+        this.gl.TEXTURE3,
+        this.gl.TEXTURE4,
+        this.gl.TEXTURE5,
+        this.gl.TEXTURE6,
+        this.gl.TEXTURE7,
+        this.gl.TEXTURE8,
+        this.gl.TEXTURE9,
+    ]
 
     constructor(canvas:HTMLCanvasElement) {
         super(canvas);
 
+        this.lightRays = 10;
+
         this.secondPassProgram = initFileShaders(this.gl, "../shaders/ab-vertexShader.glsl",
             "../shaders/ab-fragmentShader.glsl");
         this.gl.useProgram(this.secondPassProgram);
-        this.uFragColorSampler = this.gl.getUniformLocation(this.secondPassProgram, "uFragColorSampler");
+        this.uFragColorSamplers = [];
+        for(let i = 0; i < this.lightRays; i++){
+            this.uFragColorSamplers[i] = this.gl.getUniformLocation(this.secondPassProgram, `uFragColorSampler${i}`);
+        }
         this.uDepthSampler = this.gl.getUniformLocation(this.secondPassProgram, "uDepthSampler");
 
         this.gl.useProgram(this.program);
         this.makeSquareAndBuffer();
 
         this.gl.enable(this.gl.DEPTH_TEST);
+        this.gl.enable(this.gl.BLEND);
+        this.gl.blendFunc(this.gl.ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 
+        this.textures = [];
         // set up textures we can render to
-        this.texture = this.gl.createTexture();
-        this.setupTextureBuffer(this.texture);
-        this.depthTexture = this.gl.createTexture();
+        for(let i = 0; i < this.lightRays; i++){
+            let newTex:WebGLTexture = this.gl.createTexture()
+            this.textures.push(newTex);
+            this.setupTextureBuffer(newTex);
+        }
 
+        // set up depth texture
+        this.depthTexture = this.gl.createTexture();
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.depthTexture);
         this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.DEPTH_COMPONENT32F, this.canvas.clientWidth,
             this.canvas.clientHeight, 0, this.gl.DEPTH_COMPONENT, this.gl.FLOAT, null); //null data for now
@@ -59,18 +82,11 @@ export class AccumulationDepthGLContext extends GLContext {
         this.fb = this.gl.createFramebuffer();
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fb);
 
-        // add textures to frame buffer
-        this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, this.texture,
-            0);
+        // add depth texture to frame buffer
         this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.TEXTURE_2D, this.depthTexture,
             0);
 
         this.gl.drawBuffers([this.gl.COLOR_ATTACHMENT0]);
-    }
-
-    setLightRayCount(lightRays:number):void {
-        this.lightRays = 10;
-        this.gl.uniform1f(this.uNumLightRays, this.lightRays);
     }
 
     setAperture(aperture:number):void {
@@ -85,7 +101,6 @@ export class AccumulationDepthGLContext extends GLContext {
         // ----------------------------------
         // Part 1: Render Geometry to texture
         // ----------------------------------
-
         this.gl.useProgram(this.program);
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fb);
 
@@ -94,19 +109,50 @@ export class AccumulationDepthGLContext extends GLContext {
 
         this.gl.viewport(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
 
+        let object:vec4 = camera.getAt()//.subtract(camera.getEye());
+        object = object.normalize();
+        object = new vec4(
+            object[0] * this.focalDistance,
+            object[1] * this.focalDistance,
+            object[2] * this.focalDistance,
+            object[3],
+        )
+
+        let scaledAt:vec4 = object.subtract(camera.getEye());
+        let p_right:vec4 = (scaledAt.cross(camera.getUp()))
+        let p_up:vec4 = (scaledAt.cross(p_right))
+
         // // set up projection matrix
         let p: mat4 = camera.getPerspectiveMat();
         this.gl.uniformMatrix4fv(this.uproj, false, p.flatten());
 
-        let mv:mat4 = camera.getLookAtMat();
+        for(let i = 0; i < this.lightRays; i++){
+            this.gl.useProgram(this.program);
+            this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fb);
+            this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D,
+                this.textures[i], 0);
+            this.gl.clearColor(0.0, 0.0, 0.2, 1.0);
+            this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-        this.setLights(lights, mv);
+            let angle = i * 2 * Math.PI / this.lightRays;
+            let bokeh:vec4 = new vec4(
+                (p_right[0] * Math.cos(angle) + p_up[0] * Math.sin(angle)) * this.aperture,
+                (p_right[1] * Math.cos(angle) + p_up[1] * Math.sin(angle)) * this.aperture,
+                (p_right[2] * Math.cos(angle) + p_up[2] * Math.sin(angle)) * this.aperture,
+                (p_right[3] * Math.cos(angle) + p_up[3] * Math.sin(angle)) * this.aperture,
+            )
 
-        this.setVertexArrays();
+            // set up model view matrix
+            let mv: mat4 = lookAt(camera.getEye().add(bokeh), camera.getAt(), camera.getUp());
 
-        this.draw(mv, objects);
+            this.setLights(lights, mv);
 
-        this.disableVertexArrays();
+            this.setVertexArrays();
+
+            this.draw(mv, objects);
+
+            this.disableVertexArrays();
+        }
 
         // ----------------------------------
         // Part 2: Render Geometry to texture
@@ -121,13 +167,16 @@ export class AccumulationDepthGLContext extends GLContext {
 
         this.gl.enable(this.gl.DEPTH_TEST);
 
-        this.gl.activeTexture(this.gl.TEXTURE0);
-        this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
-        this.gl.uniform1i(this.uFragColorSampler, 0);
+        // read out of textures to set the texture uniforms for the shaders
+        for(let i = 0; i < this.lightRays; i++){
+            this.gl.activeTexture(this.activeTextures[i]);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, this.textures[i]);
+            this.gl.uniform1i(this.uFragColorSamplers[i], i);
+        }
 
-        this.gl.activeTexture(this.gl.TEXTURE1);
+        this.gl.activeTexture(this.gl.TEXTURE10);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.depthTexture);
-        this.gl.uniform1i(this.uDepthSampler, 1);
+        this.gl.uniform1i(this.uDepthSampler, 10);
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.squareBufferId);
 
@@ -186,9 +235,7 @@ export class AccumulationDepthGLContext extends GLContext {
         // disable after use
         this.gl.disableVertexAttribArray(this.vPositionSquare);
         this.gl.disableVertexAttribArray(this.vTexCoord);
-
     }
-
 }
 
 // let object:vec4 = camera.getAt()//.subtract(camera.getEye());

@@ -11,10 +11,10 @@ export class SceneryManager{
     }
 
     getScenery():RenderObject[]{
-        let extraWater = false;
-        let wayfindingTrees = false;
-        let extraTrees = false;
-        let marshPlants = false;
+        let extraWater = true;
+        let wayfindingTrees = true;
+        let extraTrees = true;
+        let marshPlants = true;
 
         let scenery: RenderObject[] = [];
 

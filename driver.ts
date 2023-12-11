@@ -33,10 +33,8 @@ let cameraControlFeedback: HTMLDivElement;
 let coinModeFeedback: HTMLDivElement;
 let apertureSlider: HTMLInputElement;
 let focalDepthSlider: HTMLInputElement;
-let lightRaysSlider: HTMLInputElement;
 let apertureFeedback: HTMLDivElement;
 let focalDepthFeedback:HTMLDivElement;
-let lightRayFeedback:HTMLDivElement;
 
 let spotLight: SpotLight;
 let leftNavLight: NavigationLight;
@@ -124,12 +122,9 @@ window.onload = function init() {
         apertureSlider.addEventListener("change", handleDepthEffectChange);
         focalDepthSlider = document.getElementById("focal-distance") as HTMLInputElement;
         focalDepthSlider.addEventListener("change", handleDepthEffectChange);
-        lightRaysSlider = document.getElementById("light-rays") as HTMLInputElement;
-        lightRaysSlider.addEventListener("change", handleDepthEffectChange);
 
         apertureFeedback = document.getElementById("aperture-feedback") as HTMLDivElement;
         focalDepthFeedback = document.getElementById("focal-distance-feedback") as HTMLDivElement;
-        lightRayFeedback = document.getElementById("light-ray-feedback") as HTMLDivElement;
     }
 
     // the boat is still to begin with
@@ -406,11 +401,9 @@ function setSearchLightCamera() {
 function handleDepthEffectChange(){
     abGLContext.setFocalDistance(parseInt(focalDepthSlider.value));
     abGLContext.setAperture(parseInt(apertureSlider.value));
-    abGLContext.setLightRayCount(parseInt(lightRaysSlider.value));
 
     apertureFeedback.innerText = abGLContext.aperture.toString();
     focalDepthFeedback.innerText = abGLContext.focalDistance.toString();
-    lightRayFeedback.innerText = abGLContext.lightRays.toString();
 
     requestAnimationFrame(render);
 }
