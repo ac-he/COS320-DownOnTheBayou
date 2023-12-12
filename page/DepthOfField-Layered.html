@@ -2,25 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Depth Of Field Example</title>
+    <title>Layered-Depth Rectangle Spreading Depth Of Field Example</title>
 
     <script type="module" src="../driver.js"></script>
 
     <link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
 <body>
-    <h1>Depth of Field/Bokeh Effects</h1>
+    <h1>Layered-Depth Rectangle Spreading Depth of Field/Bokeh Effects</h1>
     <p>COS320 Final Project</p>
     <table>
         <tr>
             <td>
-                <canvas id="gl-canvas-ldof" width="500" height=500>
+                <canvas id="gl-canvas" width="500" height=500>
                     Sorry; your web browser doesn't support HTML5's canvas element.
                 </canvas>
             </td>
             <td>
+                <canvas id="gl-canvas-ldof" width="500" height=500%>
+                    Sorry; your web browser doesn't support HTML5's canvas element.
+                </canvas>
+            </td>
+        </tr>
+        <tr>
+            <td>
                 <div>
-                    <h3>Controls</h3>
+                    <h2>Controls</h2>
                     <table>
                         <tr>
                             <th>Rotate right</th>
@@ -79,35 +86,8 @@
                 </div>
             </td>
             <td>
-                <canvas id="gl-canvas-ab" width="500" height=500%>
-                    Sorry; your web browser doesn't support HTML5's canvas element.
-                </canvas>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <h2>Layered Depth of Field</h2>
+                <h2>Layered-Depth Rectangle Spreading</h2>
                 <h3>Image Space Technique</h3>
-            </td>
-            <td>
-            </td>
-            <td>
-                <h2>Accumulation Buffer</h2>
-                <h3>Object Space Technique</h3>
-                <div>
-                    <h4>Aperture</h4>
-                    Size of the virtual lens.
-                    Manipulating this will change the size of the region that is in focus (???)<br>
-                    <input type="range" min="1" max="100" value="50" class="slider" id="aperture">
-                    <div id="aperture-feedback"></div>
-                </div>
-                <div>
-                    <h4>Focal Distance</h4>
-                    Distance between the camera and the focal point. <br>
-                    Manipulating this value will bring objects at different distances into focus.<br>
-                    <input type="range" min="1" max="300" value="10" class="slider" id="focal-distance">
-                    <div id="focal-distance-feedback"></div>
-                </div>
             </td>
         </tr>
     </table>

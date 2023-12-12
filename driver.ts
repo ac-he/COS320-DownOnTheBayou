@@ -74,20 +74,32 @@ let coinCount: number;
 let coinMode: boolean;
 
 // to keep track of the page mode
-let isDepthEffects:boolean;
+let accumulationMode:boolean;
+let layeredDepthMode:boolean;
 
 // initial setup
 window.onload = function init() {
     // get mode/what html is being viewed by checking the page's name
-    isDepthEffects = !!window.location.pathname.match("DepthOfField");
+    accumulationMode = !!window.location.pathname.match("Accumulation");
+    if(!accumulationMode){
+        layeredDepthMode = !!window.location.pathname.match("Layered");
+    }
 
     // set up canvas
-    if(isDepthEffects){
+    if(accumulationMode){
         let canvas = document.getElementById("gl-canvas-ab") as HTMLCanvasElement;
         abGLContext = new AccumulationDepthGLContext(canvas);
+        canvas = document.getElementById("gl-canvas") as HTMLCanvasElement;
+        regularGLContext = new RegularGLContext(canvas);
+        if (!regularGLContext || !ldofGLContext) {
+            alert("WebGL isn't available");
+        }
+    } else if (layeredDepthMode) {
+        let canvas = document.getElementById("gl-canvas") as HTMLCanvasElement;
+        regularGLContext = new RegularGLContext(canvas);
         canvas = document.getElementById("gl-canvas-ldof") as HTMLCanvasElement;
         ldofGLContext = new LayeredDepthGLContext(canvas);
-        if (!abGLContext || !ldofGLContext) {
+        if (!regularGLContext || !ldofGLContext) {
             alert("WebGL isn't available");
         }
     } else {
@@ -117,7 +129,7 @@ window.onload = function init() {
     cameraControlFeedback = document.getElementById("camera-control-feedback") as HTMLDivElement;
     coinModeFeedback = document.getElementById("coin-mode-feedback") as HTMLDivElement;
 
-    if(isDepthEffects){
+    if(accumulationMode){
         apertureSlider = document.getElementById("aperture") as HTMLInputElement;
         apertureSlider.addEventListener("change", handleDepthEffectChange);
         focalDepthSlider = document.getElementById("focal-distance") as HTMLInputElement;
@@ -181,11 +193,17 @@ window.onload = function init() {
     // create all the objects
     makeObjectsAndBuffer();
 
-    if(isDepthEffects){
-        if(ldofGLContext.getAspectRatio() != abGLContext.getAspectRatio()){
+    if(accumulationMode){
+        if(regularGLContext.getAspectRatio() != abGLContext.getAspectRatio()){
             alert("GL Contexts have different aspect ratios.");
         } else {
-            aspectRatio = ldofGLContext.getAspectRatio();
+            aspectRatio = regularGLContext.getAspectRatio();
+        }
+    } else if(layeredDepthMode){
+        if(regularGLContext.getAspectRatio() != ldofGLContext.getAspectRatio()){
+            alert("GL Contexts have different aspect ratios.");
+        } else {
+            aspectRatio = regularGLContext.getAspectRatio();
         }
     } else {
         aspectRatio = regularGLContext.getAspectRatio();
@@ -197,7 +215,7 @@ window.onload = function init() {
     toggleCoinMode();
     toggleCoinMode();
 
-    if(isDepthEffects){
+    if(accumulationMode){
         handleDepthEffectChange();
     }
 
@@ -232,10 +250,13 @@ function keydownHandler(event) {
                 }
                 lightLevel += 0.05;
             }
-            if(isDepthEffects){
+            if(accumulationMode){
                 abGLContext.setAmbientLightAmount(new vec4(lightLevel, lightLevel, lightLevel, 1.0));
+                regularGLContext.setAmbientLightAmount(new vec4(lightLevel, lightLevel, lightLevel, 1.0));
+            } else if(accumulationMode){
+                regularGLContext.setAmbientLightAmount(new vec4(lightLevel, lightLevel, lightLevel, 1.0));
                 ldofGLContext.setAmbientLightAmount(new vec4(lightLevel, lightLevel, lightLevel, 1.0));
-            } else {
+            }else {
                 regularGLContext.setAmbientLightAmount(new vec4(lightLevel, lightLevel, lightLevel, 1.0));
             }
             break;
@@ -348,9 +369,12 @@ function toggleCoinMode(){
         newLightLevel = [lightLevel, lightLevel, lightLevel, 1];
     }
 
-    if(isDepthEffects){
-        ldofGLContext.setAmbientLightAmount(newLightLevel);
+    if(accumulationMode){
+        regularGLContext.setAmbientLightAmount(newLightLevel);
         abGLContext.setAmbientLightAmount(newLightLevel);
+    } else if (layeredDepthMode) {
+        regularGLContext.setAmbientLightAmount(newLightLevel);
+        ldofGLContext.setAmbientLightAmount(newLightLevel);
     } else {
         regularGLContext.setAmbientLightAmount(newLightLevel);
     }
@@ -440,8 +464,11 @@ function update() {
 }
 
 function render() {
-    if(isDepthEffects){
+    if(accumulationMode){
         abGLContext.render(lights, camera, objects);
+        regularGLContext.render(lights, camera, objects);
+    } else if (layeredDepthMode) {
+        regularGLContext.render(lights, camera, objects);
         ldofGLContext.render(lights, camera, objects);
     } else {
         regularGLContext.render(lights, camera, objects);
@@ -470,8 +497,11 @@ function makeObjectsAndBuffer() {
     })
 
     //bind and buffer all points
-    if(isDepthEffects){
+    if(accumulationMode){
         abGLContext.bindAndBufferPoints(allPoints);
+        regularGLContext.bindAndBufferPoints(allPoints);
+    } else if (layeredDepthMode) {
+        regularGLContext.bindAndBufferPoints(allPoints);
         ldofGLContext.bindAndBufferPoints(allPoints);
     } else {
         regularGLContext.bindAndBufferPoints(allPoints);
