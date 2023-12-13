@@ -15,8 +15,6 @@ uniform sampler2D uFragColorSampler7;
 uniform sampler2D uFragColorSampler8;
 uniform sampler2D uFragColorSampler9;
 
-uniform sampler2D uDepthSampler;
-
 out vec4 fColor;
 
 void main()

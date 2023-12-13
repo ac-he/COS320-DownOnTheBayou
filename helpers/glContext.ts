@@ -1,4 +1,4 @@
-import {initFileShaders, mat4, translate, vec4} from "./helperfunctions.js";
+import {flatten, initFileShaders, mat4, translate, vec2, vec4} from "./helperfunctions.js";
 import {RenderObject} from "./renderObject.js";
 import {Light} from "./light";
 import {Camera} from "./camera";
@@ -26,12 +26,19 @@ export abstract class GLContext {
     protected uLights: WebGLUniformLocation;
     protected uLightCount: WebGLUniformLocation;
 
+    protected squareBufferId:WebGLBuffer;
+    protected vPositionSquare:GLint;
+    protected vTexCoord:GLint;
+
+    protected secondPassProgram:WebGLProgram;
+
     public ambientLightLevel:number[];
 
     constructor(canvas:HTMLCanvasElement) {
         this.canvas = canvas;
         this.gl = this.canvas.getContext('webgl2') as WebGL2RenderingContext;
-        this.program = this.getFileShaders();
+        this.program = initFileShaders(this.gl, "../shaders/vertexShader.glsl",
+            "../shaders/fragmentShader.glsl");
         this.gl.useProgram(this.program);
 
         // set up uniform views
@@ -51,12 +58,6 @@ export abstract class GLContext {
 
         // configure so that object overlap corresponds to depth
         this.gl.enable(this.gl.DEPTH_TEST);
-    }
-
-    getFileShaders():WebGLProgram
-    {
-        return initFileShaders(this.gl, "../shaders/vertexShader.glsl",
-            "../shaders/fragmentShader.glsl");
     }
 
     setAmbientLightAmount(level:number[]):void{
@@ -190,4 +191,44 @@ export abstract class GLContext {
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
     }
 
+    protected makeSquareAndBuffer(){
+        let squarePoints:any[] = []; //empty array
+
+        //create 4 vertices and add them to the array
+        //fill the whole screen: If we plan to use the default (aka identity)
+        //orthographic projection matrix, then the screen will go from -1 to 1
+        //in GL coordinates
+        squarePoints.push(new vec4(-1, -1, 0, 1));
+        squarePoints.push(new vec2(0,0)); //texture coordinates, bottom left
+        squarePoints.push(new vec4(1, -1, 0, 1));
+        squarePoints.push(new vec2(1,0)); //texture coordinates, bottom right
+        squarePoints.push(new vec4(1, 1, 0, 1));
+        squarePoints.push(new vec2(1,1)); //texture coordinates, top right
+        squarePoints.push(new vec4(-1, 1, 0, 1));
+        squarePoints.push(new vec2(0,1)); //texture coordinates, top left
+
+        //we need some graphics memory for this information
+        this.squareBufferId = this.gl.createBuffer();
+        //tell WebGL that the buffer we just created is the one we want to work with right now
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.squareBufferId);
+        //send the local data over to this buffer on the graphics card.  Note our use of Angel's "flatten" function
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, flatten(squarePoints), this.gl.STATIC_DRAW);
+
+        // use second pass program
+        this.gl.useProgram(this.secondPassProgram);
+
+        // set vposition
+        this.vPositionSquare = this.gl.getAttribLocation(this.secondPassProgram, "vPosition");
+        this.gl.vertexAttribPointer(this.vPositionSquare, 4, this.gl.FLOAT, false, 24, 0);
+        this.gl.enableVertexAttribArray(this.vPositionSquare);
+
+        // set vtexcoord
+        this.vTexCoord = this.gl.getAttribLocation(this.secondPassProgram, "vTexCoord");
+        this.gl.vertexAttribPointer(this.vTexCoord, 2, this.gl.FLOAT, false, 24, 16); //stride is 24 bytes total for position, texcoord
+        this.gl.enableVertexAttribArray(this.vTexCoord);
+
+        // disable after use
+        this.gl.disableVertexAttribArray(this.vPositionSquare);
+        this.gl.disableVertexAttribArray(this.vTexCoord);
+    }
 }

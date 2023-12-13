@@ -91,7 +91,7 @@ window.onload = function init() {
         abGLContext = new AccumulationDepthGLContext(canvas);
         canvas = document.getElementById("gl-canvas") as HTMLCanvasElement;
         regularGLContext = new RegularGLContext(canvas);
-        if (!regularGLContext || !ldofGLContext) {
+        if (!regularGLContext || !abGLContext) {
             alert("WebGL isn't available");
         }
     } else if (layeredDepthMode) {

@@ -11,3 +11,5 @@ You'd need to adapt that code from using GLM to using the WebGL equivalents.
 Other sources
 https://cgvr.cs.uni-bremen.de/teaching/cg_literatur/Rendering%20Depth%20of%20Field%20Effects%20Survey.pdf
 https://developer.nvidia.com/gpugems/gpugems/part-iv-image-processing/chapter-23-depth-field-survey-techniques
+https://registry.khronos.org/OpenGL-Refpages/es3.0/html/glReadPixels.xhtml
+https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/readPixels
