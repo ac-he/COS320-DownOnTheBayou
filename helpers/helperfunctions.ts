@@ -127,6 +127,10 @@ export class vec2 extends Array{
         this.push(x);
         this.push(y);
     }
+
+    flatten(): number[]{
+        return this;
+    }
 }
 
 export class vec3 extends Array{

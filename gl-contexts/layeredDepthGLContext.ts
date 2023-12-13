@@ -1,5 +1,5 @@
 import {GLContext} from "../helpers/glContext.js";
-import {initFileShaders, lookAt, mat4, vec4} from "../helpers/helperfunctions.js";
+import {flatten, initFileShaders, lookAt, mat4, vec2, vec4} from "../helpers/helperfunctions.js";
 import {Light} from "../helpers/light";
 import {Camera} from "../helpers/camera";
 import {RenderObject} from "../helpers/renderObject";
@@ -12,6 +12,8 @@ export class LayeredDepthGLContext extends GLContext {
     private fb:WebGLFramebuffer;
 
     private uTableSampler:WebGLUniformLocation;
+
+    private spreadTable:vec4[][];
 
     constructor(canvas:HTMLCanvasElement) {
         super(canvas);
@@ -47,8 +49,8 @@ export class LayeredDepthGLContext extends GLContext {
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fb);
 
         // add depth texture to frame buffer
-        this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.TEXTURE_2D, this.depthTexture,
-            0);
+        this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.TEXTURE_2D,
+            this.depthTexture, 0);
 
         this.gl.drawBuffers([this.gl.COLOR_ATTACHMENT0]);
     }
@@ -84,13 +86,22 @@ export class LayeredDepthGLContext extends GLContext {
         this.disableVertexArrays();
 
         // ----------------------------------
-        // Part 2: Render Geometry to texture
+        // Part 2: Spread and accumulate
+        // ----------------------------------
+
+        let pixels:Uint8Array = new Uint8Array(this.canvas.clientWidth * this.canvas.clientHeight * 4);
+        this.gl.readPixels(0, 0, this.canvas.clientWidth, this.canvas.clientHeight, this.gl.RGBA,
+            this.gl.UNSIGNED_BYTE, pixels);
+        let table:number[] = this.spreadAndAccumulate(pixels);
+
+        // ----------------------------------
+        // Part 3: Render Geometry to texture
         // ----------------------------------
 
         this.gl.useProgram(this.secondPassProgram);
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null); // disable the frame buffer to draw to screen
 
-        //setting background color to black for render to screen
+        //setting background color for render to screen
         this.gl.clearColor(1, 0, 0, 1.0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
@@ -102,6 +113,11 @@ export class LayeredDepthGLContext extends GLContext {
         this.gl.uniform1i(this.uTableSampler, 0);
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.squareBufferId);
+        //send the local data over to this buffer on the graphics card.
+        // this is throwing an error but it works, and if I change it to something like "new Float32Array(table)"
+        //  it no longer works?? So I'm going to ignore it :)
+        // @ts-ignore
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, table, this.gl.STATIC_DRAW);
 
         // set vposition
         this.gl.vertexAttribPointer(this.vPositionSquare, 4, this.gl.FLOAT, false, 24, 0);
@@ -119,8 +135,55 @@ export class LayeredDepthGLContext extends GLContext {
 
     }
 
-    // for tomorrow: copy other methods
-    // see if adding the first color attachment does anything. if i want attachments other than zero will it still work
-    //  with my other shader
+    protected createSpreadTable():tableEntry[][]{
+        let table:tableEntry[][] = []
+        for(let i = 0; i < this.canvas.clientWidth; i++){
+            table[i] = [];
+            for(let j = 0; j < this.canvas.clientHeight; j++){
+                table[i][j] = new tableEntry(new vec2(i, j));
+            }
+        }
+        return table;
+    }
 
+    protected spreadAndAccumulate(pixels:Uint8Array):number[]{
+        let table:tableEntry[][] = this.createSpreadTable();
+
+        for(let i = 0; i < this.canvas.clientWidth; i++){
+            for(let j = 0; j < this.canvas.clientHeight; j++){
+                let base:number = i * j;
+                table[i][j].color = new vec4(pixels[base], pixels[base + 1], pixels[base + 2], pixels[base + 3]);
+            }
+        }
+
+        let retArray = [];
+
+        for(let i = 0; i < this.canvas.clientWidth; i++){
+            for(let j = 0; j < this.canvas.clientHeight; j++){
+                retArray.push(table[i][j].flatten());
+            }
+        }
+
+        return retArray;
+    }
+
+}
+
+class tableEntry {
+    color:vec4;
+    position:vec2;
+
+    constructor(position:vec2) {
+        this.color = new vec4(0, 0, 0, 0);
+        this.position = position;
+    }
+
+    flatten():number[]{
+        let retArray = [];
+
+        retArray.push(this.color.flatten());
+        retArray.push(this.position.flatten());
+
+        return retArray;
+    }
 }

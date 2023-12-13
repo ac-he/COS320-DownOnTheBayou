@@ -3,8 +3,9 @@ https://www2.eecs.berkeley.edu/Pubs/TechRpts/2008/EECS-2008-187.pdf
 
 Accumulation buffer using
 https://en.wikibooks.org/wiki/OpenGL_Programming/Depth_of_Field
-You'd need to adapt that code from using GLM to using the WebGL equivalents.
+"You'd need to adapt that code from using GLM to using the WebGL equivalents."
 
+Assignment objectives
 -Alter your project 4 to implement the two depth of field algorithms you chose
 -Provide a way for the user to dynamically adjust the various focus parameters and to switch back and forth between the two algorithms
 
@@ -13,3 +14,4 @@ https://cgvr.cs.uni-bremen.de/teaching/cg_literatur/Rendering%20Depth%20of%20Fie
 https://developer.nvidia.com/gpugems/gpugems/part-iv-image-processing/chapter-23-depth-field-survey-techniques
 https://registry.khronos.org/OpenGL-Refpages/es3.0/html/glReadPixels.xhtml
 https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/readPixels
+https://webglfundamentals.org/webgl/lessons/webgl-qna-i-get-invalid-type-error-when-calling-readpixels.html
