@@ -1,8 +1,8 @@
-import {GLContext} from "../helpers/glContext.js";
-import {flatten, initFileShaders, lookAt, mat4, vec2, vec4} from "../helpers/helperfunctions.js";
-import {Light} from "../helpers/light";
-import {Camera} from "../helpers/camera";
-import {RenderObject} from "../helpers/renderObject";
+import {GLContext} from "./glContext.js";
+import {flatten, initFileShaders, mat4, vec4} from "../helpers/helperfunctions.js";
+import {Light} from "../helpers/light.js";
+import {Camera} from "../helpers/camera.js";
+import {RenderObject} from "../helpers/renderObject.js";
 
 
 export class LayeredDepthGLContext extends GLContext {

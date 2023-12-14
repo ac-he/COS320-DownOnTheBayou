@@ -18,12 +18,12 @@ import {Light} from "./helpers/light.js";
 import {NavigationLight} from "./lights/navigationLight.js";
 import {HazardLight} from "./lights/hazardLight.js";
 import {Coin} from "./objects/coin.js";
-import {RegularGLContext} from "./gl-contexts/RegularGLContext.js";
 import {LayeredDepthGLContext} from "./gl-contexts/layeredDepthGLContext.js";
 import {AccumulationDepthGLContext} from "./gl-contexts/accumulationDepthGLContext.js";
+import {GLContext} from "./gl-contexts/glContext.js";
 
 // webGL contexts
-let regularGLContext: RegularGLContext;
+let regularGLContext: GLContext;
 let ldofGLContext: LayeredDepthGLContext;
 let abGLContext: AccumulationDepthGLContext;
 
@@ -90,13 +90,13 @@ window.onload = function init() {
         let canvas = document.getElementById("gl-canvas-ab") as HTMLCanvasElement;
         abGLContext = new AccumulationDepthGLContext(canvas);
         canvas = document.getElementById("gl-canvas") as HTMLCanvasElement;
-        regularGLContext = new RegularGLContext(canvas);
+        regularGLContext = new GLContext(canvas);
         if (!regularGLContext || !abGLContext) {
             alert("WebGL isn't available");
         }
     } else if (layeredDepthMode) {
         let canvas = document.getElementById("gl-canvas") as HTMLCanvasElement;
-        regularGLContext = new RegularGLContext(canvas);
+        regularGLContext = new GLContext(canvas);
         canvas = document.getElementById("gl-canvas-ldof") as HTMLCanvasElement;
         ldofGLContext = new LayeredDepthGLContext(canvas);
         if (!regularGLContext || !ldofGLContext) {
@@ -104,7 +104,7 @@ window.onload = function init() {
         }
     } else {
         let canvas = document.getElementById("gl-canvas") as HTMLCanvasElement;
-        regularGLContext = new RegularGLContext(canvas);
+        regularGLContext = new GLContext(canvas);
         if (!regularGLContext) {
             alert("WebGL isn't available");
         }

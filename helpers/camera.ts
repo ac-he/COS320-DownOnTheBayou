@@ -1,5 +1,4 @@
 import {mat4, vec4} from "./helperfunctions.js";
-import {GLContext} from "./glContext";
 
 export abstract class Camera {
     aspectRatio:number;

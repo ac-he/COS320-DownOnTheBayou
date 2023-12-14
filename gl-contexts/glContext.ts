@@ -1,10 +1,10 @@
-import {flatten, initFileShaders, mat4, translate, vec2, vec4} from "./helperfunctions.js";
-import {RenderObject} from "./renderObject.js";
-import {Light} from "./light";
-import {Camera} from "./camera";
+import {flatten, initFileShaders, mat4, translate, vec2, vec4} from "../helpers/helperfunctions.js";
+import {RenderObject} from "../helpers/renderObject.js";
+import {Light} from "../helpers/light.js";
+import {Camera} from "../helpers/camera.js";
 
 
-export abstract class GLContext {
+export class GLContext {
 
     protected canvas:HTMLCanvasElement;
     protected gl:WebGL2RenderingContext;
