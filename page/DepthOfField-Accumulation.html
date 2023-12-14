@@ -127,7 +127,13 @@
                     enter Coin Mode and then angle the boat towards the coin. If you bring the camera out of focus, you
                     can see a ring of ten coins. These exist on a plane perpendicular to the angle the camera is
                     pointing in. As you bring the scene into focus, you can see the coins move towards each other and
-                    start to overlap.
+                    start to overlap. <br><br>
+                    A major limitation of my implementation is the fixed number of "light rays" or images being
+                    rendered. I render ten of them; this is a somewhat arbitrary amount that demonstrated the technique
+                    without introducing performance issues. Ideally, this would be a variable amount. In real-life
+                    photography, the user has control over this variable. Due to the limitations of WebGL and the fact
+                    that buffers have to be specified manually made it more convenient to simply keep the amount
+                    constant.
                 </div>
             </td>
         </tr>

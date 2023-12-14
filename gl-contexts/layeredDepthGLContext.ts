@@ -216,7 +216,7 @@ export class LayeredDepthGLContext extends GLContext {
         let retArray:vec4[] = [];
         for(let i = 0; i < this.canvas.clientWidth; i++){
             for(let j = 0; j < this.canvas.clientHeight; j++){
-                //retArray.push(retTable[i][j]);
+                // retArray.push(retTable[i][j]);
                 retArray.push(new vec4(Math.random() * 255, Math.random() * 255, Math.random() * 255, 255));
             }
         }

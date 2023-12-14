@@ -88,6 +88,62 @@
             <td>
                 <h2>Layered-Depth Rectangle Spreading</h2>
                 <h3>Image Space Technique</h3>
+                <div class="method-desc">
+                    <h4>Method</h4>
+                    Unfortunately, I was unable to complete this view. Here, I will describe what it would have done,
+                    how it differs from the Simple Accumulation Buffer shown on the other page, and why this technique
+                    was unsuccessful and not suited to this particular application. <br><br>
+
+                    The Depth of Field Postprocessing For Layered Scenes Using Constant-Time Rectangle Spreading
+                    algorithm outlined in <a href ="">this paper</a> spreads out each pixel by adding or subtracting its
+                    value from nearby pixels in a zero-ed out table with the same dimensions as the image. <br>
+                    Then, each row is accumulated, starting from zero at the leftmost pixel, by adding or subtracting
+                    each pixel's value from the accumulator. This compensates for "missed pixels" as the points the
+                    initial pixel would have been spread to are not necessarily near each other. <br>
+                    The amount of spread each pixel receives (its blur radius) is based on its depth within the image.
+                    The paper I based my research on does not go into detail about this, but had I had more time to
+                    correctly implement the technique, I would have introduced parameters that would modify the blur
+                    radius function. For example, having it get bigger either exponentially or linearly as the depth
+                    value diverged from the focal depth and introducing a scalar to increase or decrease the effect.
+                    Additionally, I would have included controls to set a focal depth so that different objects in the
+                    scene could be brought into focus with user control<br>
+                    The final step in this process is the normalization of all of the pixels. While the color channels
+                    are being modified via the process above, a fifth channel is also being modified: the normalization
+                    channel. Essentially, this tracks how many additions and subtractions each pixel receives. The color
+                    channels are divided by the normalization channel at the end of the process. Ultimately, the
+                    normalization buffer allows us to take an average of all the spread rectangles that overlap at any
+                    particular pixel, introducing an accumulation buffer-like result.<br><br>
+
+                    This differs from the other accumulation buffer effect I have presented in that it is blurring the
+                    colors on a pixel-by-pixel basis based on their depth rather than by blending together several
+                    sharp images taken at slightly different locations. This technique is actually designed to be used
+                    with layered-depth images. In this format, the image has been sliced into depths, in the same manner
+                    as the filtering algorithms we discussed in class are. Each slice gets a particular blur, and it is
+                    up to the person or program rendering the image to decide on which slice should be in focus. <br>
+                    This technique also only collects a single image to work off of, rather than collecting ten
+                    different images. This reduces the amount of buffers at play.<br><br>
+
+                    However, between my current implementations of the two effects, this one would have had
+                    significantly worse performance than the Simple Accumulation Buffer has. For each frame, the CPU has
+                    to loop through each pixel in the image four times! This gives me more appreciation for how quickly
+                    the shaders are able to do the work that they do. If you observe the static pattern above, you will
+                    notice that it updates about once per second -- I currently have one of the iterations commented out
+                    and the program still displays considerable lag. <br>
+                    The algorithm specified in the paper loops through every pixel and sets the values of nearby pixels.
+                    As I was unable to do this from the fragment shader, it was necessary to do as the paper did and
+                    work with pixels that had been read in from textures on the CPU side. This was decidedly not optimal
+                    and even with broken code I can tell that this algorithm was not meant to be implemented in the way
+                    that I implemented it. I believe that the team that published this paper was working with a
+                    different setup where this algorithm would have been able to run on the graphics card rather than
+                    the CPU. I would be very curious to see how they pulled this off! <br><br>
+
+                    Another major thing I struggled with on this objective was reading in and out of textures. OpenGL
+                    provides ways of doing this through calls such as readPixels(), which unpacks information from a
+                    buffer, and texImage2D(), which can be used to re-pack pixel data from an array. While working on
+                    this project, I became aware of Pixel Buffer Objects (PBOs) as a way of managing this process. While
+                    I did not have adequate time to implement this, it would have likely been useful as a framework for
+                    working with collections of pixels.
+                </div>
             </td>
         </tr>
     </table>
