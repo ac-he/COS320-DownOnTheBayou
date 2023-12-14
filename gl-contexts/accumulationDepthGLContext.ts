@@ -48,8 +48,6 @@ export class AccumulationDepthGLContext extends GLContext {
         this.makeSquareAndBuffer();
 
         this.gl.enable(this.gl.DEPTH_TEST);
-        this.gl.enable(this.gl.BLEND);
-        this.gl.blendFunc(this.gl.ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 
         this.textures = [];
         // set up textures we can render to
@@ -101,7 +99,7 @@ export class AccumulationDepthGLContext extends GLContext {
 
         this.gl.viewport(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
 
-        let object: vec4 = camera.getAt()//.subtract(camera.getEye());
+        let object: vec4 = camera.getAt();
         object = object.normalize();
         object = new vec4(
             object[0] * this.focalDistance,

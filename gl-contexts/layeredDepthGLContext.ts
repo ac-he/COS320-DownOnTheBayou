@@ -10,6 +10,7 @@ export class LayeredDepthGLContext extends GLContext {
     private tableInTexture:WebGLTexture;
     private tableOutTexture:WebGLTexture;
     private depthOutTexture:WebGLTexture;
+    private positionOutTexture:WebGLTexture;
     private fb:WebGLFramebuffer;
 
     private uTableSampler:WebGLUniformLocation;
@@ -27,14 +28,15 @@ export class LayeredDepthGLContext extends GLContext {
         this.makeSquareAndBuffer();
 
         this.gl.enable(this.gl.DEPTH_TEST);
-        this.gl.enable(this.gl.BLEND);
-        this.gl.blendFunc(this.gl.ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 
-        this.tableInTexture = this.gl.createTexture()
+        this.tableInTexture = this.gl.createTexture();
         this.setupTextureBuffer(this.tableInTexture);
 
-        this.tableOutTexture = this.gl.createTexture()
+        this.tableOutTexture = this.gl.createTexture();
         this.setupTextureBuffer(this.tableOutTexture);
+
+        this.positionOutTexture = this.gl.createTexture();
+        this.setupTextureBuffer(this.positionOutTexture)
 
         // set up depth texture
         this.depthOutTexture = this.gl.createTexture();
@@ -55,7 +57,7 @@ export class LayeredDepthGLContext extends GLContext {
         this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.TEXTURE_2D,
             this.depthOutTexture, 0);
 
-        this.gl.drawBuffers([this.gl.COLOR_ATTACHMENT0]);
+        this.gl.drawBuffers([this.gl.COLOR_ATTACHMENT0, this.gl.COLOR_ATTACHMENT1]);
     }
 
     render(lights:Light[], camera:Camera, objects:RenderObject[]):void{
@@ -78,6 +80,8 @@ export class LayeredDepthGLContext extends GLContext {
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fb);
         this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D,
             this.tableOutTexture, 0);
+        this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT1, this.gl.TEXTURE_2D,
+            this.positionOutTexture, 0);
         this.gl.clearColor(0.0, 0.0, 0.2, 1.0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
@@ -93,12 +97,17 @@ export class LayeredDepthGLContext extends GLContext {
         // ----------------------------------
 
         // convert texture to pixels
+        this.gl.readBuffer(this.gl.COLOR_ATTACHMENT0);
         let pixels:Uint8Array = new Uint8Array(this.canvas.clientWidth * this.canvas.clientHeight * 4);
         this.gl.readPixels(0, 0, this.canvas.clientWidth, this.canvas.clientHeight, this.gl.RGBA,
             this.gl.UNSIGNED_BYTE, pixels);
+        this.gl.readBuffer(this.gl.COLOR_ATTACHMENT1);
+        let depthPixels:Uint8Array = new Uint8Array(this.canvas.clientWidth * this.canvas.clientHeight * 4);
+        this.gl.readPixels(0, 0, this.canvas.clientWidth, this.canvas.clientHeight, this.gl.RGBA,
+            this.gl.UNSIGNED_BYTE, depthPixels);
 
         // operate on pixels
-        let table:Uint8Array = this.spreadAndAccumulate(pixels, null);
+        let table:Uint8Array = this.spreadAndAccumulate(pixels, depthPixels);
 
         // switch program
         this.gl.useProgram(this.secondPassProgram);
@@ -154,13 +163,15 @@ export class LayeredDepthGLContext extends GLContext {
         // PHASE 1: SPREAD
         for(let i = 0; i < this.canvas.clientWidth; i++){
             for(let j = 0; j < this.canvas.clientHeight; j++){
+                // find this pixel's first index in the array
+                let base:number = i * this.canvas.clientHeight * 4 + j * 4;
+
                 // get the blur radius
-                let radius:number = this.getBlurRadius();
-                let area = (radius * 2 + 1) * (radius * 2 + 1);
+                let radius:number = this.getBlurRadius(depthPixels[base+3]);
+                let area:number = (radius * 2 + 1) * (radius * 2 + 1);
 
                 // determine the color that this picture will spread to other colors
                 // if it spreads to a larger area, it will appear more diluted
-                let base:number = i * this.canvas.clientHeight * 4 + j * 4;
                 let color:vec4 = new vec4(
                     pixels[base] / area,
                     pixels[base + 1] / area,
@@ -183,37 +194,37 @@ export class LayeredDepthGLContext extends GLContext {
             }
         }
 
-        // PHASE 2: ACCUMULATE
-        let accumulator:vec4;
-        let retTable:vec4[][] = [];
-        for(let i = 0; i < this.canvas.clientWidth; i++){
-            accumulator = new vec4(0, 0, 0, 0);
-            retTable[i] = [];
-            for(let j = 0; j < this.canvas.clientHeight; j++){
-                accumulator.add(table[i][j]);
-                let tableColor:vec4;
-                if(j - 1 >= 0) {
-                    tableColor = table[i][j - 1];
-                } else {
-                    tableColor = new vec4(0, 0, 0, 0);
-                }
-
-                retTable[i][j] = tableColor.add(accumulator);
-            }
-        }
+        // // PHASE 2: ACCUMULATE
+        // let accumulator:vec4;
+        // let retTable:vec4[][] = [];
+        // for(let i = 0; i < this.canvas.clientWidth; i++){
+        //     accumulator = new vec4(0, 0, 0, 0);
+        //     retTable[i] = [];
+        //     for(let j = 0; j < this.canvas.clientHeight; j++){
+        //         accumulator.add(table[i][j]);
+        //         let tableColor:vec4;
+        //         if(j - 1 <= 0) {
+        //             tableColor = table[i][j - 1];
+        //         } else {
+        //             tableColor = new vec4(0, 0, 0, 0);
+        //         }
+        //         //retTable[i][j] = tableColor.add(accumulator);
+        //     }
+        // }
 
         // export the table in a usable format
         let retArray:vec4[] = [];
         for(let i = 0; i < this.canvas.clientWidth; i++){
             for(let j = 0; j < this.canvas.clientHeight; j++){
-                retArray.push(retTable[i][j]);
+                //retArray.push(retTable[i][j]);
+                retArray.push(new vec4(Math.random() * 255, Math.random() * 255, Math.random() * 255, 255));
             }
         }
         return new Uint8Array(flatten(retArray));
     }
 
-    protected getBlurRadius():number{ // this should have a depth parameter
-        return 1;
+    protected getBlurRadius(depth:number):number{ // this should have a depth parameter
+        return depth;
     };
 
 }

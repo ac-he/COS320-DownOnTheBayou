@@ -13,6 +13,7 @@ in vec4 specularColor;
 in float specularExponent;
 
 layout (location = 0) out vec4 fColor;
+layout (location = 1) out vec4 fPosition;
 
 void main()
 {
@@ -58,4 +59,6 @@ void main()
     }
     //make sure the alpha value remains at 1 after all the calculations
     fColor.a = 1.0;
+    // set position for use with the ldof algorithm
+    fPosition = position;
 }
