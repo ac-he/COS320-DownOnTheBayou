@@ -3,7 +3,7 @@ body {
     font-family: "Book Antiqua", serif;
     color: antiquewhite;
     text-align: center;
-    font-size: 0.8em;
+    font-size: 1em;
 }
 
 .row {
@@ -34,4 +34,18 @@ button {
 
 .selected {
     background-color: darkseagreen;
+}
+
+.code-snippet {
+    color:darkseagreen;
+    font-family: monospace;
+}
+
+.method-desc {
+    text-align: left;
+    padding: 10%;
+}
+
+h4 {
+    text-align: center;
 }

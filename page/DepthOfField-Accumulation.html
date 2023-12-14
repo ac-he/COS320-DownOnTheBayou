@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
 <body>
-    <h1>Accumulation Buffer Depth of Field/Bokeh Effects</h1>
+    <h1>Simple Accumulation Buffer Depth of Field/Bokeh Effects</h1>
     <p>COS320 Final Project</p>
     <table>
         <tr>
@@ -77,7 +77,7 @@
                     <h3>Cameras</h3>
                     <button id="free-roam" class="selected">Free Roam [1]</button>
                     <button id="overhead">Overhead [2]</button>
-                    </br>
+                    <br>
                     <button id="chase">Chase [3]</button>
                     <button id="search-light">Search Light [4]</button>
                     <div id="camera-control-feedback">
@@ -86,21 +86,48 @@
                 </div>
             </td>
             <td>
-                <h2>Accumulation Buffer</h2>
+                <h2>Simple Accumulation Buffer</h2>
                 <h3>Object Space Technique</h3>
-                <div>
-                    <h4>Aperture</h4>
-                    Size of the virtual lens.
-                    Manipulating this will change the size of the region that is in focus (???)<br>
-                    <input type="range" min="1" max="100" value="50" class="slider" id="aperture">
-                    <div id="aperture-feedback"></div>
-                </div>
                 <div>
                     <h4>Focal Distance</h4>
                     Distance between the camera and the focal point. <br>
                     Manipulating this value will bring objects at different distances into focus.<br>
-                    <input type="range" min="1" max="300" value="10" class="slider" id="focal-distance">
+                    <input type="range" min="0" max="300" value="10" class="slider" id="focal-distance">
                     <div id="focal-distance-feedback"></div>
+                </div>
+                <div>
+                    <h4>Aperture</h4>
+                    Size of the virtual lens.
+                    Manipulating this will focus or unfocus the scene. <br>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="aperture">
+                    <div id="aperture-feedback"></div>
+                </div>
+                <div class="method-desc">
+                    <h4>Method</h4>
+                    The cameras we simulated in class simulated pinhole cameras. This technique expands the size of the
+                    "lens" and collects ten different images taken from locations slightly offset from the real camera
+                    position and then composites them together in a technique simulating an accumulation buffer. <br><br>
+                    Each of the ten cameras that contributes to the final image is simply the original "LookAt" matrix
+                    with its "eye" component modified. A bokeh vector is added to the eye component. The bokeh vector
+                    for each channel is calculated with this formula:
+                    <div>
+                        <span class="code-snippet">(p_right * Math.cos(angle) + p_up * Math.sin(angle)) * aperture</span> <br>
+                        where <span class="code-snippet">p_right</span> and <span class="code-snippet">p_up</span> are the
+                        vectors defining the plane perpendicular to the direction the camera is looking in <br>
+                        and <span class="code-snippet">angle</span> represents the angle the camera is looking at. <br>
+                        Lastly, <span class="code-snippet">aperture</span> here is specified by the user. It controls
+                        how far away from the center the camera should be moved. Low apertures will be close to center,
+                        while high ones are farther away.
+                    </div><br>
+                    Sort of like with the jittering effect we discussed during the aliasing lecture, taking multiple
+                    offset pictures and then blending them together helps us to get a softer view of the image. In
+                    regards to depth of field effects, the offset images will line up most when the object is in focus
+                    and least when it is completely out of focus. <br><br>
+                    I've found that the best visualization of what this method is doing happens in Coin Mode. Hit 'C' to
+                    enter Coin Mode and then angle the boat towards the coin. If you bring the camera out of focus, you
+                    can see a ring of ten coins. These exist on a plane perpendicular to the angle the camera is
+                    pointing in. As you bring the scene into focus, you can see the coins move towards each other and
+                    start to overlap.
                 </div>
             </td>
         </tr>
