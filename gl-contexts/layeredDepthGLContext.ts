@@ -98,7 +98,7 @@ export class LayeredDepthGLContext extends GLContext {
             this.gl.UNSIGNED_BYTE, pixels);
 
         // operate on pixels
-        let table:Uint8Array = this.spreadAndAccumulate(pixels);
+        let table:Uint8Array = this.spreadAndAccumulate(pixels, null);
 
         // switch program
         this.gl.useProgram(this.secondPassProgram);
@@ -137,47 +137,83 @@ export class LayeredDepthGLContext extends GLContext {
 
     }
 
-    protected createSpreadTable():tableEntry[][]{
-        let table:tableEntry[][] = []
+    protected createSpreadTable():vec4[][]{
+        let table:vec4[][] = []
         for(let i = 0; i < this.canvas.clientWidth; i++){
             table[i] = [];
             for(let j = 0; j < this.canvas.clientHeight; j++){
-                table[i][j] = new tableEntry(new vec2(i, j));
+                table[i][j] = new vec4(0.0, 0.0, 0.0, 0.0);
             }
         }
         return table;
     }
 
-    protected spreadAndAccumulate(pixels:Uint8Array):Uint8Array{
-        let table:tableEntry[][] = this.createSpreadTable();
+    protected spreadAndAccumulate(pixels:Uint8Array, depthPixels:Uint8Array):Uint8Array{
+        let table:vec4[][] = this.createSpreadTable();
 
+        // PHASE 1: SPREAD
         for(let i = 0; i < this.canvas.clientWidth; i++){
             for(let j = 0; j < this.canvas.clientHeight; j++){
+                // get the blur radius
+                let radius:number = this.getBlurRadius();
+                let area = (radius * 2 + 1) * (radius * 2 + 1);
+
+                // determine the color that this picture will spread to other colors
+                // if it spreads to a larger area, it will appear more diluted
                 let base:number = i * this.canvas.clientHeight * 4 + j * 4;
-                table[i][j].color = new vec4(pixels[base], pixels[base + 1], pixels[base + 2], pixels[base + 3]);
+                let color:vec4 = new vec4(
+                    pixels[base] / area,
+                    pixels[base + 1] / area,
+                    pixels[base + 2] / area,
+                    pixels[base + 3] / area) ;
+
+                // spread this color to the corners of its blur rectangle, if they exist
+                if(i - radius >= 0 && j - radius >= 0){
+                    table[i - radius][j - radius].add(color);
+                }
+                if(i + radius < this.canvas.clientWidth && j - radius >= 0){
+                    table[i + radius][j - radius].add(color);
+                }
+                if(i - radius >= 0 && j + radius < this.canvas.clientHeight){
+                    table[i - radius][j + radius].add(color);
+                }
+                if(i + radius < this.canvas.clientWidth && j + radius < this.canvas.clientHeight){
+                    table[i + radius][j + radius].add(color);
+                }
             }
         }
 
-        let retArray:vec4[] = [];
+        // PHASE 2: ACCUMULATE
+        let accumulator:vec4;
+        let retTable:vec4[][] = [];
+        for(let i = 0; i < this.canvas.clientWidth; i++){
+            accumulator = new vec4(0, 0, 0, 0);
+            retTable[i] = [];
+            for(let j = 0; j < this.canvas.clientHeight; j++){
+                accumulator.add(table[i][j]);
+                let tableColor:vec4;
+                if(j - 1 >= 0) {
+                    tableColor = table[i][j - 1];
+                } else {
+                    tableColor = new vec4(0, 0, 0, 0);
+                }
 
+                retTable[i][j] = tableColor.add(accumulator);
+            }
+        }
+
+        // export the table in a usable format
+        let retArray:vec4[] = [];
         for(let i = 0; i < this.canvas.clientWidth; i++){
             for(let j = 0; j < this.canvas.clientHeight; j++){
-                retArray.push(table[i][j].color);
+                retArray.push(retTable[i][j]);
             }
         }
-
         return new Uint8Array(flatten(retArray));
     }
 
-}
-
-class tableEntry {
-    color:vec4;
-    position:vec2;
-
-    constructor(position:vec2) {
-        this.color = new vec4(0, 0, 0, 0);
-        this.position = position;
-    }
+    protected getBlurRadius():number{ // this should have a depth parameter
+        return 1;
+    };
 
 }
